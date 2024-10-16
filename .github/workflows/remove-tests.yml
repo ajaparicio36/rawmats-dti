@@ -1,0 +1,28 @@
+name: Remove Tests from Main Branch
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  remove-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      - name: Remove __tests__ folder from main branch
+        run: |
+          git rm -r __tests__ || true
+          git commit -m "build: remove __tests__ folder from main branch" || echo "No changes to commit"
+          
+      - name: Force push changes to main
+        run: git push origin HEAD:main --force
