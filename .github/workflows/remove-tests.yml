@@ -23,6 +23,13 @@ jobs:
         run: |
           git rm -r __tests__ || true
           git commit -m "build: remove __tests__ folder from main branch" || echo "No changes to commit"
+
+      - name: Remove testing libraries from main branch
+        run: |
+          git rm -r jest.config.ts || true
+          git rm -r jest.setup.ts || true
+          npm remove --save-dev @testing-library/jest-dom @testing-library/react @testing-library/user-event || true
+          git commit -m "build: remove testing libraries from main branch" || echo "No changes to commit"
           
       - name: Force push changes to main
         run: git push origin HEAD:main --force
