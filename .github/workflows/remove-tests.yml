@@ -1,23 +1,24 @@
-name: Remove Tests on Merge to Main
+name: Prepare and Merge to Main
 
 on:
   pull_request:
-    types:
-      - closed
+    types: [labeled]
     branches:
       - main
 
 jobs:
-  remove-tests:
-    if: github.event.pull_request.merged == true
+  prepare-and-merge:
+    if: github.event.label.name == 'ready-to-merge'
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          ref: ${{ github.head_ref }}
 
       - name: Configure Git
         run: |
@@ -36,5 +37,11 @@ jobs:
           npm remove --save-dev @testing-library/jest-dom @testing-library/react @testing-library/user-event || true
           git commit -m "build: remove testing libraries for production" || echo "No changes to commit"
 
-      - name: Push changes to main
-        run: git push origin HEAD:main
+      - name: Update package.json
+        run: |
+          npm pkg delete scripts.test
+          npm pkg delete jest
+          git commit -am "build: update package.json for production" || echo "No changes to commit"
+
+      - name: Push changes to PR branch
+        run: git push origin HEAD:${{ github.head_ref }}
