@@ -45,10 +45,3 @@ jobs:
 
       - name: Push changes to PR branch
         run: git push origin HEAD:${{ github.head_ref }}
-
-      - name: Approve and merge PR
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr review --approve "${{ github.event.pull_request.number }}"
-          gh pr merge --merge "${{ github.event.pull_request.number }}"
