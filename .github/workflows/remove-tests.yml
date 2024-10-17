@@ -1,66 +1,39 @@
-name: Prepare Main Branch for Production
+name: Prepare Staging for Production
 
 on:
-  pull_request:
-    types: [labeled]
+  push:
     branches:
-      - main
+      - staging
 
 jobs:
-  prepare-main:
-    if: github.event.label.name == 'ready-to-merge'
+  remove-tests:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
-      - name: Checkout main branch
+      - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          ref: main
-          token: ${{ secrets.ACTIONS_TOKEN }}
-
-      - name: Configure Git
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-
-      - name: Merge PR into temporary branch
-        run: |
-          git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-${{ github.event.pull_request.number }}
-          git checkout -b temp-merge
-          git merge pr-${{ github.event.pull_request.number }} --no-commit
 
       - name: Remove __tests__ folder
         run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git rm -r __tests__ || true
-          git commit -m "build: remove __tests__ folder for production" || echo "No changes to commit"
+          git commit -m "build: remove __tests__ folder for production" || echo "No tests folder to remove"
 
       - name: Remove testing libraries
         run: |
-          git rm -r jest.config.ts || true
-          git rm -r jest.setup.ts || true
+          git rm jest.config.ts || true
+          git rm jest.setup.ts || true
           npm remove --save-dev @testing-library/jest-dom @testing-library/react @testing-library/user-event || true
-          git commit -m "build: remove testing libraries for production" || echo "No changes to commit"
+          git commit -am "build: remove testing libraries for production" || echo "No testing libraries to remove"
 
       - name: Update package.json
         run: |
           npm pkg delete scripts.test
           npm pkg delete jest
-          git commit -am "build: update package.json for production" || echo "No changes to commit"
+          git commit -am "build: update package.json for production" || echo "No changes to package.json"
 
-      - name: Push changes to main
-        run: |
-          git push origin temp-merge:main
-
-      - name: Clean up
-        run: |
-          git checkout main
-          git branch -D temp-merge
-          git push origin --delete pr-${{ github.event.pull_request.number }}
-
-      - name: Close PR
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr close ${{ github.event.pull_request.number }} --comment "Merged and prepared for production. Tests and testing setup removed from main branch."
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
