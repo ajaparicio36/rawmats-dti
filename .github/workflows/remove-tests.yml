@@ -1,47 +1,39 @@
-name: Prepare and Merge to Main
+name: Prepare Staging for Production
 
 on:
-  pull_request:
-    types: [labeled]
+  push:
     branches:
-      - main
+      - staging
 
 jobs:
-  prepare-and-merge:
-    if: github.event.label.name == 'ready-to-merge'
+  remove-tests:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref }}
-
-      - name: Configure Git
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
 
       - name: Remove __tests__ folder
         run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git rm -r __tests__ || true
-          git commit -m "build: remove __tests__ folder for production" || echo "No changes to commit"
+          git commit -m "build: remove __tests__ folder for production" || echo "No tests folder to remove"
 
       - name: Remove testing libraries
         run: |
-          git rm -r jest.config.ts || true
-          git rm -r jest.setup.ts || true
+          git rm jest.config.ts || true
+          git rm jest.setup.ts || true
           npm remove --save-dev @testing-library/jest-dom @testing-library/react @testing-library/user-event || true
-          git commit -m "build: remove testing libraries for production" || echo "No changes to commit"
+          git commit -am "build: remove testing libraries for production" || echo "No testing libraries to remove"
 
       - name: Update package.json
         run: |
           npm pkg delete scripts.test
           npm pkg delete jest
-          git commit -am "build: update package.json for production" || echo "No changes to commit"
+          git commit -am "build: update package.json for production" || echo "No changes to package.json"
 
-      - name: Push changes to PR branch
-        run: git push origin HEAD:${{ github.head_ref }}
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
