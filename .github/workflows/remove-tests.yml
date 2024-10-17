@@ -1,4 +1,4 @@
-name: Prepare and Merge to Main
+name: Prepare Main Branch for Production
 
 on:
   pull_request:
@@ -7,23 +7,29 @@ on:
       - main
 
 jobs:
-  prepare-and-merge:
+  prepare-main:
     if: github.event.label.name == 'ready-to-merge'
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
     steps:
-      - name: Checkout repository
+      - name: Checkout main branch
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref }}
+          ref: main
+          token: ${{ secrets.ACTIONS_TOKEN }}
 
       - name: Configure Git
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
+
+      - name: Merge PR into temporary branch
+        run: |
+          git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-${{ github.event.pull_request.number }}
+          git checkout -b temp-merge
+          git merge pr-${{ github.event.pull_request.number }} --no-commit
 
       - name: Remove __tests__ folder
         run: |
@@ -43,5 +49,18 @@ jobs:
           npm pkg delete jest
           git commit -am "build: update package.json for production" || echo "No changes to commit"
 
-      - name: Push changes to PR branch
-        run: git push origin HEAD:${{ github.head_ref }}
+      - name: Push changes to main
+        run: |
+          git push origin temp-merge:main
+
+      - name: Clean up
+        run: |
+          git checkout main
+          git branch -D temp-merge
+          git push origin --delete pr-${{ github.event.pull_request.number }}
+
+      - name: Close PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr close ${{ github.event.pull_request.number }} --comment "Merged and prepared for production. Tests and testing setup removed from main branch."
