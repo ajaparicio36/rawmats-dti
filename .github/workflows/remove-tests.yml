@@ -1,13 +1,18 @@
-name: Remove Tests from Main Branch
+name: Remove Tests on Merge to Main
 
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - main
 
 jobs:
   remove-tests:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -19,17 +24,17 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
 
-      - name: Remove __tests__ folder from main branch
+      - name: Remove __tests__ folder
         run: |
           git rm -r __tests__ || true
-          git commit -m "build: remove __tests__ folder from main branch" || echo "No changes to commit"
+          git commit -m "build: remove __tests__ folder for production" || echo "No changes to commit"
 
-      - name: Remove testing libraries from main branch
+      - name: Remove testing libraries
         run: |
           git rm -r jest.config.ts || true
           git rm -r jest.setup.ts || true
           npm remove --save-dev @testing-library/jest-dom @testing-library/react @testing-library/user-event || true
-          git commit -m "build: remove testing libraries from main branch" || echo "No changes to commit"
-          
-      - name: Force push changes to main
-        run: git push origin HEAD:main --force
+          git commit -m "build: remove testing libraries for production" || echo "No changes to commit"
+
+      - name: Push changes to main
+        run: git push origin HEAD:main
