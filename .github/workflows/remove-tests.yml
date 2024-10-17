@@ -8,6 +8,8 @@ on:
 jobs:
   remove-tests:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -31,5 +33,5 @@ jobs:
           npm remove --save-dev @testing-library/jest-dom @testing-library/react @testing-library/user-event || true
           git commit -m "build: remove testing libraries from main branch" || echo "No changes to commit"
           
-      - name: Force push changes to main
+      - name: Push changes to main
         run: git push origin HEAD:main --force
