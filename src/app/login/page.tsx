@@ -14,12 +14,12 @@ const MobileLogin = dynamic(() => import("@/components/login/MobileLogin"), {
 
 const LoginPage = () => {
   return (
-    <div className="w-full min-h-screen bg-gray-100 flex items-center justify-center">
+    <div className="w-full min-h-screen flex items-center justify-center">
       <Suspense fallback={<div>Loading...</div>}>
-        <div className="hidden md:block">
+        <div className="hidden md:flex w-full h-screen items-center justify-center">
           <DesktopLogin />
         </div>
-        <div className="md:hidden">
+        <div className="md:hidden w-full h-screen">
           <MobileLogin />
         </div>
       </Suspense>
