@@ -1,12 +1,21 @@
 "use client";
 
 import React, { useState } from "react";
-import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
+import {
+  APIProvider,
+  Map,
+  AdvancedMarker,
+  ControlPosition,
+} from "@vis.gl/react-google-maps";
+import MapHandler from "./mapHandler";
+import { CustomMapControl } from "./mapControl";
 
 const MapView = ({ apiKey, mapId }: { apiKey: string; mapId: string }) => {
   const [markerKey, setMarkerKey] = useState(0);
   const [clickedPosition, setClickedPosition] =
     useState<null | google.maps.LatLngLiteral>(null);
+  const [selectedPlace, setSelectedPlace] =
+    useState<google.maps.places.PlaceResult | null>(null);
 
   return (
     <APIProvider apiKey={apiKey}>
@@ -31,7 +40,13 @@ const MapView = ({ apiKey, mapId }: { apiKey: string; mapId: string }) => {
           setClickedPosition(event.detail.latLng);
           setMarkerKey((prevKey) => prevKey + 1);
         }}
-      />
+      >
+        <CustomMapControl
+          controlPosition={ControlPosition.TOP_CENTER}
+          onPlaceSelect={setSelectedPlace}
+        />
+        <MapHandler place={selectedPlace} />
+      </Map>
 
       {clickedPosition && (
         <AdvancedMarker
