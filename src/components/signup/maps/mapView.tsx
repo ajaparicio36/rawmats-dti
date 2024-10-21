@@ -10,7 +10,15 @@ import {
 import MapHandler from "./mapHandler";
 import { CustomMapControl } from "./mapControl";
 
-const MapView = ({ apiKey, mapId }: { apiKey: string; mapId: string }) => {
+const MapView = ({
+  apiKey,
+  mapId,
+  setAddress,
+}: {
+  apiKey: string;
+  mapId: string;
+  setAddress: (location: null | google.maps.LatLngLiteral) => void;
+}) => {
   const [markerKey, setMarkerKey] = useState(0);
   const [clickedPosition, setClickedPosition] =
     useState<null | google.maps.LatLngLiteral>(null);
@@ -39,12 +47,17 @@ const MapView = ({ apiKey, mapId }: { apiKey: string; mapId: string }) => {
         onClick={(event) => {
           setClickedPosition(event.detail.latLng);
           setMarkerKey((prevKey) => prevKey + 1);
+          setAddress(event.detail.latLng);
         }}
       >
+        {/* this is for the search bar */}
         <CustomMapControl
           controlPosition={ControlPosition.TOP_CENTER}
           onPlaceSelect={setSelectedPlace}
         />
+
+        {/* responsible for panning the map after selecting
+        something from the search bar */}
         <MapHandler place={selectedPlace} />
       </Map>
 

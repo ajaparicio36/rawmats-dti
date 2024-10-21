@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import LocationSelect from "./LocationSelect";
+import { useState } from "react";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -31,6 +32,7 @@ export default function SignupForm({
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
+  const [businessAddress, setBusinessAddress] = useState<null | string>(null);
 
   const onSubmit = (data: FormData) => {
     console.log("Signup attempt with:", data);
@@ -83,8 +85,20 @@ export default function SignupForm({
             </p>
           )}
         </div>
-        <div>
-          <LocationSelect apiKey={apiKey} mapId={mapId} />
+        <div className="flex flex-row items-center justify-between gap-3">
+          <LocationSelect
+            apiKey={apiKey}
+            mapId={mapId}
+            setBusinessAddress={setBusinessAddress}
+          />
+          <Input
+            type="text"
+            id="address"
+            value={businessAddress ?? ""}
+            placeholder="Select your business address"
+            className="basis-3/4 mt-1 w-full rounded-lg border-rawmats-neutral-700 shadow-sm focus:border-rawmats-accent-300 focus:ring-rawmats-accent-300 bg-white text-rawmats-text-700"
+            disabled
+          />
         </div>
         <div className="flex items-center justify-between mt-4">
           <div className="flex flex-col space-y-1 text-sm text-rawmats-text-500">
