@@ -1,11 +1,9 @@
 import React from "react";
-import RawmatsSplash from "@/components/buyer-signup/RawmatsSplash";
 import BuyerAttributeFields from "@/components/buyer-signup/BuyerAttributeFields";
 
 function BuyerSignUp() {
   return (
-    <div className="max-w-screen max-h-screen bg-rawmats-secondary-300 flex flex-col items-center">
-      <RawmatsSplash />
+    <div className="min-h-screen bg-gray-300 flex flex-col items-center justify-center py-12">
       <BuyerAttributeFields />
     </div>
   );
