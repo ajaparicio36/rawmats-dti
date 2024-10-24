@@ -6,6 +6,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 const schema = z
   .object({
@@ -131,13 +132,21 @@ export default function SignUpForm() {
           )}
         </div>
 
-        <div className="flex items-center mt-4 ml-auto">
-          <Button
-            type="submit"
-            className="px-6 py-2 mb-2 bg-rawmats-primary-700 text-white rounded-lg hover:bg-rawmats-primary-300 active:bg-rawmats-primary-700 transition-colors"
+        <div className="justify-between flex flex-col mt-2 md:mt-0 md:flex-row items-center">
+          <Link
+            className="text-rawmats-text-500 text-sm font-medium italic"
+            href="/login"
           >
-            Create Account
-          </Button>
+            Already have an account?
+          </Link>
+          <div className="flex items-center mt-4">
+            <Button
+              type="submit"
+              className="px-6 py-2 mb-2 bg-rawmats-primary-700 text-white rounded-lg hover:bg-rawmats-primary-300 active:bg-rawmats-primary-700 transition-colors"
+            >
+              Create Account
+            </Button>
+          </div>
         </div>
       </form>
 
