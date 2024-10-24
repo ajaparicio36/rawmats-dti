@@ -13,6 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { MapPinIcon } from "@heroicons/react/24/outline";
 
 function LocationSelect({
   apiKey,
@@ -23,14 +24,19 @@ function LocationSelect({
   mapId: string;
   setBusinessAddress: (location: null | string) => void;
 }) {
-  const [address, setAddress] = useState<null | google.maps.LatLngLiteral>(
-    null,
-  );
+  const [address, setAddress] = useState<null | google.maps.LatLngLiteral>(null);
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="default">Set Address</Button>
+        <div className="h-11 flex items-center">
+          <Button
+            variant="default"
+            className="p-2 bg-[#0A0830] text-white border border-[#5477e8a4] rounded hover:bg-blue-500 transition-colors"
+          >
+            <MapPinIcon className="h-7 w-6 text-white" aria-hidden="true" />
+          </Button>
+        </div>
       </DialogTrigger>
       <DialogContent className="min-w-[95%] overflow-y-scroll max-h-screen">
         <DialogHeader>
@@ -55,7 +61,7 @@ function LocationSelect({
                 variant="default"
                 onClick={() => {
                   setBusinessAddress(
-                    `https://www.google.com/maps/place/${address.lat},${address.lng}`,
+                    `https://www.google.com/maps/place/${address.lat},${address.lng}`
                   );
                 }}
                 className="bg-green-600"
