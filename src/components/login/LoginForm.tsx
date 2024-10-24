@@ -6,6 +6,8 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { login } from "./actions";
+import { useState } from "react";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -25,12 +27,25 @@ export default function LoginForm() {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log("Login attempt with:", data);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onSubmit = async (data: FormData) => {
+    setIsLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("email", data.email);
+      formData.append("password", data.password);
+      await login(formData);
+    } catch (error) {
+      console.error("Login failed:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleLogin = () => {
     console.log("Login with Google");
+    // Implement Google login logic here
   };
 
   return (
@@ -90,9 +105,10 @@ export default function LoginForm() {
           </div>
           <Button
             type="submit"
+            disabled={isLoading}
             className="px-6 py-2 bg-rawmats-primary-700 text-white rounded-lg hover:bg-rawmats-primary-300 active:bg-rawmats-primary-700 transition-colors"
           >
-            Login
+            {isLoading ? "Logging in..." : "Login"}
           </Button>
         </div>
       </form>
