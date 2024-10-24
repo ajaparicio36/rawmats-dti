@@ -7,27 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const schema = z
-  .object({
-    name: z
-      .string()
-      .min(6, { message: "Name must be at least 6 characters long" }),
-    email: z.string().email({ message: "Invalid email address" }),
-    password: z
-      .string()
-      .min(8, { message: "Password must be at least 8 characters long" }),
-    confirmPassword: z
-      .string()
-      .min(8, { message: "Password must be at least 8 characters long" }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    path: ["confirmPassword"],
-    message: "Passwords do not match",
-  });
+const schema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" }),
+});
 
 type FormData = z.infer<typeof schema>;
 
-export default function SignUpForm() {
+export default function LoginForm() {
   const {
     register,
     handleSubmit,
@@ -37,37 +26,19 @@ export default function SignUpForm() {
   });
 
   const onSubmit = (data: FormData) => {
-    console.log("Sign up attempt with:", data);
+    console.log("Login attempt with:", data);
   };
 
-  const handleGoogleSignUp = () => {
-    console.log("Sign up with Google");
+  const handleGoogleLogin = () => {
+    console.log("Login with Google");
   };
 
   return (
-    <div className="w-full mx-auto flex flex-col justify-center">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col p-6 ">
-        <div>
-          <Label
-            htmlFor="name"
-            className="text-lg font-semibold text-rawmats-text-700"
-          >
-            Name
-          </Label>
-          <Input
-            type="text"
-            id="name"
-            {...register("name")}
-            placeholder="Full Name"
-            className="mt-1 w-full rounded-lg border-rawmats-neutral-700 shadow-sm focus:border-rawmats-accent-300 focus:ring-rawmats-accent-300 bg-white text-rawmats-text-700"
-          />
-          {errors.name && (
-            <p className="mt-1 text-sm text-rawmats-feedback-error">
-              {errors.name.message}
-            </p>
-          )}
-        </div>
-
+    <div className="w-full mx-auto flex flex-col justify-center p-6 space-y-6">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col space-y-4"
+      >
         <div>
           <Label
             htmlFor="email"
@@ -88,7 +59,6 @@ export default function SignUpForm() {
             </p>
           )}
         </div>
-
         <div>
           <Label
             htmlFor="password"
@@ -109,38 +79,23 @@ export default function SignUpForm() {
             </p>
           )}
         </div>
-
-        <div>
-          <Label
-            htmlFor="confirmPassword"
-            className="text-lg font-semibold text-rawmats-text-700"
-          >
-            Confirm Password
-          </Label>
-          <Input
-            type="password"
-            id="confirmPassword"
-            {...register("confirmPassword")}
-            placeholder="********"
-            className="mt-1 w-full rounded-lg border-rawmats-neutral-700 shadow-sm focus:border-rawmats-accent-300 focus:ring-rawmats-accent-300 bg-white text-rawmats-text-700"
-          />
-          {errors.confirmPassword && (
-            <p className="mt-1 text-sm text-rawmats-feedback-error">
-              {errors.confirmPassword.message}
-            </p>
-          )}
-        </div>
-
-        <div className="flex items-center mt-4 ml-auto">
+        <div className="flex items-center justify-between mt-4">
+          <div className="flex flex-col space-y-1 text-sm text-rawmats-text-500">
+            <a href="#" className="hover:text-rawmats-accent-300">
+              Need an account?
+            </a>
+            <a href="#" className="hover:text-rawmats-accent-300">
+              Forgot my password
+            </a>
+          </div>
           <Button
             type="submit"
-            className="px-6 py-2 mb-2 bg-rawmats-primary-700 text-white rounded-lg hover:bg-rawmats-primary-300 active:bg-rawmats-primary-700 transition-colors"
+            className="px-6 py-2 bg-rawmats-primary-700 text-white rounded-lg hover:bg-rawmats-primary-300 active:bg-rawmats-primary-700 transition-colors"
           >
-            Create Account
+            Login
           </Button>
         </div>
       </form>
-
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-rawmats-neutral-700"></div>
@@ -149,11 +104,10 @@ export default function SignUpForm() {
           <span className="px-2 text-rawmats-text-500">OR</span>
         </div>
       </div>
-
-      <div className="flex flex-col justify-center items-center mt-3">
+      <div className="flex flex-col justify-center items-center">
         <Button
-          onClick={handleGoogleSignUp}
-          className="md:w-full w-fit py-4 md:py-6 mb-3 max-w-sm px-4 bg-rawmats-primary-700 text-white rounded-lg hover:bg-rawmats-primary-300 active:bg-rawmats-primary-100 transition-colors flex items-center justify-center space-x-2"
+          onClick={handleGoogleLogin}
+          className="w-full py-6 max-w-sm px-4 bg-rawmats-primary-700 text-white rounded-lg hover:bg-rawmats-primary-300 active:bg-rawmats-primary-100 transition-colors flex items-center justify-center space-x-2"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
@@ -173,7 +127,7 @@ export default function SignUpForm() {
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
             />
           </svg>
-          <span>Sign up with Google</span>
+          <span>Login with Google</span>
         </Button>
       </div>
     </div>

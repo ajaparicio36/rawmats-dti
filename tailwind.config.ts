@@ -72,9 +72,22 @@ const config: Config = {
             300: "#0371DD",
             100: "#048AFF",
           },
-          neutral: { 900: "#4B5563", 700: "#9CA3AF", 500: "#F3F4F6" },
-          text: { 700: "#040029", 500: "#0C0066" },
-          shade: { light: "#F1F0F0", dark: "#050418" },
+          neutral: {
+            900: "#4B5563",
+            700: "#9CA3AF",
+            500: "#F3F4F6",
+          },
+          text: {
+            700: "#040029",
+            500: "#0C0066",
+          },
+          shade: {
+            light: "#F1F0F0",
+            dark: "#050418",
+          },
+          background: {
+            700: "#DBEFFC",
+          },
           feedback: {
             success: "#22C55E",
             error: "#EF4444",
@@ -91,4 +104,5 @@ const config: Config = {
   },
   plugins: [animatePlugin],
 };
+
 export default config;
