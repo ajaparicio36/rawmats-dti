@@ -96,10 +96,10 @@ export default function LoginForm() {
         </div>
         <div className="flex items-center justify-between mt-4">
           <div className="flex flex-col space-y-1 text-sm text-rawmats-text-500">
-            <a href="#" className="hover:text-rawmats-accent-300">
+            <a href="/signup" className="hover:text-rawmats-accent-300">
               Need an account?
             </a>
-            <a href="#" className="hover:text-rawmats-accent-300">
+            <a href="/recover" className="hover:text-rawmats-accent-300">
               Forgot my password
             </a>
           </div>
