@@ -1,7 +1,6 @@
 import React from "react";
 import SignupForm from "@/components/signup/SignupForm";
 import Image from "next/image";
-import "@/components/signup/styles/DesktopSignup.css";
 
 export default function DesktopSignup({
   apiKey,
@@ -9,30 +8,31 @@ export default function DesktopSignup({
 }: {
   apiKey: string;
   mapId: string;
-}) {
+}) {   
   return (
-    <div className="desktop-signup-container min-h-screen flex items-center justify-center">
-      <div className="center-box">
-        <div className="form-side">
-          <h2 className="text-xl font-semibold mb-2 text-gray-900">
-            Connect. Collaborate. Succeed!
+    <div className="bg-[rgba(254,254,254,0.962)] min-h-screen flex items-center justify-center">
+      <div className="w-[80%] lg:w-[70%] flex rounded-xl overflow-hidden m-12 h-[75%] shadow-[0_15px_30px_rgba(70,130,180,0.5)]"> 
+        <div className="w-[60%] p-12 bg-white"> 
+          <h2 className="text-[20px] font-extrabold mb-3 text-[#001D3F]">
+            Connect. Collaborate. Succeed.
           </h2>
-          <p className="mobile-tagline text-sm mb-6 text-gray-700">
-            Process your business registration now!
+          <p className="text-sm mb-6 text-[#001D3F] text-wide">
+          Your trusted partner in business registration!
           </p>
           <SignupForm apiKey={apiKey} mapId={mapId} />
         </div>
-        <div className="logo-side">
+        
+        <div className="w-[60%] bg-[#CFEEF9] flex items-center justify-center p-4">
           <Image
             src="/logo.png"
-            alt="Company Logo"
-            className="logo"
+            alt="RAWMATS Logo"
             width={450}
             height={300}
             layout="intrinsic"
           />
-        </div> 
+        </div>
+        
       </div>
     </div>
   );
-}
+} 
