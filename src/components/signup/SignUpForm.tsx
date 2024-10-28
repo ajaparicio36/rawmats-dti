@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { signup } from "../login/actions";
+import { signup } from "./actions";
 import { SignupFormData } from "@/types/types";
 
 const schema = z
@@ -16,6 +16,9 @@ const schema = z
       .string()
       .min(6, { message: "Name must be at least 6 characters long" }),
     email: z.string().email({ message: "Invalid email address" }),
+    phone: z.string().regex(/^09\d{9}$/, {
+      message: "Phone number must be 11 digits and start with '09'",
+    }),
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters long" }),
@@ -47,6 +50,7 @@ export default function SignUpForm() {
       );
 
       await signup(payload);
+      console.log("Signup successful", data);
     } catch (error) {
       console.error("Signup failed:", error);
     }
@@ -100,6 +104,27 @@ export default function SignUpForm() {
           {errors.email && (
             <p className="mt-1 text-sm text-rawmats-feedback-error">
               {errors.email.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <Label
+            htmlFor="phone"
+            className="text-lg font-semibold text-rawmats-text-700"
+          >
+            Phone Number
+          </Label>
+          <Input
+            type="text"
+            id="phone"
+            {...register("phone")}
+            placeholder="09xxxxxxxxx"
+            className="mt-1 w-full rounded-lg border-rawmats-neutral-700 shadow-sm focus:border-rawmats-accent-300 focus:ring-rawmats-accent-300 bg-white text-rawmats-text-700"
+          />
+          {errors.phone && (
+            <p className="mt-1 text-sm text-rawmats-feedback-error">
+              {errors.phone.message}
             </p>
           )}
         </div>
