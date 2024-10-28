@@ -14,12 +14,13 @@ datasource db {
 }
 
 model User {
-  id          String    @id @default(cuid())
-  email       String    @unique
+  id          String     @id @default(cuid())
+  email       String     @unique
   displayName String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   supplier    Supplier? // Optional because not every user is a supplier
+  favorites   Favorite[] // One user can have many favorites
 }
 
 model Supplier {
@@ -34,10 +35,30 @@ model Supplier {
 }
 
 model Product {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   name        String
   description String
   price       Float
   supplierId  String
-  supplier    Supplier @relation(fields: [supplierId], references: [id])
+  supplier    Supplier   @relation(fields: [supplierId], references: [id])
+  favorites   Favorite[] // One product can have many favorites
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now()) // Track when the item was favorited
+  user      User     @relation(fields: [userId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  albums    Album[] // A favorite can be in multiple albums
+
+  @@unique([userId, productId]) // Ensure a user can't favorite the same product twice
+}
+
+model Album {
+  id          String     @id @default(cuid())
+  name        String
+  description String
+  favorites   Favorite[] // An album can contain many favorites
 }
