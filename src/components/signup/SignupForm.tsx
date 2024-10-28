@@ -4,8 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import LocationSelect from "./LocationSelect";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { PaperClipIcon } from "@heroicons/react/24/outline";
+import { uploadFile } from "@/utils/supabase/uploadFile";
 
 type FormData = {
   businessName: string;
@@ -27,6 +28,7 @@ export default function SignupForm({
   } = useForm<FormData>();
 
   const [businessAddress, setBusinessAddress] = useState<null | string>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onSubmit = (data: FormData) => {
     console.log("Signup attempt with:", { ...data, businessAddress });
@@ -111,6 +113,9 @@ export default function SignupForm({
               className="absolute right-3 top-1/2 transform -translate-y-1/2 p-0 bg-transparent"
               onClick={() => {
                 console.log("Upload document button clicked");
+                if (fileInputRef.current) {
+                  fileInputRef.current.click();
+                }
               }}
             >
               <PaperClipIcon
@@ -118,6 +123,21 @@ export default function SignupForm({
                 aria-hidden="true"
               />
             </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              multiple
+              onChange={(e) => {
+                const files = e.target.files;
+                if (files) {
+                  Array.from(files).forEach((file) => {
+                    console.log(`Selected file: ${file.name}`);
+                    uploadFile(file); //uploads file (move this)
+                  });
+                }
+              }}
+            />
           </div>
         </div>
 
