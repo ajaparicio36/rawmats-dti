@@ -17,10 +17,16 @@ model User {
   id          String     @id @default(cuid())
   email       String     @unique
   displayName String
+  role        Role       @default(USER)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   supplier    Supplier? // Optional because not every user is a supplier
   favorites   Favorite[] // One user can have many favorites
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model Supplier {
