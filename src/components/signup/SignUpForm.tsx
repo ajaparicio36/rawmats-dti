@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { signup } from "../login/actions";
+import { SignupFormData } from "@/types/types";
 
 const schema = z
   .object({
@@ -37,8 +39,17 @@ export default function SignUpForm() {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log("Sign up attempt with:", data);
+  const onSubmit = async (data: SignupFormData) => {
+    try {
+      const payload = new FormData();
+      Object.entries(data).forEach(([key, value]) =>
+        payload.append(key, value),
+      );
+
+      await signup(payload);
+    } catch (error) {
+      console.error("Signup failed:", error);
+    }
   };
 
   const handleGoogleSignUp = () => {
@@ -137,7 +148,7 @@ export default function SignUpForm() {
 
         <div className="justify-between flex flex-col mt-2 md:mt-0 md:flex-row items-center">
           <Link
-            className="text-rawmats-primary-700 text-sm font-medium italic hover:text-rawmats-primary-300"
+            className="text-rawmats-primary-700 text-xs font-medium italic hover:text-rawmats-primary-300 lg:text-sm"
             href="/login"
           >
             Already have an account?
