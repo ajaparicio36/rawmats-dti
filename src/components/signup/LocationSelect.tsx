@@ -24,7 +24,9 @@ function LocationSelect({
   mapId: string;
   setBusinessAddress: (location: null | string) => void;
 }) {
-  const [address, setAddress] = useState<null | google.maps.LatLngLiteral>(null);
+  const [address, setAddress] = useState<null | google.maps.LatLngLiteral>(
+    null,
+  );
 
   return (
     <Dialog>
@@ -61,10 +63,10 @@ function LocationSelect({
                 variant="default"
                 onClick={() => {
                   setBusinessAddress(
-                    `https://www.google.com/maps/place/${address.lat},${address.lng}`
+                    `https://www.google.com/maps/place/${address.lat},${address.lng}`,
                   );
                 }}
-                className="bg-green-600"
+                className="bg-green-600 hover:bg-green-700"
               >
                 Confirm Selection
               </Button>

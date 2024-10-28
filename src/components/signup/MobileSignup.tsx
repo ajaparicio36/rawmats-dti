@@ -18,9 +18,11 @@ export default function MobileSignup({
           Connect. Collaborate. Succeed.
         </h2>
         <p className="text-sm mt-4 mb-6 text-[#001D3F] text-wider text-center font-inter">
-        Your trusted partner in business registration!
+          Your trusted partner in business registration!
         </p>
-        <SignupForm apiKey={apiKey} mapId={mapId} />
+        <div className="">
+          <SignupForm apiKey={apiKey} mapId={mapId} />
+        </div>
       </div>
     </div>
   );

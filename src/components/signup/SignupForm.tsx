@@ -9,7 +9,6 @@ import { PaperClipIcon } from "@heroicons/react/24/outline";
 
 type FormData = {
   businessName: string;
-  contactNumber: string;
   businessDocuments?: string;
 };
 
@@ -34,11 +33,10 @@ export default function SignupForm({
   };
 
   const businessNameValue = watch("businessName");
-  const contactNumberValue = watch("contactNumber");
   const businessDocumentsValue = watch("businessDocuments");
 
   return (
-    <div className="max-w-md p-6 font-inter mt-[-0.7rem]">
+    <div className="max-w-md p-6 font-inter mt-[-0.7rem] m-auto">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
         <div className="relative mb-8 mt-2">
           {errors.businessName && (
@@ -49,33 +47,18 @@ export default function SignupForm({
           <Input
             type="text"
             id="businessName"
-            {...register("businessName", { required: "Business name is required" })}
+            {...register("businessName", {
+              required: "Business name is required",
+            })}
             placeholder=" "
-            className="w-full p-5 border border-gray-400 rounded-lg focus:border-[#0A0830] focus:ring focus:ring-[#0A0830] rounded-xl"
+            className="w-full p-5 border border-gray-400 focus:border-[#0A0830] focus:ring focus:ring-[#0A0830] rounded-xl"
           />
           {!businessNameValue && (
-            <Label htmlFor="businessName" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 font-medium bg-white px-1">
+            <Label
+              htmlFor="businessName"
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 font-medium bg-white px-1"
+            >
               Business Name
-            </Label>
-          )}
-        </div>
-
-        <div className="relative mb-8">
-          {errors.contactNumber && (
-            <p className="absolute left-0 -top-4 text-red-500 text-xs">
-              {errors.contactNumber.message}
-            </p>
-          )}
-          <Input
-            type="text"
-            id="contactNumber"
-            {...register("contactNumber", { required: "Contact number is required" })}
-            placeholder=" "
-            className="w-full p-5 border border-gray-400 rounded-lg focus:border-[#0A0830] focus:ring focus:ring-[#0A0830] rounded-xl"
-          />
-          {!contactNumberValue && (
-            <Label htmlFor="contactNumber" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 font-medium bg-white px-1">
-              Contact Number
             </Label>
           )}
         </div>
@@ -87,7 +70,7 @@ export default function SignupForm({
               id="address"
               value={businessAddress ?? ""}
               placeholder="Select your business address"
-              className="flex-1 p-5 border border-gray-400 rounded-lg focus:border-[#0A0830] focus:ring focus:ring-[#0A0830] rounded-xl"
+              className="flex-1 p-5 border border-gray-400 focus:border-[#0A0830] focus:ring focus:ring-[#0A0830] rounded-xl"
               readOnly
             />
             <div className="ml-2">
@@ -112,11 +95,14 @@ export default function SignupForm({
               id="businessDocuments"
               {...register("businessDocuments")}
               placeholder=" "
-              className="w-full p-5 pr-10 border border-gray-400 rounded-lg focus:border-[#0A0830] focus:ring focus:ring-[#0A0830] rounded-xl"
+              className="w-full p-5 pr-10 border border-gray-400 focus:border-[#0A0830] focus:ring focus:ring-[#0A0830] rounded-xl"
               readOnly
             />
             {!businessDocumentsValue && (
-              <Label htmlFor="businessDocuments" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 font-medium bg-white px-1">
+              <Label
+                htmlFor="businessDocuments"
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 font-medium bg-white px-1"
+              >
                 Business Documents
               </Label>
             )}
@@ -127,13 +113,19 @@ export default function SignupForm({
                 console.log("Upload document button clicked");
               }}
             >
-              <PaperClipIcon className="h-5 w-5 text-black" aria-hidden="true" />
+              <PaperClipIcon
+                className="h-5 w-5 text-black"
+                aria-hidden="true"
+              />
             </button>
           </div>
         </div>
 
         <div className="flex justify-center">
-          <Button type="submit" className="mt-1 p-5 w-[45%] bg-[#0A0830] hover:bg-[#0d0b4d] text-white rounded-full">
+          <Button
+            type="submit"
+            className="mt-1 p-5 w-[45%] bg-[#0A0830] hover:bg-[#0d0b4d] text-white rounded-full"
+          >
             Register
           </Button>
         </div>
