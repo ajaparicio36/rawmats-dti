@@ -86,6 +86,9 @@ const config: Config = {
             light: "#F1F0F0",
             dark: "#050418",
           },
+          background: {
+            700: "#DBEFFC",
+          },
           feedback: {
             success: "#22C55E",
             error: "#EF4444",
