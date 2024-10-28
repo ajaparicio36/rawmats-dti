@@ -4,13 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import LocationSelect from "./LocationSelect";
-import { useRef, useState } from "react";
-import { PaperClipIcon } from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
 import { uploadFile } from "@/utils/supabase/uploadFile";
+import Image from "next/image";
 
 type FormData = {
   businessName: string;
-  businessDocuments?: string;
+  businessAddress: string;
+  businessDocuments: FileList;
 };
 
 export default function SignupForm({
@@ -23,19 +24,37 @@ export default function SignupForm({
   const {
     register,
     handleSubmit,
-    watch,
+    setValue,
+    trigger,
     formState: { errors },
   } = useForm<FormData>();
 
   const [businessAddress, setBusinessAddress] = useState<null | string>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [filePreviews, setFilePreviews] = useState<string[]>([]);
 
-  const onSubmit = (data: FormData) => {
-    console.log("Signup attempt with:", { ...data, businessAddress });
+  useEffect(() => {
+    if (businessAddress !== null) {
+      // trigger form validation
+      setValue("businessAddress", businessAddress);
+      trigger("businessAddress");
+    }
+  }, [businessAddress, setValue, trigger]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const newPreviews = Array.from(files).map((file) =>
+        URL.createObjectURL(file),
+      );
+      setFilePreviews(newPreviews);
+    }
   };
 
-  const businessNameValue = watch("businessName");
-  const businessDocumentsValue = watch("businessDocuments");
+  const onSubmit = (data: FormData) => {
+    Array.from(data.businessDocuments).forEach(async (file) => {
+      await uploadFile(file);
+    });
+  };
 
   return (
     <div className="max-w-md p-6 font-inter mt-[-0.7rem] m-auto">
@@ -52,25 +71,25 @@ export default function SignupForm({
             {...register("businessName", {
               required: "Business name is required",
             })}
-            placeholder=" "
+            placeholder="Business Name"
             className="w-full p-5 border border-gray-400 focus:border-[#0A0830] focus:ring focus:ring-[#0A0830] rounded-xl"
           />
-          {!businessNameValue && (
-            <Label
-              htmlFor="businessName"
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 font-medium bg-white px-1"
-            >
-              Business Name
-            </Label>
-          )}
         </div>
 
         <div className="flex flex-col mb-8">
-          <div className="flex items-center">
+          <div className="relative flex items-center">
+            {errors.businessAddress && (
+              <p className="absolute left-0 -top-4 text-red-500 text-xs">
+                {errors.businessAddress.message}
+              </p>
+            )}
             <Input
               type="text"
               id="address"
               value={businessAddress ?? ""}
+              {...register("businessAddress", {
+                required: "Business address is required",
+              })}
               placeholder="Select your business address"
               className="flex-1 p-5 border border-gray-400 focus:border-[#0A0830] focus:ring focus:ring-[#0A0830] rounded-xl"
               readOnly
@@ -92,52 +111,42 @@ export default function SignupForm({
             </p>
           )}
           <div className="relative">
-            <Input
-              type="text"
-              id="businessDocuments"
-              {...register("businessDocuments")}
-              placeholder=" "
-              className="w-full p-5 pr-10 border border-gray-400 focus:border-[#0A0830] focus:ring focus:ring-[#0A0830] rounded-xl"
-              readOnly
-            />
-            {!businessDocumentsValue && (
-              <Label
-                htmlFor="businessDocuments"
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 font-medium bg-white px-1"
-              >
-                Business Documents
-              </Label>
-            )}
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 p-0 bg-transparent"
-              onClick={() => {
-                console.log("Upload document button clicked");
-                if (fileInputRef.current) {
-                  fileInputRef.current.click();
-                }
-              }}
+            <Label
+              htmlFor="businessDocuments"
+              className="text-gray-700 font-medium"
             >
-              <PaperClipIcon
-                className="h-5 w-5 text-black"
-                aria-hidden="true"
-              />
-            </button>
-            <input
+              Upload Business Documents
+            </Label>
+            {errors.businessDocuments && (
+              <p className="absolute left-0 -top-4 text-red-500 text-xs">
+                {errors.businessDocuments.message}
+              </p>
+            )}
+            <Input
               type="file"
-              ref={fileInputRef}
-              style={{ display: "none" }}
+              accept="image/*"
               multiple
-              onChange={(e) => {
-                const files = e.target.files;
-                if (files) {
-                  Array.from(files).forEach((file) => {
-                    console.log(`Selected file: ${file.name}`);
-                    uploadFile(file); //uploads file (move this)
-                  });
-                }
-              }}
+              {...register("businessDocuments", {
+                required: "Please upload at least one file",
+                validate: (value) =>
+                  value?.length > 0 || "Please upload at least one file",
+                onChange: () => handleFileChange,
+              })}
+              className="my-3 border border-gray-400 rounded-xl cursor-pointer"
             />
+
+            <div className="grid grid-cols-3 gap-3">
+              {filePreviews.map((preview, index) => (
+                <Image
+                  key={index}
+                  src={preview}
+                  alt={`Selected file ${index + 1}`}
+                  width={100}
+                  height={100}
+                  className="w-24 h-24 object-cover rounded"
+                />
+              ))}
+            </div>
           </div>
         </div>
 

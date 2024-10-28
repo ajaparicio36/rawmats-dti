@@ -33,6 +33,7 @@ function LocationSelect({
       <DialogTrigger asChild>
         <div className="h-11 flex items-center">
           <Button
+            type="button"
             variant="default"
             className="p-2 bg-[#0A0830] text-white border border-[#5477e8a4] rounded hover:bg-blue-500 transition-colors"
           >

@@ -7,7 +7,7 @@ const supabase = createClient(
 );
 
 // Upload file using standard upload
-export async function uploadFile(file) {
+export async function uploadFile(file: File) {
   const { data, error } = await supabase.storage
     .from("product-photos")
     .upload(file.name, file);
