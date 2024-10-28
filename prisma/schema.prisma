@@ -12,3 +12,32 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  displayName String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  supplier    Supplier? // Optional because not every user is a supplier
+}
+
+model Supplier {
+  id                String    @id @default(cuid())
+  userId            String    @unique // One-to-one with User
+  user              User      @relation(fields: [userId], references: [id])
+  businessName      String    @unique
+  businessLocation  String
+  businessDocuments String
+  verified          Boolean
+  products          Product[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  supplierId  String
+  supplier    Supplier @relation(fields: [supplierId], references: [id])
+}
