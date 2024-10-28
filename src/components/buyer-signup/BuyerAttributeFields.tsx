@@ -47,7 +47,10 @@ export default function SignUpForm() {
 
   return (
     <div className="w-full mx-auto flex flex-col justify-center">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col p-6 ">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col p-6 space-y-1"
+      >
         <div>
           <Label
             htmlFor="name"
@@ -134,7 +137,7 @@ export default function SignUpForm() {
 
         <div className="justify-between flex flex-col mt-2 md:mt-0 md:flex-row items-center">
           <Link
-            className="text-rawmats-text-500 text-sm font-medium italic"
+            className="text-rawmats-primary-700 text-sm font-medium italic hover:text-rawmats-primary-300"
             href="/login"
           >
             Already have an account?

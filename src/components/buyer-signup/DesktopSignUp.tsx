@@ -5,7 +5,7 @@ import logo from "../../public/logo.png";
 
 const SignUp = () => {
   return (
-    <div className="max-w-6xl m-4 w-full h-3/4 flex items-center justify-center bg-white rounded-2xl shadow-xl shadow-rawmats-secondary-700 overflow-hidden">
+    <div className="max-w-6xl m-4 w-full h-3/4 flex items-center justify-center bg-white rounded-2xl shadow-2xl shadow-rawmats-secondary-700 overflow-hidden">
       <div className="flex flex-col justify-center gap-4 items-start w-1/2 p-12">
         <h2 className="text-5xl font-bold text-rawmats-text-700">
           SIGN UP NOW!
