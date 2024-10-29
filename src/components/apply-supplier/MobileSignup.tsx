@@ -1,12 +1,15 @@
 import SignupForm from "@/components/apply-supplier/SignupForm";
+import { User } from "@supabase/supabase-js";
 import Image from "next/image";
 
 export default function MobileSignup({
   apiKey,
   mapId,
+  user,
 }: {
   apiKey: string;
   mapId: string;
+  user: User;
 }) {
   return (
     <div className="min-h-screen flex flex-col bg-[#CFEEF9]">
@@ -21,7 +24,7 @@ export default function MobileSignup({
           Your trusted partner in business registration!
         </p>
         <div className="">
-          <SignupForm apiKey={apiKey} mapId={mapId} />
+          <SignupForm apiKey={apiKey} mapId={mapId} user={user} />
         </div>
       </div>
     </div>

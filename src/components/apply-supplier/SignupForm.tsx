@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import LocationSelect from "./LocationSelect";
 import { useEffect, useRef, useState } from "react";
-import { uploadFile } from "@/utils/supabase/uploadFile";
+import { uploadFile } from "@/utils/supabase/files";
 import Image from "next/image";
 import { FaUpload } from "react-icons/fa";
+import { User } from "@supabase/supabase-js";
 
 type FormData = {
   businessName: string;
@@ -18,9 +19,11 @@ type FormData = {
 export default function SignupForm({
   apiKey,
   mapId,
+  user,
 }: {
   apiKey: string;
   mapId: string;
+  user: User;
 }) {
   const {
     register,
@@ -62,7 +65,7 @@ export default function SignupForm({
 
   const onSubmit = (data: FormData) => {
     Array.from(data.businessDocuments).forEach(async (file) => {
-      await uploadFile(file);
+      await uploadFile(file, user);
     });
   };
 

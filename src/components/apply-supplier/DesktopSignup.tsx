@@ -1,13 +1,16 @@
 import React from "react";
 import SignupForm from "@/components/apply-supplier/SignupForm";
 import Image from "next/image";
+import { User } from "@supabase/supabase-js";
 
 export default function DesktopSignup({
   apiKey,
   mapId,
+  user,
 }: {
   apiKey: string;
   mapId: string;
+  user: User;
 }) {
   return (
     <div className="bg-[rgba(254,254,254,0.962)] min-h-screen flex items-center justify-center">
@@ -19,7 +22,7 @@ export default function DesktopSignup({
           <p className="text-sm mb-6 text-[#001D3F] text-wide">
             Your trusted partner in business registration!
           </p>
-          <SignupForm apiKey={apiKey} mapId={mapId} />
+          <SignupForm apiKey={apiKey} mapId={mapId} user={user} />
         </div>
 
         <div className="w-[60%] bg-[#CFEEF9] flex items-center justify-center p-4">
