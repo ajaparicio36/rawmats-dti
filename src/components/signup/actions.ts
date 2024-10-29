@@ -54,7 +54,7 @@ export async function signup(formData: FormData) {
       options: {
         data: {
           display_name: name,
-          phone,
+          phone: phone,
         },
       },
     });
