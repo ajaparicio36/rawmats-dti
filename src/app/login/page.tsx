@@ -1,6 +1,8 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
 const DesktopLogin = dynamic(() => import("@/components/login/DesktopLogin"), {
   loading: () => <p>Loading desktop login...</p>,
@@ -12,7 +14,12 @@ const MobileLogin = dynamic(() => import("@/components/login/MobileLogin"), {
   ssr: true,
 });
 
-const LoginPage = () => {
+const LoginPage = async () => {
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.getUser();
+  if (!error || data.user) {
+    redirect("/");
+  }
   return (
     <div className="w-full min-h-screen flex items-center justify-center">
       <Suspense fallback={<div>Loading...</div>}>
