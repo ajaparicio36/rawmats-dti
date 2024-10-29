@@ -1,12 +1,13 @@
 "use client";
 import { useForm } from "react-hook-form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input"; 
+import { Button } from "@/components/ui/button"; 
+import { Label } from "@/components/ui/label"; 
 import LocationSelect from "./LocationSelect";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { uploadFile } from "@/utils/supabase/uploadFile";
 import Image from "next/image";
+import { FaUpload } from "react-icons/fa";
 
 type FormData = {
   businessName: string;
@@ -31,10 +32,11 @@ export default function SignupForm({
 
   const [businessAddress, setBusinessAddress] = useState<null | string>(null);
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
+  const [fileCount, setFileCount] = useState<number>(0);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (businessAddress !== null) {
-      // trigger form validation
       setValue("businessAddress", businessAddress);
       trigger("businessAddress");
     }
@@ -44,10 +46,19 @@ export default function SignupForm({
     const files = e.target.files;
     if (files) {
       const newPreviews = Array.from(files).map((file) =>
-        URL.createObjectURL(file),
+        URL.createObjectURL(file)
       );
       setFilePreviews(newPreviews);
+      setFileCount(files.length); 
+
+    
+      setValue("businessDocuments", files);
+      trigger("businessDocuments");
     }
+  };
+
+  const handleFileUploadClick = () => {
+    fileInputRef.current?.click();
   };
 
   const onSubmit = (data: FormData) => {
@@ -62,7 +73,7 @@ export default function SignupForm({
         <div className="relative mb-8 mt-2">
           {errors.businessName && (
             <p className="absolute left-0 -top-4 text-red-500 text-xs">
-              {errors.businessName.message}
+              {errors.businessName.message} 
             </p>
           )}
           <Input
@@ -110,44 +121,55 @@ export default function SignupForm({
               {errors.businessDocuments.message}
             </p>
           )}
-          <div className="relative">
-            <Label
-              htmlFor="businessDocuments"
-              className="text-gray-700 font-medium"
-            >
-              Upload Business Documents
+          <div className="flex items-center border border-gray-400 rounded-xl p-1 bg-white"> 
+            <Label htmlFor="businessDocuments" className="flex-1 ml-2 text-gray-500 text-sm">
+              Business Documents
             </Label>
-            {errors.businessDocuments && (
-              <p className="absolute left-0 -top-4 text-red-500 text-xs">
-                {errors.businessDocuments.message}
-              </p>
-            )}
-            <Input
-              type="file"
-              accept="image/*"
-              multiple
-              {...register("businessDocuments", {
-                required: "Please upload at least one file",
-                validate: (value) =>
-                  value?.length > 0 || "Please upload at least one file",
-                onChange: () => handleFileChange,
-              })}
-              className="my-3 border border-gray-400 rounded-xl cursor-pointer"
-            />
 
-            <div className="grid grid-cols-3 gap-3">
-              {filePreviews.map((preview, index) => (
-                <Image
-                  key={index}
-                  src={preview}
-                  alt={`Selected file ${index + 1}`}
-                  width={100}
-                  height={100}
-                  className="w-24 h-24 object-cover rounded"
-                />
-              ))}
-            </div>
+            <Button
+              type="button"
+              onClick={handleFileUploadClick}
+              className="flex items-center bg-gray-200 text-gray-700 hover:bg-gray-300 p-2 text-xs rounded ml-2"
+            >
+              <FaUpload className="mr-1 text-xs ml-auto" style={{ fontSize: '0.4rem' }} /> 
+              <span className="text-xs">Choose Files</span> 
+            </Button>
           </div>
+
+          <Input
+            type="file"
+            accept="image/*"
+            multiple
+            {...register("businessDocuments", {
+              required: "Please upload at least one file",
+              validate: {
+                checkFileCount: (value) => 
+                  value && value.length > 0 || "Please upload at least one file",
+              },
+            })}
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="hidden"
+          />
+
+          <div className="grid grid-cols-3 gap-3 mt-3">
+            {filePreviews.map((preview, index) => (
+              <Image
+                key={index}
+                src={preview}
+                alt={`Selected file ${index + 1}`}
+                width={100}
+                height={100}
+                className="w-24 h-24 object-cover rounded"
+              />
+            ))}
+          </div>
+
+          {fileCount > 0 && (
+            <p className="mt-2 text-gray-600">
+              {fileCount} file{fileCount > 1 ? 's' : ''} selected.
+            </p>
+          )}
         </div>
 
         <div className="flex justify-center">
