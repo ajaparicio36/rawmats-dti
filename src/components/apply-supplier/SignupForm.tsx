@@ -1,8 +1,8 @@
 "use client";
 import { useForm } from "react-hook-form";
-import { Input } from "@/components/ui/input"; 
-import { Button } from "@/components/ui/button"; 
-import { Label } from "@/components/ui/label"; 
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import LocationSelect from "./LocationSelect";
 import { useEffect, useRef, useState } from "react";
 import { uploadFile } from "@/utils/supabase/uploadFile";
@@ -46,12 +46,11 @@ export default function SignupForm({
     const files = e.target.files;
     if (files) {
       const newPreviews = Array.from(files).map((file) =>
-        URL.createObjectURL(file)
+        URL.createObjectURL(file),
       );
       setFilePreviews(newPreviews);
-      setFileCount(files.length); 
+      setFileCount(files.length);
 
-    
       setValue("businessDocuments", files);
       trigger("businessDocuments");
     }
@@ -73,7 +72,7 @@ export default function SignupForm({
         <div className="relative mb-8 mt-2">
           {errors.businessName && (
             <p className="absolute left-0 -top-4 text-red-500 text-xs">
-              {errors.businessName.message} 
+              {errors.businessName.message}
             </p>
           )}
           <Input
@@ -121,8 +120,11 @@ export default function SignupForm({
               {errors.businessDocuments.message}
             </p>
           )}
-          <div className="flex items-center border border-gray-400 rounded-xl p-1 bg-white"> 
-            <Label htmlFor="businessDocuments" className="flex-1 ml-2 text-gray-500 text-sm">
+          <div className="flex items-center border border-gray-400 rounded-xl p-1 bg-white">
+            <Label
+              htmlFor="businessDocuments"
+              className="flex-1 ml-2 text-gray-500 text-sm"
+            >
               Business Documents
             </Label>
 
@@ -131,8 +133,11 @@ export default function SignupForm({
               onClick={handleFileUploadClick}
               className="flex items-center bg-gray-200 text-gray-700 hover:bg-gray-300 p-2 text-xs rounded ml-2"
             >
-              <FaUpload className="mr-1 text-xs ml-auto" style={{ fontSize: '0.4rem' }} /> 
-              <span className="text-xs">Choose Files</span> 
+              <FaUpload
+                className="mr-1 text-xs ml-auto"
+                style={{ fontSize: "0.4rem" }}
+              />
+              <span className="text-xs">Choose Files</span>
             </Button>
           </div>
 
@@ -143,8 +148,9 @@ export default function SignupForm({
             {...register("businessDocuments", {
               required: "Please upload at least one file",
               validate: {
-                checkFileCount: (value) => 
-                  value && value.length > 0 || "Please upload at least one file",
+                checkFileCount: (value) =>
+                  (value && value.length > 0) ||
+                  "Please upload at least one file",
               },
             })}
             ref={fileInputRef}
@@ -167,7 +173,7 @@ export default function SignupForm({
 
           {fileCount > 0 && (
             <p className="mt-2 text-gray-600">
-              {fileCount} file{fileCount > 1 ? 's' : ''} selected.
+              {fileCount} file{fileCount > 1 ? "s" : ""} selected.
             </p>
           )}
         </div>

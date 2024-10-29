@@ -1,4 +1,4 @@
-import SignupForm from "@/components/signup/SignupForm";
+import SignupForm from "@/components/apply-supplier/SignupForm";
 import Image from "next/image";
 
 export default function MobileSignup({

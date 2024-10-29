@@ -2,17 +2,20 @@ import React, { Suspense } from "react";
 import dynamic from "next/dynamic";
 
 const DesktopSignup = dynamic(
-  () => import("@/components/signup/DesktopSignup"),
+  () => import("@/components/apply-supplier/DesktopSignup"),
   {
     loading: () => <p>Loading desktop signup...</p>,
     ssr: true,
   },
 );
 
-const MobileSignup = dynamic(() => import("@/components/signup/MobileSignup"), {
-  loading: () => <p>Loading mobile signup...</p>,
-  ssr: true,
-});
+const MobileSignup = dynamic(
+  () => import("@/components/apply-supplier/MobileSignup"),
+  {
+    loading: () => <p>Loading mobile signup...</p>,
+    ssr: true,
+  },
+);
 
 const API_KEY = process.env.GOOGLE_MAPS_API_KEY as string;
 const mapId = process.env.GOOGLE_MAPS_MAP_ID as string;
