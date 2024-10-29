@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { sendResetPassword } from "./actions";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -25,9 +26,10 @@ const ResetPasswordForm = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = async () => {
+  const onSubmit = async (data: FormData) => {
     setIsLoading(true);
-    // Reset logic here
+    await sendResetPassword(data.email);
+    setIsLoading(false);
   };
 
   return (
