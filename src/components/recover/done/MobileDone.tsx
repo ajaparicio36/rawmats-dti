@@ -3,6 +3,7 @@ import Image from "next/image";
 import logo from "../../../public/logo.png";
 
 import { DoneProps } from "@/utils/DoneProps";
+import DoneButton from "./DoneButton";
 
 const MobileDone: React.FC<DoneProps> = ({ header, message }) => {
   return (
@@ -21,6 +22,9 @@ const MobileDone: React.FC<DoneProps> = ({ header, message }) => {
             {header}
           </h2>
           <p className="text-rawmats-text-500 mb-8">{message}</p>
+          <div className="flex flex-col items-center justify-center  p-6 rounded-b-md ">
+            <DoneButton />
+          </div>
         </div>
       </div>
     </div>

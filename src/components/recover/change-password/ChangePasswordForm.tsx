@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { updatePassword } from "./actions";
 
 const schema = z
   .object({
@@ -35,8 +36,7 @@ export default function ChangePasswordForm() {
 
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
-    // Password change logic here
-    console.log("Password changed:", data.password);
+    await updatePassword(data.password);
     setIsLoading(false);
   };
 
