@@ -1,5 +1,5 @@
 import React from "react";
-import BuyerAttributeFields from "./BuyerAttributeFields";
+import SignUpForm from "./SignUpForm";
 import Image from "next/image";
 import logo from "../../public/logo.png";
 
@@ -15,7 +15,7 @@ const MobileSignUp = () => {
         />
       </div>
       <div className="flex flex-1 bg-white rounded-t-md shadow-md">
-        <BuyerAttributeFields />
+        <SignUpForm />
       </div>
     </div>
   );

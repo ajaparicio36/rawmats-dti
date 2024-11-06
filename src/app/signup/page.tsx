@@ -3,20 +3,17 @@ import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
 const DesktopSignUp = dynamic(
-  () => import("@/components/buyer-signup/DesktopSignUp"),
+  () => import("@/components/signup/DesktopSignUp"),
   {
     loading: () => <p>Loading desktop sign up form...</p>,
     ssr: true,
   },
 );
 
-const MobileSignUp = dynamic(
-  () => import("@/components/buyer-signup/MobileSignUp"),
-  {
-    loading: () => <p>Loading mobile sign up form...</p>,
-    ssr: true,
-  },
-);
+const MobileSignUp = dynamic(() => import("@/components/signup/MobileSignUp"), {
+  loading: () => <p>Loading mobile sign up form...</p>,
+  ssr: true,
+});
 
 const BuyerSignUp = () => {
   return (
