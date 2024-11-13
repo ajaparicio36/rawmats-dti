@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { sendResetPassword } from "./actions";
+import { sendResetPassword } from "../AuthHandlers/SendRecoveryHandler";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -34,11 +34,6 @@ const ResetPasswordForm = () => {
 
   return (
     <div className="w-full mx-auto flex flex-col justify-center p-6 space-y-6">
-      <div className="flex flex-col">
-        <h2 className="text-xl font-bold text-rawmats-text-700">
-          Reset Password
-        </h2>
-      </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col space-y-4"
@@ -66,10 +61,10 @@ const ResetPasswordForm = () => {
         <div className="flex items-center justify-between mt-4">
           <div className="flex flex-col space-y-1 text-sm text-rawmats-text-500">
             <a href="/login" className="hover:text-rawmats-accent-300">
-              Log in
+              Go back to login
             </a>
             <a href="/signup" className="hover:text-rawmats-accent-300">
-              {"Sign up"}
+              {"Don't have an account?"}
             </a>
           </div>
           <Button
