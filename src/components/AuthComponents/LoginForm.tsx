@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login } from "../AuthHandlers/LoginHandler";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import InlineLoading from "../Loading/InlineLoading";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -28,6 +30,8 @@ export default function LoginForm() {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
@@ -35,9 +39,23 @@ export default function LoginForm() {
       const formData = new FormData();
       formData.append("email", data.email);
       formData.append("password", data.password);
-      await login(formData);
+      const result = await login(formData);
+      if (result.error) {
+        setError(result.error);
+        setTimeout(() => {
+          setError(null);
+        }, 5000);
+      }
     } catch (error) {
-      console.error("Login failed:", error);
+      if (error instanceof Error) {
+        router.push(
+          `/error?message=${encodeURIComponent(error.message)}&code=${encodeURIComponent("500")}`,
+        );
+      } else {
+        router.push(
+          `/error?message=${encodeURIComponent("An unexpected error occurred")}&code=${encodeURIComponent("500")}`,
+        );
+      }
     } finally {
       setIsLoading(false);
     }
@@ -89,6 +107,13 @@ export default function LoginForm() {
             </p>
           )}
         </div>
+
+        {error ? (
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 text-rawmats-feedback-error">{error}</span>
+          </div>
+        ) : null}
+
         <div className="flex items-center justify-between mt-4">
           <div className="flex flex-col space-y-1 text-sm text-rawmats-text-500">
             <a href="/signup" className="hover:text-rawmats-accent-300">
@@ -103,7 +128,7 @@ export default function LoginForm() {
             disabled={isLoading}
             className="px-6 py-2 bg-rawmats-primary-700 text-white rounded-lg hover:bg-rawmats-primary-300 active:bg-rawmats-primary-700 transition-colors"
           >
-            {isLoading ? "Logging in..." : "Login"}
+            {isLoading ? <InlineLoading message="Logging in" /> : "Login"}
           </Button>
         </div>
       </form>
