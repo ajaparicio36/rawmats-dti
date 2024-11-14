@@ -10,6 +10,6 @@ export const sendResetPassword = async (email: string) => {
   }
 
   redirect(
-    "/done?header=Check_your_email&message=Password_reset_email_sent_to_your_inbox&type=email",
+    `/done?header=${encodeURIComponent("Reset Link Sent")}&message=${encodeURIComponent("Check your inbox to view your password reset link!")}&type=email`,
   );
 };

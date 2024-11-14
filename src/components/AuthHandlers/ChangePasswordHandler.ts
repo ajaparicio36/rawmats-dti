@@ -30,6 +30,6 @@ export const updatePassword = async (newPassword: string) => {
   }
 
   redirect(
-    "/done?header=Password_updated&message=Your_password_has_been_updated!&type=reset",
+    `/done?header=${encodeURIComponent("Password Reset")}&message=${encodeURIComponent("Your password has been reset, log in again!")}&type=reset`,
   );
 };

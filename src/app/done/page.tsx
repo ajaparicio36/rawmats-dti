@@ -10,8 +10,8 @@ const DonePage = async ({
 }) => {
   const header = `${(await searchParams).header}` || "";
   const message = `${(await searchParams).message}` || "";
-  const parsedHeader = header.replace(/_/g, " ");
-  const parsedMessage = message.replace(/_/g, " ");
+  const parsedHeader = decodeURIComponent(header);
+  const parsedMessage = decodeURIComponent(message);
   const body = <DesktopDoneBody />;
   const mobileBody = (
     <MobileDoneBody
