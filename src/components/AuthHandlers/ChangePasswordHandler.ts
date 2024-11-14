@@ -2,34 +2,45 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { parseAuthError } from "./AuthErrorHandler";
 
 export const updatePassword = async (newPassword: string) => {
-  const supabase = createClient();
+  try {
+    const supabase = createClient();
 
-  const PasswordSchema = z.object({
-    password: z.string().min(8, "Password must be at least 8 characters long"),
-  });
+    const PasswordSchema = z.object({
+      password: z
+        .string()
+        .min(8, "Password must be at least 8 characters long"),
+    });
 
-  const result = PasswordSchema.safeParse({ password: newPassword });
+    const result = PasswordSchema.safeParse({ password: newPassword });
 
-  if (!result.success) {
-    const errorMessage = result.error.issues
-      .map((issue) => issue.message)
-      .join(", ");
-    throw new Error(errorMessage);
+    if (!result.success) {
+      const errorMessage = result.error.issues
+        .map((issue) => issue.message)
+        .join(", ");
+      throw new Error(errorMessage);
+    }
+
+    const { password } = result.data;
+
+    const { error } = await supabase.auth.updateUser({
+      password: password,
+    });
+
+    if (error) {
+      return parseAuthError(error);
+    }
+
+    return { error: null };
+  } catch (error) {
+    if (error instanceof Error) {
+      redirect(`/error?message=${encodeURIComponent(error.message)}`);
+    } else {
+      redirect(
+        `/error?message=${encodeURIComponent("An unexpected error occurred")}`,
+      );
+    }
   }
-
-  const { password } = result.data;
-
-  const { error } = await supabase.auth.updateUser({
-    password: password,
-  });
-
-  if (error) {
-    redirect("/error");
-  }
-
-  redirect(
-    `/done?header=${encodeURIComponent("Password Reset")}&message=${encodeURIComponent("Your password has been reset, log in again!")}&type=reset`,
-  );
 };

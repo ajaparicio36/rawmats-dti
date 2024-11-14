@@ -1,15 +1,25 @@
 "use server";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { parseAuthError } from "./AuthErrorHandler";
 
 export const sendResetPassword = async (email: string) => {
-  const supabase = createClient();
-  const { error } = await supabase.auth.resetPasswordForEmail(email);
-  if (error) {
-    redirect("/error");
-  }
+  try {
+    const supabase = createClient();
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
 
-  redirect(
-    `/done?header=${encodeURIComponent("Reset Link Sent")}&message=${encodeURIComponent("Check your inbox to view your password reset link!")}&type=email`,
-  );
+    if (error) {
+      return parseAuthError(error);
+    }
+
+    return { error: null };
+  } catch (error) {
+    if (error instanceof Error) {
+      redirect(`/error?message=${encodeURIComponent(error.message)}`);
+    } else {
+      redirect(
+        `/error?message=${encodeURIComponent("An unexpected error occurred")}`,
+      );
+    }
+  }
 };

@@ -13,5 +13,5 @@ export const parseAuthError = (error: AuthError) => {
   if (error.code === "same_password") {
     return { error: "New password must be different from the old password" };
   }
-  throw new Error(error.message);
+  return { error: "An unexpected error occurred" };
 };

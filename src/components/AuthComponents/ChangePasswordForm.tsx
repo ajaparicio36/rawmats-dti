@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { updatePassword } from "../AuthHandlers/ChangePasswordHandler";
+import { useRouter } from "next/navigation";
 
 const schema = z
   .object({
@@ -31,13 +32,37 @@ export default function ChangePasswordForm() {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
+  const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const onSubmit = async (data: FormData) => {
-    setIsLoading(true);
-    await updatePassword(data.password);
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const result = await updatePassword(data.password);
+      if (result.error) {
+        setErrorMessage(result.error);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
+      } else {
+        router.push(
+          `/done?header=${encodeURIComponent("Password Reset")}&message=${encodeURIComponent("Your password has been reset, log in again!")}&type=reset`,
+        );
+      }
+      setIsLoading(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        router.push(
+          `/error?message=${encodeURIComponent(error.message)}&code=${encodeURIComponent("500")}`,
+        );
+      } else {
+        router.push(
+          `/error?message=${encodeURIComponent("An unexpected error occurred")}&code=${encodeURIComponent("500")}`,
+        );
+      }
+    }
   };
 
   return (
@@ -91,6 +116,15 @@ export default function ChangePasswordForm() {
             </p>
           )}
         </div>
+
+        {errorMessage ? (
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 text-rawmats-feedback-error">
+              {errorMessage}
+            </span>
+          </div>
+        ) : null}
+
         <div className="flex items-center justify-end mt-4">
           <Button
             type="submit"

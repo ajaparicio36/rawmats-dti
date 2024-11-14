@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { sendResetPassword } from "../AuthHandlers/SendRecoveryHandler";
+import { useRouter } from "next/navigation";
+import { AuthApiError } from "@supabase/supabase-js";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -23,13 +25,39 @@ const ResetPasswordForm = () => {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
+  const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async (data: FormData) => {
-    setIsLoading(true);
-    await sendResetPassword(data.email);
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const result = await sendResetPassword(data.email);
+      if (result.error) {
+        setError(result.error);
+        setTimeout(() => {
+          setError(null);
+        }, 5000);
+      } else {
+        router.push(
+          `/done?header=${encodeURIComponent("Password Reset")}&message=${encodeURIComponent("If your email exists, the reset link has been sent, check your inbox!")}&type=reset`,
+        );
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      if (error instanceof AuthApiError) {
+        router.push(
+          `/error?message=${encodeURIComponent(error.message)}&code=${encodeURIComponent("500")}`,
+        );
+      } else {
+        console.log(error);
+        router.push(
+          `/error?message=${encodeURIComponent("An unexpected error occurred")}&code=${encodeURIComponent("500")}`,
+        );
+      }
+    }
   };
 
   return (
@@ -58,6 +86,13 @@ const ResetPasswordForm = () => {
             </p>
           )}
         </div>
+
+        {error ? (
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 text-rawmats-feedback-error">{error}</span>
+          </div>
+        ) : null}
+
         <div className="flex items-center justify-between mt-4">
           <div className="flex flex-col space-y-1 text-sm text-rawmats-text-500">
             <a href="/login" className="hover:text-rawmats-accent-300">

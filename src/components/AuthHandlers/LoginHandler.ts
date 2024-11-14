@@ -39,8 +39,7 @@ export async function login(formData: FormData) {
       return parseAuthError(error);
     }
 
-    revalidatePath("/", "layout");
-    redirect("/");
+    return { error: null };
   } catch (error) {
     if (error instanceof Error) {
       redirect(`/error?message=${encodeURIComponent(error.message)}`);
