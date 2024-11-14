@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { createClient } from "@/utils/supabase/server";
+import { parseAuthError } from "./AuthErrorHandler";
 
 // Define the schema for login data
 const LoginSchema = z.object({
@@ -35,10 +36,7 @@ export async function login(formData: FormData) {
     });
 
     if (error) {
-      if (error.code === "invalid_credentials") {
-        return { error: "Invalid email or password" };
-      }
-      return { error: error.message };
+      return parseAuthError(error);
     }
 
     revalidatePath("/", "layout");
