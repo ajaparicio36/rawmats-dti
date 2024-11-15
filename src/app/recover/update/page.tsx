@@ -1,36 +1,12 @@
 import React from "react";
-import dynamic from "next/dynamic";
-import { Suspense } from "react";
-
-const DesktopChangePassword = dynamic(
-  () => import("@/components/recover/change-password/DesktopChangePassword"),
-  {
-    loading: () => <p>Loading desktop view...</p>,
-    ssr: true,
-  },
-);
-
-const MobileChangePassword = dynamic(
-  () => import("@/components/recover/change-password/MobileChangePassword"),
-  {
-    loading: () => <p>Loading mobile view...</p>,
-    ssr: true,
-  },
-);
+import DynamicScreen from "@/components/AuthComponents/DynamicScreen";
+import ChangePasswordForm from "@/components/AuthComponents/ChangePasswordForm";
 
 const ResetPasswordPage = () => {
-  return (
-    <div className="w-full min-h-screen flex items-center justify-center bg-rawmats-background-700">
-      <Suspense fallback={<div>Loading...</div>}>
-        <div className="hidden md:flex w-full h-screen items-center justify-center">
-          <DesktopChangePassword />
-        </div>
-        <div className="md:hidden w-full h-screen">
-          <MobileChangePassword />
-        </div>
-      </Suspense>
-    </div>
-  );
+  const header = "Change Password";
+  const message = "Recover your lost account";
+  const body = <ChangePasswordForm />;
+  return <DynamicScreen header={header} message={message} body={body} />;
 };
 
 export default ResetPasswordPage;

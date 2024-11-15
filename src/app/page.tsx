@@ -2,7 +2,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import SignoutButton from "@/components/signout/SignoutButton";
+import SignoutButton from "@/components/AuthComponents/SignoutButton";
 
 const Home = async () => {
   const supabase = createClient();

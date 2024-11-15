@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -60,13 +59,16 @@ export async function signup(formData: FormData) {
     });
 
     if (error) {
-      throw error;
+      console.log(error);
+      redirect(`/error?message=${encodeURIComponent(error.message)}`);
     }
 
-    revalidatePath("/", "layout");
-    redirect("/login");
+    redirect(
+      `/done?header=${encodeURIComponent("Email confirmation sent")}&message=${encodeURIComponent("Check your email to proceed!")}`,
+    );
   } catch (error) {
     if (error instanceof Error) {
+      console.log(error);
       redirect(`/error?message=${encodeURIComponent(error.message)}`);
     } else {
       redirect("/error?message=An unexpected error occurred");

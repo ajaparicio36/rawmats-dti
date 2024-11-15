@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { logout } from "../login/actions";
+import { logout } from "../AuthHandlers/LoginHandler";
 
 const SignoutButton = () => {
   const signOut = async () => {
