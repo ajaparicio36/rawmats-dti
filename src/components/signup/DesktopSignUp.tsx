@@ -3,7 +3,7 @@ import SignUpForm from "./SignUpForm";
 import Image from "next/image";
 import logo from "../../public/logo.png";
 
-const SignUp = () => {
+const DesktopSignUp = () => {
   return (
     <div className="max-w-6xl w-full h-[80vh] flex items-center justify-center bg-white rounded-2xl shadow-2xl shadow-rawmats-secondary-700 overflow-hidden">
       <div className="flex flex-col justify-center gap-4 items-start w-1/2 p-12 overflow-y-auto h-full scrollbar-hide">
@@ -26,4 +26,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default DesktopSignUp;
