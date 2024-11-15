@@ -36,18 +36,22 @@ model Supplier {
   businessName      String    @unique
   businessLocation  String
   businessDocuments String
-  verified          Boolean
+  verified          Boolean   @default(false)
+  verifiedDate      DateTime  @updatedAt
   products          Product[]
 }
 
 model Product {
-  id          String     @id @default(cuid())
-  name        String
-  description String
-  price       Float
-  supplierId  String
-  supplier    Supplier   @relation(fields: [supplierId], references: [id])
-  favorites   Favorite[] // One product can have many favorites
+  id           String     @id @default(cuid())
+  name         String
+  description  String
+  price        Float
+  supplierId   String
+  dateAdded    DateTime   @default(now())
+  verified     Boolean    @default(false)
+  verifiedDate DateTime   @updatedAt
+  supplier     Supplier   @relation(fields: [supplierId], references: [id])
+  favorites    Favorite[] // One product can have many favorites
 }
 
 model Favorite {
