@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import LocationSelect from "./LocationSelect";
 import { useEffect, useRef, useState } from "react";
-import { uploadFile } from "@/utils/supabase/files";
+// import { uploadFile } from "@/utils/supabase/files";
 import Image from "next/image";
 import { FaUpload } from "react-icons/fa";
 import { User } from "@supabase/supabase-js";
+import { ApplySupplier } from "./ApplySupplierAction";
 
-type FormData = {
+type ApplicationFormData = {
   businessName: string;
   businessAddress: string;
   businessDocuments: FileList;
@@ -31,7 +32,7 @@ export default function SignupForm({
     setValue,
     trigger,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<ApplicationFormData>();
 
   const [businessAddress, setBusinessAddress] = useState<null | string>(null);
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
@@ -63,10 +64,15 @@ export default function SignupForm({
     fileInputRef.current?.click();
   };
 
-  const onSubmit = (data: FormData) => {
-    Array.from(data.businessDocuments).forEach(async (file) => {
-      await uploadFile(file, user);
-    });
+  const onSubmit = async (data: ApplicationFormData) => {
+    const formData = new FormData();
+    formData.append("businessName", data.businessName);
+    formData.append("businessAddress", data.businessAddress);
+
+    await ApplySupplier(formData, user);
+    // Array.from(data.businessDocuments).forEach(async (file) => {
+    //   await uploadFile(file, user);
+    // });
   };
 
   return (
