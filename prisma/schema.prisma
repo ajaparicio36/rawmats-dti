@@ -12,3 +12,63 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id          String     @id @default(cuid())
+  email       String     @unique
+  displayName String
+  role        Role       @default(USER)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  supplier    Supplier? // Optional because not every user is a supplier
+  favorites   Favorite[] // One user can have many favorites
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Supplier {
+  id                String    @id @default(cuid())
+  userId            String    @unique // One-to-one with User
+  user              User      @relation(fields: [userId], references: [id])
+  businessName      String    @unique
+  businessLocation  String
+  businessDocuments String
+  verified          Boolean   @default(false)
+  verifiedDate      DateTime  @updatedAt
+  products          Product[]
+}
+
+model Product {
+  id           String     @id @default(cuid())
+  name         String
+  description  String
+  price        Float
+  supplierId   String
+  dateAdded    DateTime   @default(now())
+  verified     Boolean    @default(false)
+  verifiedDate DateTime   @updatedAt
+  supplier     Supplier   @relation(fields: [supplierId], references: [id])
+  favorites    Favorite[] // One product can have many favorites
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now()) // Track when the item was favorited
+  user      User     @relation(fields: [userId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  albums    Album[] // A favorite can be in multiple albums
+
+  @@unique([userId, productId]) // Ensure a user can't favorite the same product twice
+}
+
+model Album {
+  id          String     @id @default(cuid())
+  name        String
+  description String
+  favorites   Favorite[] // An album can contain many favorites
+}
