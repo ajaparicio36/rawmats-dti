@@ -7,36 +7,59 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label'; 
 import { Product } from '@/types/types'; 
 
-export default function ProductListingForm({ onAddProduct }: { onAddProduct: (product: Product) => void }) {
+export default function ProductListingForm({ onAddProduct, supplierId }: { onAddProduct: (product: Product) => void, supplierId: string }) {
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
-  const [image, setImage] = useState<File | null>(null);
+  // const [image, setImage] = useState<File | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState<string | null>(null); 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newProduct: Product = {
-      id: Date.now(),
-      name: productName,
-      price: parseFloat(price),
-      description,
-      image: image ? URL.createObjectURL(image) : null,
-    };
+    setLoading(true); 
+    setError(null); 
 
-    onAddProduct(newProduct);
+    try {
+      const response = await fetch('/api/product', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: productName,
+          description: description,
+          price: price,
+          supplierId: supplierId
+        }),
+      });
 
-    setProductName('');
-    setPrice('');
-    setDescription('');
-    setImage(null);
-    setShowForm(false);
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Error creating product');
+      }
+
+      const product = await response.json();
+      onAddProduct(product); 
+
+      setProductName('');
+      setPrice('');
+      setDescription('');
+      // setImage(null);
+      setShowForm(false);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message); 
+      } else {
+        setError('An unexpected error occurred.');
+      }
+    } finally {
+      setLoading(false); 
+    }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) setImage(e.target.files[0]);
-  };
+  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files) setImage(e.target.files[0]);
+  // };
 
   return (
     <>
@@ -58,6 +81,7 @@ export default function ProductListingForm({ onAddProduct }: { onAddProduct: (pr
                   value={productName}
                   onChange={(e) => setProductName(e.target.value)}
                   placeholder="Product Name"
+                  required
                 />
               </div>
 
@@ -69,6 +93,7 @@ export default function ProductListingForm({ onAddProduct }: { onAddProduct: (pr
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                   placeholder="Price"
+                  required
                 />
               </div>
 
@@ -80,6 +105,7 @@ export default function ProductListingForm({ onAddProduct }: { onAddProduct: (pr
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Description"
                   className="w-full p-2 border rounded"
+                  required
                 />
               </div>
 
@@ -88,16 +114,18 @@ export default function ProductListingForm({ onAddProduct }: { onAddProduct: (pr
                 <Input
                   id="image"
                   type="file"
-                  onChange={handleFileChange}
+                  // onChange={handleFileChange}
                 />
               </div>
+
+              {error && <div className="text-red-500">{error}</div>}
 
               <div className="flex justify-end space-x-2">
                 <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" className="bg-green-500 text-white">
-                  Submit
+                <Button type="submit" className="bg-green-500 text-white" disabled={loading}>
+                  {loading ? 'Submitting...' : 'Submit'}
                 </Button>
               </div>
             </form>

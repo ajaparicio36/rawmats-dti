@@ -1,8 +1,16 @@
-import Image from 'next/image'; 
-import { Product } from '@/types/types';
+// import Image from 'next/image'; 
 
 interface ProductListProps {
-  products: Product[];
+  products: {
+    id: string;
+    name: string;
+    supplierId: string;
+    price: number;
+    description: string;
+    verified: boolean;
+    verifiedDate: Date;
+    dateAdded: Date;
+}[];
 }
 
 export default function ProductList({ products }: ProductListProps) {
@@ -16,7 +24,7 @@ export default function ProductList({ products }: ProductListProps) {
               <h3 className="text-lg font-semibold">{product.name}</h3>
               <p>Price: ${product.price}</p>
               <p>{product.description}</p>
-              {product.image && (
+              {/* {product.image && (
                 <div className="w-32 h-32 mt-2">
                   <Image
                     src={product.image}
@@ -27,7 +35,7 @@ export default function ProductList({ products }: ProductListProps) {
                     loading="lazy" 
                   />
                 </div>
-              )}
+              )} */}
             </li>
           ))}
         </ul>

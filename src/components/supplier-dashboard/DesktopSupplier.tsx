@@ -9,7 +9,18 @@ import { useState } from "react";
 import { Product } from "@/types/types";
 import Image from "next/image";
 
-const DesktopSupplier = () => {
+const DesktopSupplier = ({ fetchedProducts, userID } : { fetchedProducts: {
+  id: string;
+  name: string;
+  supplierId: string;
+  price: number;
+  description: string;
+  verified: boolean;
+  verifiedDate: Date;
+  dateAdded: Date;
+}[],
+  userID: string
+}) => {
   const [products, setProducts] = useState<Product[]>([]); 
   const [tabValue, setTabValue] = useState("create-listing");
 
@@ -43,8 +54,8 @@ const DesktopSupplier = () => {
       <div className="flex-1 p-6"> 
         <Tabs value={tabValue} onValueChange={setTabValue}>
           <TabsContent value="create-listing">
-            <ProductListingForm onAddProduct={handleAddProduct} />
-            <ProductList products={products} />
+            <ProductListingForm onAddProduct={handleAddProduct} supplierId={userID} />
+            <ProductList products={fetchedProducts} />
           </TabsContent>
 
           <TabsContent value="manage-listing">

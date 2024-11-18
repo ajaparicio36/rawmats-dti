@@ -8,7 +8,18 @@ import ProductListingForm from "@/components/supplier-dashboard/contents/Product
 import ProductList from "@/components/supplier-dashboard/contents/ProductList";
 import { Product } from "@/types/types";
 
-const MobileSupplier = () => {
+const MobileSupplier = ({ fetchedProducts, userID }: { fetchedProducts: {
+  id: string;
+  name: string;
+  supplierId: string;
+  price: number;
+  description: string;
+  verified: boolean;
+  verifiedDate: Date;
+  dateAdded: Date;
+}[],
+  userID: string
+}) => {
   const [products, setProducts] = useState<Product[]>([]);
 
   const handleAddProduct = (product: Product) => {
@@ -25,8 +36,8 @@ const MobileSupplier = () => {
         </TabsList>
 
         <TabsContent value="create-listing">
-          <ProductListingForm onAddProduct={handleAddProduct} />
-          <ProductList products={products} />
+          <ProductListingForm onAddProduct={handleAddProduct} supplierId={userID} />
+          <ProductList products={fetchedProducts} />
         </TabsContent>
 
         <TabsContent value="manage-listing">
