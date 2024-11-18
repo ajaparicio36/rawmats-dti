@@ -7,8 +7,8 @@ import {
   AdvancedMarker,
   ControlPosition,
 } from "@vis.gl/react-google-maps";
-import MapHandler from "./MapHandler";
-import { CustomMapControl } from "./MapControl";
+import MapHandler from "./mapHandler";
+import { CustomMapControl } from "./mapControl";
 
 const MapView = ({
   apiKey,
