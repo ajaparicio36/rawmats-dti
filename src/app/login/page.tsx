@@ -1,30 +1,19 @@
 import React from "react";
-import dynamic from "next/dynamic";
-import { Suspense } from "react";
+import DynamicScreen from "@/components/AuthComponents/DynamicScreen";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+import LoginForm from "@/components/AuthComponents/LoginForm";
 
-const DesktopLogin = dynamic(() => import("@/components/login/DesktopLogin"), {
-  loading: () => <p>Loading desktop login...</p>,
-  ssr: true,
-});
-
-const MobileLogin = dynamic(() => import("@/components/login/MobileLogin"), {
-  loading: () => <p>Loading mobile login...</p>,
-  ssr: true,
-});
-
-const LoginPage = () => {
-  return (
-    <div className="w-full min-h-screen flex items-center justify-center">
-      <Suspense fallback={<div>Loading...</div>}>
-        <div className="hidden md:flex w-full h-screen items-center justify-center">
-          <DesktopLogin />
-        </div>
-        <div className="md:hidden w-full h-screen">
-          <MobileLogin />
-        </div>
-      </Suspense>
-    </div>
-  );
+const LoginPage = async () => {
+  const header = "Ready to Dive In?";
+  const message = "Login to your account!";
+  const body: React.ReactNode = <LoginForm />;
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.getUser();
+  if (!error || data.user) {
+    redirect("/");
+  }
+  return <DynamicScreen header={header} message={message} body={body} />;
 };
 
 export default LoginPage;

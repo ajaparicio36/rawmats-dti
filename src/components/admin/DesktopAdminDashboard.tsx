@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Mail, Package } from "lucide-react";
 import logo from "../../public/logo.png";
 import { useState } from "react";
+import { ItemVerification } from "./ItemVerification";
 
 const DesktopAdminDashboard = () => {
   const [selectedTab, setSelectedTab] = useState("email");
@@ -52,8 +53,13 @@ const DesktopAdminDashboard = () => {
             <p>Email verification content will be displayed here.</p>
           </TabsContent>
           <TabsContent value="item">
+            {" "}
             <h2 className="text-2xl font-bold mb-4">Item Verification</h2>
-            <p>Item verification content will be displayed here.</p>
+            <ItemVerification
+              products={mockProducts}
+              onVerify={handleVerify}
+              onReject={handleReject}
+            />
           </TabsContent>
         </Tabs>
       </main>
