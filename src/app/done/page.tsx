@@ -1,22 +1,7 @@
+import DynamicScreen from "@/components/AuthComponents/DynamicScreen";
 import React from "react";
-import dynamic from "next/dynamic";
-import { Suspense } from "react";
-
-const DesktopDone = dynamic(
-  () => import("@/components/recover/done/DesktopDone"),
-  {
-    loading: () => <p>Loading desktop login...</p>,
-    ssr: true,
-  },
-);
-
-const MobileDone = dynamic(
-  () => import("@/components/recover/done/MobileDone"),
-  {
-    loading: () => <p>Loading mobile login...</p>,
-    ssr: true,
-  },
-);
+import DesktopDoneBody from "@/components/AuthComponents/DoneScreen/DesktopDoneBody";
+import MobileDoneBody from "@/components/AuthComponents/DoneScreen/MobileDoneBody";
 
 const DonePage = async ({
   searchParams,
@@ -25,21 +10,28 @@ const DonePage = async ({
 }) => {
   const header = `${(await searchParams).header}` || "";
   const message = `${(await searchParams).message}` || "";
-
-  const parsedHeader = header.replace(/_/g, " ");
-  const parsedMessage = message.replace(/_/g, " ");
+  const parsedHeader = decodeURIComponent(header);
+  const parsedMessage = decodeURIComponent(message);
+  const body = <DesktopDoneBody />;
+  const mobileBody = (
+    <MobileDoneBody
+      header={""}
+      message={""}
+      body={body}
+      mobileHeader={parsedHeader}
+      mobileMessage={parsedMessage}
+    />
+  );
 
   return (
-    <div className="w-full min-h-screen flex items-center justify-center">
-      <Suspense fallback={<div>Loading...</div>}>
-        <div className="hidden md:flex w-full h-screen items-center justify-center">
-          <DesktopDone header={parsedHeader} message={parsedMessage} />
-        </div>
-        <div className="md:hidden w-full h-screen">
-          <MobileDone header={parsedHeader} message={parsedMessage} />
-        </div>
-      </Suspense>
-    </div>
+    <DynamicScreen
+      header={parsedHeader}
+      message={parsedMessage}
+      body={body}
+      mobileBody={mobileBody}
+      mobileHeader={parsedHeader}
+      mobileMessage={parsedMessage}
+    />
   );
 };
 
