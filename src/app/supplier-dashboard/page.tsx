@@ -1,21 +1,30 @@
-'use client';
+import React from "react";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
 
-import { useState } from 'react';
-import ProductListingForm from '@/components/supplier-dashboard/ProductForm';
-import ProductList from '@/components/supplier-dashboard/ProductList';
-import { Product } from '@/types/types';
+const DesktopSupplier = dynamic(() => import("@/components/supplier-dashboard/DesktopSupplier"), {
+  loading: () => <p>Loading desktop supplier dashboard...</p>,
+  ssr: true,
+});
 
-export default function CreateListingPage() {
-  const [products, setProducts] = useState<Product[]>([]);
+const MobileSupplier = dynamic(() => import("@/components/supplier-dashboard/MobileSupplier"), {
+  loading: () => <p>Loading mobile supplier dashboard...</p>,
+  ssr: true,
+});
 
-  const handleAddProduct = (product: Product) => {
-    setProducts([...products, product]);
-  };
-
+const SupplierDashboard = () => {
   return (
-    <div className="p-6">
-      <ProductListingForm onAddProduct={handleAddProduct} />
-      <ProductList products={products} />
+    <div className="w-full min-h-screen flex items-center justify-center">
+      <Suspense fallback={<div>Loading...</div>}>
+        <div className="hidden md:flex w-full h-screen items-center justify-center">
+          <DesktopSupplier />
+        </div>
+        <div className="md:hidden w-full h-screen">
+          <MobileSupplier />
+        </div>
+      </Suspense>
     </div>
   );
-}
+};
+
+export default SupplierDashboard;

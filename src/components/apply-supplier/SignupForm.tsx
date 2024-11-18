@@ -63,12 +63,12 @@ export default function SignupForm({
     fileInputRef.current?.click();
   };
 
-  const onSubmit = (data: FormData) => {
-    Array.from(data.businessDocuments).forEach(async (file) => {
+   const onSubmit = (data: FormData) => {
+     Array.from(data.businessDocuments).forEach(async (file) => {
       await uploadFile(file, user);
-    });
-  };
-
+     });
+   };
+ 
   return (
     <div className="max-w-md p-6 font-inter mt-[-0.7rem] m-auto">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
