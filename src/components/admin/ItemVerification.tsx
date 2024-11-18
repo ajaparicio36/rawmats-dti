@@ -13,19 +13,19 @@ import { Product } from "@prisma/client";
 
 interface ItemVerificationProps {
   products: Product[];
-  onVerify: (id: string) => void;
-  onReject: (id: string) => void;
+  verifyProduct: (id: string) => void;
+  rejectProduct: (id: string) => void;
 }
 
 export function ItemVerification({
   products,
-  onVerify,
-  onReject,
+  verifyProduct,
+  rejectProduct,
 }: ItemVerificationProps) {
   return (
     <ScrollArea>
       {products.map((product) => (
-        <Card key={product.id}>
+        <Card className="my-3" key={product.id}>
           <CardHeader>
             <CardTitle>{product.name}</CardTitle>
             <CardDescription>{product.description}</CardDescription>
@@ -36,7 +36,6 @@ export function ItemVerification({
             <p>
               Date Added: {new Date(product.dateAdded).toLocaleDateString()}
             </p>
-            <p>Verified: {product.verified ? "Yes" : "No"}</p>
             {product.verified && (
               <p>
                 Verified Date:{" "}
@@ -44,16 +43,16 @@ export function ItemVerification({
               </p>
             )}
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex gap-4">
             <Button
-              onClick={() => onVerify(product.id)}
+              onClick={() => verifyProduct(product.id)}
               disabled={product.verified}
             >
               <Check className="mr-2 h-4 w-4" />
               Verify
             </Button>
             <Button
-              onClick={() => onReject(product.id)}
+              onClick={() => rejectProduct(product.id)}
               variant="destructive"
               disabled={product.verified}
             >

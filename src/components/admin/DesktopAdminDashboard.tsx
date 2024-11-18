@@ -97,8 +97,8 @@ const DesktopAdminDashboard = ({
             <h2 className="text-2xl font-bold mb-4">Item Verification</h2>
             <ItemVerification
               products={fetchedProducts}
-              onVerify={handleVerify}
-              onReject={handleReject}
+              verifyProduct={handleVerify}
+              rejectProduct={handleReject}
             />
           </TabsContent>
         </Tabs>
