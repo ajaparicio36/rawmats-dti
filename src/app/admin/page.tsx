@@ -40,7 +40,7 @@ const AdminDashboard = async () => {
           <DesktopAdminDashboard fetchedProducts={fetchedProducts} />
         </div>
         <div className="md:hidden w-full h-screen">
-          <MobileAdminDashboard />
+          <MobileAdminDashboard fetchedProducts={fetchedProducts} />
         </div>
       </Suspense>
     </div>

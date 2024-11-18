@@ -94,7 +94,6 @@ const DesktopAdminDashboard = ({
             <p>Email verification content will be displayed here.</p>
           </TabsContent>
           <TabsContent value="item">
-            {" "}
             <h2 className="text-2xl font-bold mb-4">Item Verification</h2>
             <ItemVerification
               products={fetchedProducts}

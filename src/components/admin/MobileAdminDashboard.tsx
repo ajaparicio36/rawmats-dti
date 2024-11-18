@@ -8,9 +8,51 @@ import { Mail, Package, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "../../public/logo.png";
 import { useState } from "react";
+import { Product } from "@prisma/client";
+import { ItemVerification } from "@/components/admin/ItemVerification";
 
-const MobileAdminDashboard = () => {
+const MobileAdminDashboard = ({
+  fetchedProducts,
+}: {
+  fetchedProducts: Product[];
+}) => {
   const [selectedTab, setSelectedTab] = useState("email");
+
+  const handleVerify = async (id: string) => {
+    try {
+      const response = await fetch(`/api/product/verify/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to verify product");
+      }
+      alert("Product verified successfully.");
+    } catch (error) {
+      console.error("Error verifying product:", error);
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    try {
+      const response = await fetch(`/api/product/reject/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to reject product");
+      }
+      alert("Product rejected successfully.");
+    } catch (error) {
+      console.error("Error rejecting product:", error);
+    }
+  };
 
   return (
     <div className="flex flex-col h-screen bg-background">
@@ -71,7 +113,11 @@ const MobileAdminDashboard = () => {
           </TabsContent>
           <TabsContent value="item">
             <h2 className="text-2xl font-bold mb-4">Item Verification</h2>
-            <p>Item verification content will be displayed here.</p>
+            <ItemVerification
+              products={fetchedProducts}
+              onVerify={handleVerify}
+              onReject={handleReject}
+            />
           </TabsContent>
         </Tabs>
       </main>
