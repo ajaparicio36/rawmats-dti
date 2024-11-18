@@ -5,11 +5,10 @@ export async function POST(req: NextRequest) {
   try {
     const { id } = await req.json();
     console.log("Received ID:", id);
-    const product = await prisma.product.update({
+    const product = await prisma.product.delete({
       where: { id },
-      data: { verified: false },
     });
-    console.log("Product updated:", product);
+    console.log("Product deleted:", product);
     return NextResponse.json(product, { status: 200 });
   } catch (error) {
     console.error("Error rejecting product:", error);
