@@ -22,10 +22,10 @@ export async function uploadFile(file: File, user: User) {
   }
 }
 
-export async function retrieveFile() {
+export async function retrieveFile(userID: string) {
   const { data, error } = await supabase.storage
     .from("photos")
-    .list("business-docs/useridstring", {
+    .list(`business-docs/${userID}`, {
       offset: 0,
       sortBy: { column: "name", order: "asc" },
     });

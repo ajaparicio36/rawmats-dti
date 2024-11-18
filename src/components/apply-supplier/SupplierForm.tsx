@@ -5,19 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import LocationSelect from "./LocationSelect";
 import { useEffect, useRef, useState } from "react";
-// import { uploadFile } from "@/utils/supabase/files";
+import { uploadFile } from "@/utils/supabase/files";
 import Image from "next/image";
 import { FaUpload } from "react-icons/fa";
 import { User } from "@supabase/supabase-js";
-import { ApplySupplier } from "./ApplySupplierAction";
+import InlineLoading from "../Loading/InlineLoading";
+import { useRouter } from "next/navigation";
 
-type ApplicationFormData = {
+export type ApplicationFormData = {
   businessName: string;
   businessAddress: string;
   businessDocuments: FileList;
 };
 
-export default function SignupForm({
+export default function SupplyForm({
   apiKey,
   mapId,
   user,
@@ -35,9 +36,12 @@ export default function SignupForm({
   } = useForm<ApplicationFormData>();
 
   const [businessAddress, setBusinessAddress] = useState<null | string>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
   const [fileCount, setFileCount] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (businessAddress !== null) {
@@ -65,14 +69,46 @@ export default function SignupForm({
   };
 
   const onSubmit = async (data: ApplicationFormData) => {
-    const formData = new FormData();
-    formData.append("businessName", data.businessName);
-    formData.append("businessAddress", data.businessAddress);
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/supplier", {
+        method: "POST",
+        body: JSON.stringify({
+          businessName: data.businessName,
+          businessAddress: data.businessAddress,
+          userID: user.id,
+        }),
+      });
 
-    await ApplySupplier(formData, user);
-    // Array.from(data.businessDocuments).forEach(async (file) => {
-    //   await uploadFile(file, user);
-    // });
+      Array.from(data.businessDocuments).forEach(async (file) => {
+        await uploadFile(file, user);
+      });
+
+      const result: { success: boolean } = await response.json();
+
+      if (result.success) {
+        setError("An error occurred while submitting your application");
+        setTimeout(() => {
+          setError(null);
+        }, 5000);
+      } else {
+        router.push(
+          `/done?header=${encodeURIComponent("Supplier form sent!")}&message=${encodeURIComponent("Kindly wait for your application to be verified")}`,
+        );
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        router.push(
+          `/error?message=${encodeURIComponent(error.message)}&code=${encodeURIComponent("500")}`,
+        );
+      } else {
+        router.push(
+          `/error?message=${encodeURIComponent("An unexpected error occurred")}&code=${encodeURIComponent("500")}`,
+        );
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -187,12 +223,19 @@ export default function SignupForm({
           )}
         </div>
 
+        {error ? (
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 text-rawmats-feedback-error">{error}</span>
+          </div>
+        ) : null}
+
         <div className="flex justify-center">
           <Button
             type="submit"
-            className="mt-1 p-5 w-[45%] bg-[#0A0830] hover:bg-[#0d0b4d] text-white rounded-full"
+            disabled={isLoading}
+            className="mt-1 p-5 w-[45%] px-6 py-2 bg-rawmats-primary-700 text-white rounded-lg hover:bg-rawmats-primary-300 active:bg-rawmats-primary-700 transition-colors"
           >
-            Register
+            {isLoading ? <InlineLoading message="Signing up" /> : "Sign Up"}
           </Button>
         </div>
       </form>
