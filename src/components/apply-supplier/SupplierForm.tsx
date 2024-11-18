@@ -86,7 +86,7 @@ export default function SupplyForm({
 
       const result: { success: boolean } = await response.json();
 
-      if (result.success) {
+      if (!result.success) {
         setError("An error occurred while submitting your application");
         setTimeout(() => {
           setError(null);
