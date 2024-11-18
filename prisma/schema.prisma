@@ -35,7 +35,6 @@ model Supplier {
   user              User      @relation(fields: [userId], references: [id])
   businessName      String    @unique
   businessLocation  String
-  businessDocuments String
   verified          Boolean   @default(false)
   verifiedDate      DateTime  @updatedAt
   products          Product[]
