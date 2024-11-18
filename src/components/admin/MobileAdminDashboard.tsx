@@ -7,8 +7,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Mail, Package, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "../../public/logo.png";
+import { useState } from "react";
 
 const MobileAdminDashboard = () => {
+  const [selectedTab, setSelectedTab] = useState("email");
+
   return (
     <div className="flex flex-col h-screen bg-background">
       <header className="flex items-center justify-between p-4 bg-card border-b">
@@ -16,8 +19,8 @@ const MobileAdminDashboard = () => {
           src={logo}
           alt="RAWMATS Logo"
           width={100}
-          height={32}
-          className="max-w-full h-auto self-center"
+          height={50}
+          className="max-w-full h-auto "
         />
         <Sheet>
           <SheetTrigger asChild>
@@ -28,15 +31,16 @@ const MobileAdminDashboard = () => {
           <SheetContent side="left" className="w-64 p-0">
             <div className="p-4 border-b">
               <Image
-                src="/placeholder.svg"
+                src={logo}
                 alt="RAWMATS Logo"
                 width={150}
                 height={50}
-                className="max-w-full h-auto"
+                className="max-w-full h-auto self-center"
               />
             </div>
             <Tabs
-              defaultValue="email"
+              value={selectedTab}
+              onValueChange={setSelectedTab}
               orientation="vertical"
               className="flex-1"
             >
@@ -56,7 +60,11 @@ const MobileAdminDashboard = () => {
       </header>
 
       <main className="flex-1 overflow-auto p-4">
-        <Tabs defaultValue="email" className="w-full">
+        <Tabs
+          value={selectedTab}
+          onValueChange={setSelectedTab}
+          className="w-full"
+        >
           <TabsContent value="email">
             <h2 className="text-2xl font-bold mb-4">Email Verification</h2>
             <p>Email verification content will be displayed here.</p>
