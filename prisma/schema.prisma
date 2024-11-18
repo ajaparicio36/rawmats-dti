@@ -17,7 +17,6 @@ model User {
   id             String     @id @default(cuid())
   email          String     @unique
   displayName    String
-  image          String
   profilePicture String     @default("/users/default.jpg")
   phoneNumber    String
   role           Role       @default(USER)
