@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,14 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  supplierId: string;
-}
+import { Product } from "@prisma/client";
 
 interface ItemVerificationProps {
   products: Product[];
@@ -30,75 +22,47 @@ export function ItemVerification({
   onVerify,
   onReject,
 }: ItemVerificationProps) {
-  const [verifiedProducts, setVerifiedProducts] = useState<Set<string>>(
-    new Set(),
-  );
-  const [rejectedProducts, setRejectedProducts] = useState<Set<string>>(
-    new Set(),
-  );
-
-  const handleVerify = (id: string) => {
-    setVerifiedProducts((prev) => new Set(prev).add(id));
-    setRejectedProducts((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(id);
-      return newSet;
-    });
-    onVerify(id);
-  };
-
-  const handleReject = (id: string) => {
-    setRejectedProducts((prev) => new Set(prev).add(id));
-    setVerifiedProducts((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(id);
-      return newSet;
-    });
-    onReject(id);
-  };
-
   return (
-    <ScrollArea className="h-[calc(100vh-12rem)] pr-4">
-      <div className="space-y-4">
-        {products.map((product) => (
-          <Card key={product.id}>
-            <CardHeader>
-              <CardTitle>{product.name}</CardTitle>
-              <CardDescription>
-                Supplier ID: {product.supplierId}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                {product.description}
+    <ScrollArea>
+      {products.map((product) => (
+        <Card key={product.id}>
+          <CardHeader>
+            <CardTitle>{product.name}</CardTitle>
+            <CardDescription>{product.description}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>Price: ${product.price}</p>
+            <p>Supplier ID: {product.supplierId}</p>
+            <p>
+              Date Added: {new Date(product.dateAdded).toLocaleDateString()}
+            </p>
+            <p>Verified: {product.verified ? "Yes" : "No"}</p>
+            {product.verified && (
+              <p>
+                Verified Date:{" "}
+                {new Date(product.verifiedDate).toLocaleDateString()}
               </p>
-              <p className="mt-2 font-semibold">
-                Price: ${product.price.toFixed(2)}
-              </p>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleVerify(product.id)}
-                disabled={verifiedProducts.has(product.id)}
-              >
-                <Check className="mr-2 h-4 w-4" />
-                Verify
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleReject(product.id)}
-                disabled={rejectedProducts.has(product.id)}
-              >
-                <X className="mr-2 h-4 w-4" />
-                Reject
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+            )}
+          </CardContent>
+          <CardFooter>
+            <Button
+              onClick={() => onVerify(product.id)}
+              disabled={product.verified}
+            >
+              <Check className="mr-2 h-4 w-4" />
+              Verify
+            </Button>
+            <Button
+              onClick={() => onReject(product.id)}
+              variant="destructive"
+              disabled={product.verified}
+            >
+              <X className="mr-2 h-4 w-4" />
+              Reject
+            </Button>
+          </CardFooter>
+        </Card>
+      ))}
     </ScrollArea>
   );
 }
