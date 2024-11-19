@@ -18,7 +18,7 @@ model User {
   email          String     @unique
   displayName    String
   profilePicture String     @default("/users/default.jpg")
-  phoneNumber    String
+  phoneNumber    String     @default("None")
   role           Role       @default(USER)
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
