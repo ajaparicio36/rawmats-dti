@@ -35,6 +35,52 @@ export function SupplierVerification({ suppliers }: { suppliers: Supplier[] }) {
     fetchFiles();
   }, [suppliers]);
 
+  const verifySupplier = async (id: string) => {
+    try {
+      const response = await fetch(`/api/supplier/verify/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to verify supplier");
+      }
+      alert("Supplier verified successfully.");
+    } catch (error) {
+      console.error("Error verifying supplier:", error);
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("An error occurred while verifying the supplier.");
+      }
+    }
+  };
+
+  const rejectSupplier = async (id: string) => {
+    try {
+      const response = await fetch(`/api/supplier/reject/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to reject supplier");
+      }
+      alert("Supplier rejected successfully.");
+    } catch (error) {
+      console.error("Error rejecting supplier:", error);
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("An error occurred while rejecting the supplier.");
+      }
+    }
+  };
+
   return (
     <ScrollArea>
       {suppliers.map((supplier) => (
@@ -67,14 +113,14 @@ export function SupplierVerification({ suppliers }: { suppliers: Supplier[] }) {
           </CardContent>
           <CardFooter className="flex gap-4">
             <Button
-              // onClick={() => verifysupplier(supplier.id)}
+              onClick={() => verifySupplier(supplier.userId)}
               disabled={supplier.verified}
             >
               <Check className="mr-2 h-4 w-4" />
               Verify
             </Button>
             <Button
-              // onClick={() => rejectsupplier(supplier.id)}
+              onClick={() => rejectSupplier(supplier.userId)}
               variant="destructive"
               disabled={supplier.verified}
             >

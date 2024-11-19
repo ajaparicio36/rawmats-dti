@@ -112,6 +112,9 @@ const MobileAdminDashboard = ({
         >
           <TabsContent value="supplier">
             <h2 className="text-2xl font-bold mb-4">Supplier Verification</h2>
+            {fetchedSuppliers.length === 0 && (
+              <p>No supplier applications currently</p>
+            )}
             <SupplierVerification suppliers={fetchedSuppliers} />
           </TabsContent>
           <TabsContent value="item">
