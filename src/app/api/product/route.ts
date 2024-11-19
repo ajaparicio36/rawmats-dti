@@ -1,4 +1,4 @@
-// Import prisma here
+// Import prisma client here
 
 export const GET = async () => {
   // This route gets ALL products
