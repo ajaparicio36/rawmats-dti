@@ -5,3 +5,11 @@ export interface SignupFormData {
   confirmPassword: string;
   phone: string;
 }
+
+export interface Product {
+  id: number;
+  name: string;
+  price: number;
+  description: string;
+  image: string | null;
+}
