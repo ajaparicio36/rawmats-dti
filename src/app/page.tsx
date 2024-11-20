@@ -7,6 +7,7 @@ import prisma from "@/utils/prisma/client";
 import ProductCarousel from "@/components/Products/ProductCarousel";
 import { ProductWithSupplier } from "@/utils/Products";
 import ProductPreviewCard from "@/components/Products/ProductPreviewCard";
+import ApplySupplierButton from "@/components/ApplySupplier/ApplySupplierButton";
 
 const Home = async () => {
   const supabase = createClient();
@@ -27,7 +28,10 @@ const Home = async () => {
       <header className="bg-rawmats-primary-700 text-rawmats-secondary-100 shadow-lg">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <h1 className="text-3xl font-bold">Welcome, {data.user.email}</h1>
-          <SignoutButton />
+          <div className="flex gap-4">
+            <ApplySupplierButton />
+            <SignoutButton />
+          </div>
         </div>
       </header>
 
