@@ -36,6 +36,9 @@ const AdminDashboard = async () => {
     where: {
       verified: false,
     },
+    include: {
+      user: true,
+    },
   });
 
   return (

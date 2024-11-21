@@ -7,7 +7,7 @@ import { Mail, Package } from "lucide-react";
 import logo from "../../public/logo.png";
 import { useState } from "react";
 import { ItemVerification } from "@/components/admin/ItemVerification";
-import { Product, Supplier } from "@prisma/client";
+import { Product, Supplier, User } from "@prisma/client";
 import { SupplierVerification } from "./SupplierVerification";
 
 const DesktopAdminDashboard = ({
@@ -15,7 +15,7 @@ const DesktopAdminDashboard = ({
   fetchedSuppliers,
 }: {
   fetchedProducts: Product[];
-  fetchedSuppliers: Supplier[];
+  fetchedSuppliers: (Supplier & { user: User })[];
 }) => {
   const [selectedTab, setSelectedTab] = useState("supplier");
 
