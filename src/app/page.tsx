@@ -7,6 +7,7 @@ import NavBar from "@/components/Home/NavBar";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import ProductCarousel from "@/components/Products/ProductCarousel";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -45,7 +46,7 @@ export default async function Home({
     },
   });
 
-  const dailyDiscoverProducts = allProducts.slice(0, 4);
+  const dailyDiscoverProducts = allProducts.slice(0, 8);
   const newArrivalsProducts = allProducts.slice(4, 8);
   const paginatedProducts = allProducts.slice(
     (page - 1) * ITEMS_PER_PAGE,
@@ -54,7 +55,7 @@ export default async function Home({
   const totalPages = Math.ceil(allProducts.length / ITEMS_PER_PAGE);
 
   return (
-    <div className="min-h-screen bg-rawmats-background-700">
+    <div className="min-h-screen">
       <NavBar user={user} supplier={supplier} />
 
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -62,24 +63,16 @@ export default async function Home({
           <h2 className="text-2xl font-bold text-rawmats-primary-700 mb-6">
             Daily Discover
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {dailyDiscoverProducts.map((product) => (
-              <ProductPreviewCard
-                key={product.id}
-                id={product.id}
-                name={product.name}
-                price={product.price}
-                supplier={product.supplier}
-              />
-            ))}
+          <div className="font-bold text-rawmats-primary-700 mb-6">
+            <ProductCarousel products={dailyDiscoverProducts} />
           </div>
         </section>
 
-        <section className="mb-12">
+        <section className="flex flex-col mb-12">
           <h2 className="text-2xl font-bold text-rawmats-primary-700 mb-6">
             New Arrivals
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="self-center grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {newArrivalsProducts.map((product) => (
               <ProductPreviewCard
                 key={product.id}
