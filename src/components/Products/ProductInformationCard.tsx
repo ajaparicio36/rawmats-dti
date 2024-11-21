@@ -11,6 +11,7 @@ import {
   TagIcon,
   Building,
   Share2,
+  MapPin,
 } from "lucide-react";
 import LoadingModal from "../Loading/LoadingModal";
 import Image from "next/image";
@@ -29,7 +30,7 @@ export default function ProductInformationCard() {
   const [favorite, setFavorite] = useState<Favorite | null>(null);
   const [loading, setLoading] = useState(true);
   const [imageUrl, setImageUrl] = useState<string>("");
-  const [selectedImage, setSelectedImage] = useState<string>("");
+  const [locationName, setLocationName] = useState<string>("");
 
   useEffect(() => {
     const getProductAndSupplier = async () => {
@@ -50,11 +51,30 @@ export default function ProductInformationCard() {
       const response = await fetch(`/api/product/${id}/image`);
       const data = await response.json();
       setImageUrl(data.signedUrl);
-      setSelectedImage(data.signedUrl);
     };
+
+    const fetchLocationName = async () => {
+      if (supplier?.businessLocation.includes("google.com/maps")) {
+        try {
+          const response = await fetch(`/api/supplier/location`, {
+            method: "POST",
+            body: JSON.stringify({ locationLink: supplier.businessLocation }),
+          });
+          const { locationName } = await response.json();
+          setLocationName(locationName);
+        } catch (error) {
+          console.error("Error fetching location name:", error);
+          setLocationName(supplier.businessLocation);
+        }
+      } else {
+        setLocationName(supplier?.businessLocation || "");
+      }
+    };
+
     fetchImage();
     getProductAndSupplier();
-  }, [id]);
+    fetchLocationName();
+  }, [id, supplier?.businessLocation]);
 
   const handleFavorite = async () => {
     try {
@@ -112,7 +132,7 @@ export default function ProductInformationCard() {
                   <InlineLoading />
                 ) : (
                   <Image
-                    src={selectedImage || imageUrl}
+                    src={imageUrl}
                     alt={product.name}
                     width={800}
                     height={800}
@@ -120,39 +140,19 @@ export default function ProductInformationCard() {
                   />
                 )}
               </div>
-
-              {/* Thumbnail Grid */}
-              <div className="grid grid-cols-5 gap-2 mt-4">
-                {[imageUrl, imageUrl, imageUrl].map((img, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedImage(img)}
-                    className={`relative aspect-square rounded-md overflow-hidden border-2 
-                      ${selectedImage === img ? "border-rawmats-primary-300" : "border-transparent"}`}
-                  >
-                    <Image
-                      src={img}
-                      alt={`Product view ${index + 1}`}
-                      width={100}
-                      height={100}
-                      className="object-cover w-full h-full"
-                    />
-                  </button>
-                ))}
-              </div>
             </div>
 
             {/* Right Column - Product Details */}
             <div className="bg-white p-6 lg:p-8 flex flex-col">
               <div className="flex justify-between items-start gap-4">
-                <div className="space-y-2">
+                <div className="space-y-2 flex flex-col">
                   <h1 className="text-2xl lg:text-3xl font-bold text-rawmats-text-700">
                     {product.name}
                   </h1>
                   <div className="flex items-center gap-2">
                     <Badge
                       variant="secondary"
-                      className="flex items-center gap-1"
+                      className="flex items-center gap-1 truncate"
                     >
                       <Building className="w-4 h-4" />
                       {supplier.businessName}
@@ -166,6 +166,17 @@ export default function ProductInformationCard() {
                       </Badge>
                     )}
                   </div>
+                  <Link
+                    href={
+                      supplier.businessLocation.includes("www.google.com/maps")
+                        ? supplier.businessLocation
+                        : `https://google.com/maps/search/${encodeURIComponent(supplier.businessLocation)}`
+                    }
+                    target="_blank"
+                    className="text-blue-600 hover:underline mt-4 pt-4 text-md flex flex-row items-center gap-2"
+                  >
+                    <MapPin size={18} /> {locationName}
+                  </Link>
                 </div>
                 <div className="flex gap-2">
                   <Button
