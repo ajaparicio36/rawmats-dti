@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Product, Supplier, Favorite } from "@prisma/client";
@@ -8,11 +10,16 @@ import {
   XCircle,
   TagIcon,
   Building,
+  Share2,
 } from "lucide-react";
 import LoadingModal from "../Loading/LoadingModal";
 import Image from "next/image";
 import InlineLoading from "../Loading/InlineLoading";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 export default function ProductInformationCard() {
   const params = useParams<{ id: string }>();
@@ -22,6 +29,7 @@ export default function ProductInformationCard() {
   const [favorite, setFavorite] = useState<Favorite | null>(null);
   const [loading, setLoading] = useState(true);
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [selectedImage, setSelectedImage] = useState<string>("");
 
   useEffect(() => {
     const getProductAndSupplier = async () => {
@@ -42,7 +50,7 @@ export default function ProductInformationCard() {
       const response = await fetch(`/api/product/${id}/image`);
       const data = await response.json();
       setImageUrl(data.signedUrl);
-      console.log(data);
+      setSelectedImage(data.signedUrl);
     };
     fetchImage();
     getProductAndSupplier();
@@ -66,109 +74,166 @@ export default function ProductInformationCard() {
 
   if (!product || !supplier) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-red-50 to-red-100 p-4">
-        <XCircle className="w-24 h-24 text-red-400 mb-4" />
-        <p className="text-2xl text-red-600 mb-4">Product Not Found</p>
-        <Link
-          href="/"
-          className="px-6 py-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors flex items-center gap-2"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          Back to Home
-        </Link>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-rawmats-secondary-300 to-rawmats-secondary-100 p-4">
+        <XCircle className="w-24 h-24 text-rawmats-feedback-error mb-4" />
+        <p className="text-2xl text-rawmats-feedback-error mb-4">
+          Product Not Found
+        </p>
+        <Button variant="default" asChild>
+          <Link href="/" className="flex items-center gap-2 border">
+            <ArrowLeft className="w-5 h-5" />
+            Back to Home
+          </Link>
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 py-4 px-2">
-      <div className="max-w-6xl w-full mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden grid md:grid-cols-2 gap-8 relative">
-        {/* Product Image Section */}
-        <div className="relative bg-gray-100 md:rounded-r-3xl overflow-hidden">
-          <Link
-            href="/"
-            className="absolute top-4 left-4 z-10 p-2 bg-white bg-opacity-75 rounded-full shadow-md text-rawmats-text-500 hover:bg-rawmats-secondary-700 hover:text-white transition-colors"
-            aria-label="Back to Home"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </Link>
-          {product.name ? (
-            <div className="h-[500px] md:h-full w-full overflow-hidden group">
-              {loading ? (
-                <InlineLoading />
-              ) : (
-                <Image
-                  width={500}
-                  height={500}
-                  src={imageUrl}
-                  alt={product.name}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              )}
-            </div>
-          ) : (
-            <div className="w-full h-[500px] flex items-center justify-center bg-gray-200">
-              <span className="text-gray-400 text-xl">No Image Available</span>
-            </div>
-          )}
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-rawmats-background-700 to-rawmats-secondary-100 py-8 px-4 md:px-8">
+      <Card className="max-w-7xl mx-auto">
+        <CardContent className="p-0">
+          <div className="grid lg:grid-cols-2 gap-0">
+            {/* Left Column - Image Section */}
+            <div className="relative bg-white p-4 lg:p-8">
+              <Button
+                variant="ghost"
+                size="icon"
+                asChild
+                className="absolute top-6 left-6 z-10 bg-white/80 hover:bg-white"
+              >
+                <Link href="/">
+                  <ArrowLeft className="w-5 h-5" />
+                </Link>
+              </Button>
 
-        {/* Product Details Section */}
-        <div className="p-6 md:p-8 space-y-6">
-          <div className="flex justify-between items-start">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                {product.name}
-              </h1>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-semibold text-blue-600">
-                  ₱{product.price}
-                </span>
-                {supplier && (
-                  <span className="text-sm text-gray-500 ml-2 flex items-center gap-1">
-                    <Building className="w-4 h-4" /> {supplier.businessName}
-                  </span>
+              <div className="relative aspect-square overflow-hidden rounded-lg bg-rawmats-secondary-100">
+                {loading ? (
+                  <InlineLoading />
+                ) : (
+                  <Image
+                    src={selectedImage || imageUrl}
+                    alt={product.name}
+                    width={800}
+                    height={800}
+                    className="object-cover w-full h-full"
+                  />
                 )}
               </div>
+
+              {/* Thumbnail Grid */}
+              <div className="grid grid-cols-5 gap-2 mt-4">
+                {[imageUrl, imageUrl, imageUrl].map((img, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImage(img)}
+                    className={`relative aspect-square rounded-md overflow-hidden border-2 
+                      ${selectedImage === img ? "border-rawmats-primary-300" : "border-transparent"}`}
+                  >
+                    <Image
+                      src={img}
+                      alt={`Product view ${index + 1}`}
+                      width={100}
+                      height={100}
+                      className="object-cover w-full h-full"
+                    />
+                  </button>
+                ))}
+              </div>
             </div>
-            <button
-              onClick={handleFavorite}
-              className="hover:scale-110 transition-transform"
-              aria-label="Toggle Favorite"
-            >
-              <HeartIcon
-                className={`w-8 h-8 ${
-                  favorite
-                    ? "fill-red-500 text-red-500"
-                    : "text-gray-400 hover:text-red-400"
-                }`}
-              />
-            </button>
-          </div>
 
-          <p className="text-gray-600 mb-4">{product.description}</p>
+            {/* Right Column - Product Details */}
+            <div className="bg-white p-6 lg:p-8 flex flex-col">
+              <div className="flex justify-between items-start gap-4">
+                <div className="space-y-2">
+                  <h1 className="text-2xl lg:text-3xl font-bold text-rawmats-text-700">
+                    {product.name}
+                  </h1>
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                    >
+                      <Building className="w-4 h-4" />
+                      {supplier.businessName}
+                    </Badge>
+                    {product.verified && (
+                      <Badge
+                        variant="default"
+                        className="bg-rawmats-feedback-success"
+                      >
+                        Verified
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleFavorite}
+                    className="shrink-0"
+                  >
+                    <HeartIcon
+                      className={`w-5 h-5 ${
+                        favorite
+                          ? "fill-rawmats-feedback-error text-rawmats-feedback-error"
+                          : "text-rawmats-neutral-900"
+                      }`}
+                    />
+                  </Button>
+                  <Button variant="outline" size="icon" className="shrink-0">
+                    <Share2 className="w-5 h-5" />
+                  </Button>
+                </div>
+              </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {product.verified ? (
-                <CheckCircle className="w-6 h-6 text-green-500" />
-              ) : (
-                <XCircle className="w-6 h-6 text-red-500" />
-              )}
-              <span
-                className={`font-medium ${product.verified ? "text-green-600" : "text-red-600"}`}
-              >
-                {product.verified ? "In Stock" : "Out of Stock"}
-              </span>
+              <Separator className="my-6" />
+
+              <div className="space-y-6 flex-1">
+                <div>
+                  <p className="text-3xl font-bold text-rawmats-accent-300">
+                    ₱{product.price}
+                  </p>
+                </div>
+
+                <div className="prose prose-sm">
+                  <h3 className="text-lg font-semibold text-rawmats-text-700">
+                    Description
+                  </h3>
+                  <p className="text-rawmats-neutral-900">
+                    {product.description}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {product.verified ? (
+                    <Badge
+                      variant="default"
+                      className="bg-rawmats-feedback-success"
+                    >
+                      <CheckCircle className="w-4 h-4 mr-1" />
+                      In Stock
+                    </Badge>
+                  ) : (
+                    <Badge variant="destructive">
+                      <XCircle className="w-4 h-4 mr-1" />
+                      Out of Stock
+                    </Badge>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-6 pt-6 border-t">
+                <div className="flex items-center text-sm text-rawmats-neutral-900 gap-2">
+                  <TagIcon className="w-5 h-5 text-rawmats-accent-300" />
+                  Added on {new Date(product.dateAdded).toLocaleDateString()}
+                </div>
+              </div>
             </div>
           </div>
-
-          <div className="flex items-center text-sm text-gray-500 gap-2">
-            <TagIcon className="w-5 h-5 text-blue-400" />
-            Added on {new Date(product.dateAdded).toLocaleDateString()}
-          </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
