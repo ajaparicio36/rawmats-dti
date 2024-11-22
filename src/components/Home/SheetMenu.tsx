@@ -11,7 +11,14 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import {
+  Menu,
+  CircleUser,
+  Building,
+  ShieldEllipsis,
+  LogOut,
+  Flag,
+} from "lucide-react";
 import { User, Supplier } from "@prisma/client";
 import { logout } from "../AuthHandlers/LoginHandler";
 
@@ -42,10 +49,10 @@ export function SheetMenu({ user, supplier }: SheetMenuProps) {
       <SheetTrigger asChild>
         <Button
           variant="ghost"
-          size="icon"
-          className="text-rawmats-primary-900 hover:bg-rawmats-secondary-500"
+          size="lg"
+          className="text-rawmats-primary-900 hover:bg-rawmats-secondary-500 p-1"
         >
-          <Menu className="h-6 w-6" />
+          <Menu size={36} strokeWidth={2} />
           <span className="sr-only">Open menu</span>
         </Button>
       </SheetTrigger>
@@ -75,36 +82,42 @@ export function SheetMenu({ user, supplier }: SheetMenuProps) {
         </div>
         <nav className="space-y-4 mt-4">
           <Button
-            variant="outline"
+            variant="ghost"
             className="w-full justify-start"
             onClick={() => router.push("/profile")}
           >
-            Profile
+            <CircleUser className="mr-2" /> Profile
           </Button>
           {isSupplier && (
             <Button
-              variant="outline"
+              variant="ghost"
               className="w-full justify-start"
               onClick={() => router.push("/supplier-dashboard")}
             >
-              Supplier Dashboard
+              <Building className="mr-2" /> Supplier Dashboard
             </Button>
           )}
           {user.role === "ADMIN" && (
             <Button
-              variant="outline"
+              variant="ghost"
               className="w-full justify-start"
               onClick={() => router.push("/admin")}
             >
+              <ShieldEllipsis className="mr-2" />
               Admin Dashboard
             </Button>
           )}
           <Button
-            variant="outline"
+            variant="ghost"
             className="w-full justify-start"
             onClick={logoutUser}
           >
+            <LogOut className="mr-2" />
             Logout
+          </Button>
+          <Button variant="ghost" className="w-full justify-start">
+            <Flag />
+            Report an Issue
           </Button>
         </nav>
       </SheetContent>
