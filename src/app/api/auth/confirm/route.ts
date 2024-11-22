@@ -21,7 +21,7 @@ export const GET = async (request: NextRequest) => {
         redirect("/recover/update");
       } else if (type === "signup" || type == "email") {
         redirect(
-          `"/done?header=${encodeURIComponent("Email confirmed")}&message=${encodeURIComponent("Your email is now confirmed, log in again!")}&type=email"`,
+          `/done?header=${encodeURIComponent("Email confirmed")}&message=${encodeURIComponent("Your email is now confirmed, log in again!")}&type=email`,
         );
       }
     }
