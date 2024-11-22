@@ -32,15 +32,26 @@ const AdminDashboard = async () => {
       verified: false,
     },
   });
+  const fetchedSuppliers = await prisma.supplier.findMany({
+    where: {
+      verified: false,
+    },
+  });
 
   return (
     <div className="w-full min-h-screen flex items-center justify-center">
       <Suspense fallback={<div>Loading...</div>}>
         <div className="hidden md:flex w-full h-screen items-center justify-center">
-          <DesktopAdminDashboard fetchedProducts={fetchedProducts} />
+          <DesktopAdminDashboard
+            fetchedProducts={fetchedProducts}
+            fetchedSuppliers={fetchedSuppliers}
+          />
         </div>
         <div className="md:hidden w-full h-screen">
-          <MobileAdminDashboard fetchedProducts={fetchedProducts} />
+          <MobileAdminDashboard
+            fetchedProducts={fetchedProducts}
+            fetchedSuppliers={fetchedSuppliers}
+          />
         </div>
       </Suspense>
     </div>

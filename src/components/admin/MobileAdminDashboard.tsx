@@ -8,15 +8,18 @@ import { Mail, Package, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "../../public/logo.png";
 import { useState } from "react";
-import { Product } from "@prisma/client";
 import { ItemVerification } from "@/components/Admin/ItemVerification";
+import { Product, Supplier } from "@prisma/client";
+import { SupplierVerification } from "./SupplierVerification";
 
 const MobileAdminDashboard = ({
   fetchedProducts,
+  fetchedSuppliers,
 }: {
   fetchedProducts: Product[];
+  fetchedSuppliers: Supplier[];
 }) => {
-  const [selectedTab, setSelectedTab] = useState("email");
+  const [selectedTab, setSelectedTab] = useState("supplier");
 
   const handleVerify = async (id: string) => {
     try {
@@ -87,9 +90,9 @@ const MobileAdminDashboard = ({
               className="flex-1"
             >
               <TabsList className="flex flex-col w-full h-auto">
-                <TabsTrigger value="email" className="justify-start mb-2">
+                <TabsTrigger value="supplier" className="justify-start mb-2">
                   <Mail className="mr-2 h-4 w-4" />
-                  Email Verification
+                  Suplier Verification
                 </TabsTrigger>
                 <TabsTrigger value="item" className="justify-start">
                   <Package className="mr-2 h-4 w-4" />
@@ -107,9 +110,12 @@ const MobileAdminDashboard = ({
           onValueChange={setSelectedTab}
           className="w-full"
         >
-          <TabsContent value="email">
-            <h2 className="text-2xl font-bold mb-4">Email Verification</h2>
-            <p>Email verification content will be displayed here.</p>
+          <TabsContent value="supplier">
+            <h2 className="text-2xl font-bold mb-4">Supplier Verification</h2>
+            {fetchedSuppliers.length === 0 && (
+              <p>No supplier applications currently</p>
+            )}
+            <SupplierVerification suppliers={fetchedSuppliers} />
           </TabsContent>
           <TabsContent value="item">
             <h2 className="text-2xl font-bold mb-4">Item Verification</h2>
