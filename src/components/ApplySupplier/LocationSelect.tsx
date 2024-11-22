@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import MapView from "./maps/MapView";
+import MapView from "./maps/mapView";
 import {
   Dialog,
   DialogClose,

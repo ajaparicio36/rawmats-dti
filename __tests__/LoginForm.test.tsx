@@ -1,112 +1,141 @@
-import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import LoginForm from "@/components/AuthComponents/LoginForm";
-import { useForm } from "react-hook-form";
+import LoginForm from "../src/components/AuthComponents/LoginForm";
+import { login } from "../src/components/AuthHandlers/LoginHandler";
+import { useRouter } from "next/navigation";
 
-// Mock the useForm hook
-jest.mock("react-hook-form", () => ({
-  useForm: jest.fn(),
+jest.mock("../src/components/AuthHandlers/LoginHandler");
+jest.mock("next/navigation", () => ({
+  useRouter: jest.fn(),
 }));
 
-describe("LoginForm", () => {
-  beforeEach(() => {
-    // Reset mocks before each test
-    jest.clearAllMocks();
+beforeAll(() => {
+  jest.clearAllMocks();
+});
 
-    // Mock the useForm hook implementation
-    (useForm as jest.Mock).mockReturnValue({
-      register: jest.fn((name) => ({
-        name,
-        onChange: jest.fn(),
-        onBlur: jest.fn(),
-        ref: jest.fn(),
-      })),
-      handleSubmit:
-        (callback: (data: { email: string; password: string }) => void) =>
-        (e: React.FormEvent) => {
-          e.preventDefault();
-          callback({
-            email: "test@example.com",
-            password: "password123",
-          });
-        },
-      formState: { errors: {} },
-    });
+describe("LoginForm", () => {
+  const mockPush = jest.fn();
+
+  beforeEach(() => {
+    (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
+    jest.clearAllMocks();
   });
 
-  it("renders all form elements", () => {
+  it("renders the login form", () => {
     render(<LoginForm />);
-
     expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /^login$/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /login with google/i }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/need an account\?/i)).toBeInTheDocument();
-    expect(screen.getByText(/forgot my password/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /login/i })).toBeInTheDocument();
   });
 
-  it("submits the form with valid data", async () => {
-    const mockConsoleLog = jest.fn();
-    console.log = mockConsoleLog;
+  it("shows validation errors for empty fields", async () => {
     render(<LoginForm />);
-
-    const emailInput = screen.getByLabelText(/email address/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    const submitButton = screen.getByRole("button", { name: /^login$/i });
-
-    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-    fireEvent.change(passwordInput, { target: { value: "password123" } });
-    fireEvent.click(submitButton);
+    fireEvent.click(screen.getByRole("button", { name: /login/i }));
 
     await waitFor(() => {
-      expect(mockConsoleLog).toHaveBeenCalledWith("Login attempt with:", {
-        email: "test@example.com",
-        password: "password123",
-      });
+      expect(screen.getByText(/invalid email address/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/password must be at least 8 characters long/i),
+      ).toBeInTheDocument();
     });
   });
 
-  it("displays error messages for invalid inputs", () => {
-    // Mock errors in the form state
-    (useForm as jest.Mock).mockReturnValue({
-      register: jest.fn((name) => ({
-        name,
-        onChange: jest.fn(),
-        onBlur: jest.fn(),
-        ref: jest.fn(),
-      })),
-      handleSubmit: jest.fn(),
-      formState: {
-        errors: {
-          email: { message: "Invalid email address" },
-          password: { message: "Password must be at least 8 characters long" },
-        },
-      },
-    });
+  it("shows error message on failed login", async () => {
+    (login as jest.Mock).mockResolvedValue({ error: "Invalid credentials" });
 
     render(<LoginForm />);
+    fireEvent.input(screen.getByLabelText(/email address/i), {
+      target: { value: "test@example.com" },
+    });
+    fireEvent.input(screen.getByLabelText(/password/i), {
+      target: { value: "password123" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /login/i }));
 
-    expect(screen.getByText("Invalid email address")).toBeInTheDocument();
-    expect(
-      screen.getByText("Password must be at least 8 characters long"),
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/invalid credentials/i)).toBeInTheDocument();
+    });
   });
 
-  it("calls handleGoogleLogin when Google login button is clicked", () => {
-    const mockConsoleLog = jest.fn();
-    console.log = mockConsoleLog;
+  it("redirects to home on successful login", async () => {
+    (login as jest.Mock).mockResolvedValue({ error: null });
+
     render(<LoginForm />);
-
-    const googleLoginButton = screen.getByRole("button", {
-      name: /login with google/i,
+    fireEvent.input(screen.getByLabelText(/email address/i), {
+      target: { value: "test@example.com" },
     });
-    fireEvent.click(googleLoginButton);
+    fireEvent.input(screen.getByLabelText(/password/i), {
+      target: { value: "password123" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /login/i }));
 
-    expect(mockConsoleLog).toHaveBeenCalledWith("Login with Google");
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith("/");
+    });
+  });
+
+  it("clears error message after a delay", async () => {
+    jest.useFakeTimers();
+    (login as jest.Mock).mockResolvedValue({ error: "Invalid credentials" });
+
+    render(<LoginForm />);
+    fireEvent.input(screen.getByLabelText(/email address/i), {
+      target: { value: "test@example.com" },
+    });
+    fireEvent.input(screen.getByLabelText(/password/i), {
+      target: { value: "password123" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /login/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/invalid credentials/i)).toBeInTheDocument();
+    });
+
+    jest.advanceTimersByTime(5000);
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText(/invalid credentials/i),
+      ).not.toBeInTheDocument();
+    });
+
+    jest.useRealTimers();
+  });
+
+  it("sends the correct data when the form is submitted", async () => {
+    const mockFormData = new FormData();
+    mockFormData.append("email", "test@example.com");
+    mockFormData.append("password", "password123");
+
+    render(<LoginForm />);
+    fireEvent.input(screen.getByLabelText(/email address/i), {
+      target: { value: "test@example.com" },
+    });
+    fireEvent.input(screen.getByLabelText(/password/i), {
+      target: { value: "password123" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /login/i }));
+
+    await waitFor(() => {
+      expect(login).toHaveBeenCalledWith(mockFormData);
+    });
+  });
+
+  it("redirects to error page on unexpected error", async () => {
+    (login as jest.Mock).mockRejectedValue(new Error("Unexpected error"));
+
+    render(<LoginForm />);
+    fireEvent.input(screen.getByLabelText(/email address/i), {
+      target: { value: "test@example.com" },
+    });
+    fireEvent.input(screen.getByLabelText(/password/i), {
+      target: { value: "password123" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /login/i }));
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith(
+        `/error?message=${encodeURIComponent("Unexpected error")}&code=${encodeURIComponent("500")}`,
+      );
+    });
   });
 });
