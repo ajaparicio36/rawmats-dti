@@ -1,35 +1,51 @@
+
 'use client';
 
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog'; 
-import { Button } from '@/components/ui/button'; 
-import { Input } from '@/components/ui/input'; 
-import { Label } from '@/components/ui/label'; 
-import { Product } from '@/types/types'; 
+import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Product } from '@/types/types';
+import { uploadProductImage } from "@/utils/supabase/product";
 
-export default function ProductListingForm({ onAddProduct, supplierId }: { onAddProduct: (product: Product) => void, supplierId: string }) {
+
+export default function ProductListingForm({
+  onAddProduct,
+  supplierId,
+}: {
+  onAddProduct: (product: Product) => void;
+  supplierId: string;
+}) {
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
-  // const [image, setImage] = useState<File | null>(null);
+  const [image, setImage] = useState<File | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [loading, setLoading] = useState(false); 
-  const [error, setError] = useState<string | null>(null); 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setLoading(true); 
-    setError(null); 
+    setLoading(true);
+    setError(null);
 
     try {
+      let imagePath = null;
+
+      if (image) {
+        imagePath = await uploadProductImage(image);
+      }
+
       const response = await fetch('/api/product', {
         method: 'POST',
         body: JSON.stringify({
           name: productName,
-          description: description,
-          price: price,
-          supplierId: supplierId
+          description,
+          price,
+          supplierId,
+          image: imagePath,
         }),
       });
 
@@ -39,31 +55,34 @@ export default function ProductListingForm({ onAddProduct, supplierId }: { onAdd
       }
 
       const product = await response.json();
-      onAddProduct(product); 
+      onAddProduct(product);
 
       setProductName('');
       setPrice('');
       setDescription('');
-      // setImage(null);
+      setImage(null);
       setShowForm(false);
     } catch (error: unknown) {
       if (error instanceof Error) {
-        setError(error.message); 
+        setError(error.message);
       } else {
         setError('An unexpected error occurred.');
       }
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
-  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files) setImage(e.target.files[0]);
-  // };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) setImage(e.target.files[0]);
+  };
 
   return (
     <>
-      <Button onClick={() => setShowForm(true)} className="bg-blue-500 text-white py-2 px-4 rounded">
+      <Button
+        onClick={() => setShowForm(true)}
+        className="bg-blue-500 text-white py-2 px-4 rounded"
+      >
         Add New Product
       </Button>
 
@@ -114,17 +133,27 @@ export default function ProductListingForm({ onAddProduct, supplierId }: { onAdd
                 <Input
                   id="image"
                   type="file"
-                  // onChange={handleFileChange}
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  required
                 />
               </div>
 
               {error && <div className="text-red-500">{error}</div>}
 
               <div className="flex justify-end space-x-2">
-                <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowForm(false)}
+                >
                   Cancel
                 </Button>
-                <Button type="submit" className="bg-green-500 text-white" disabled={loading}>
+                <Button
+                  type="submit"
+                  className="bg-green-500 text-white"
+                  disabled={loading}
+                >
                   {loading ? 'Submitting...' : 'Submit'}
                 </Button>
               </div>
@@ -135,3 +164,4 @@ export default function ProductListingForm({ onAddProduct, supplierId }: { onAdd
     </>
   );
 }
+

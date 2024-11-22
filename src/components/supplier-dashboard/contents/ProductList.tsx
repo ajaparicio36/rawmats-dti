@@ -1,4 +1,4 @@
-// import Image from 'next/image'; 
+// import Image from 'next/image';
 
 interface ProductListProps {
   products: {
@@ -10,40 +10,41 @@ interface ProductListProps {
     verified: boolean;
     verifiedDate: Date;
     dateAdded: Date;
-}[];
+    // image?: string; 
+  }[];
 }
 
 export default function ProductList({ products }: ProductListProps) {
   return (
-    <div className="mt-6 space-y-4">
-      <h2 className="text-xl font-semibold">Created Products</h2>
+    <div className="mt-6">
+      <h2 className="text-xl font-semibold mb-4">Created Products</h2>
       {products.length > 0 ? (
-        <ul className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
-            <li key={product.id} className="border p-4 rounded-lg">
-              <h3 className="text-lg font-semibold">{product.name}</h3>
-              <p>Price: ${product.price}</p>
-              <p>{product.description}</p>
+            <div key={product.id} className="border rounded-lg shadow-md p-4 flex flex-col items-center">
               {/* {product.image && (
-                <div className="w-32 h-32 mt-2">
+                <div className="w-32 h-32 overflow-hidden rounded-md mb-4">
                   <Image
                     src={product.image}
                     alt={product.name}
-                    width={128} 
-                    height={128} 
+                    width={128}
+                    height={128}
                     className="object-cover"
-                    loading="lazy" 
+                    loading="lazy"
+                    quality={75} // Optional: Set image quality to balance performance and clarity
                   />
                 </div>
               )} */}
-            </li>
+              <h3 className="text-lg font-semibold">{product.name}</h3>
+              <p className="text-gray-600 mt-2 text-sm">{product.description}</p>
+              <p className="text-green-500 mt-2 font-semibold">${product.price.toFixed(2)}</p>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : (
         <p>No products created yet.</p>
       )}
     </div>
   );
 }
-
 

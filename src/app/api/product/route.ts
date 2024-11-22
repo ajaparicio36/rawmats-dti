@@ -2,6 +2,24 @@ import prisma from '@/utils/prisma/client';
 import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
+
+export const GET = async () => {
+  try {
+    const products = await prisma.product.findMany({
+      include: {
+        supplier: {
+          select: { businessName: true },
+        },
+      },
+    });
+    return NextResponse.json(products);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+  }
+};
+
+
 // export const GET = async () => {
 //   // This route gets ALL products
 //   // Use prisma to retrieve data AND include supplier data to get supplier business name
@@ -41,22 +59,3 @@ export const POST = async (req: NextRequest) => {
     }
   }
 };
-
-export const GET = async () => {
-  try {
-    const products = await prisma.product.findMany({
-      include: {
-        supplier: {
-          select: { businessName: true },
-        },
-      },
-    });
-    return NextResponse.json(products);
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
-  }
-};
-
-
-
