@@ -8,8 +8,8 @@ import { Mail, Package, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "../../public/logo.png";
 import { useState } from "react";
-import { ItemVerification } from "@/components/Admin/ItemVerification";
-import { Product, Supplier } from "@prisma/client";
+import { Product, Supplier, User } from "@prisma/client";
+import { ItemVerification } from "@/components/admin/ItemVerification";
 import { SupplierVerification } from "./SupplierVerification";
 
 const MobileAdminDashboard = ({
@@ -17,7 +17,7 @@ const MobileAdminDashboard = ({
   fetchedSuppliers,
 }: {
   fetchedProducts: Product[];
-  fetchedSuppliers: Supplier[];
+  fetchedSuppliers: (Supplier & { user: User })[];
 }) => {
   const [selectedTab, setSelectedTab] = useState("supplier");
 

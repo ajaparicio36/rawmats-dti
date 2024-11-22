@@ -1,21 +1,30 @@
-import { Check, MapPin, X } from "lucide-react";
+import { Check, MapPin, UserRound, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Supplier } from "@prisma/client";
+import { Supplier, User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { retrieveFile } from "@/utils/supabase/files";
 import Image from "next/image";
+import InlineLoading from "../Loading/InlineLoading";
 
-export function SupplierVerification({ suppliers }: { suppliers: Supplier[] }) {
+export function SupplierVerification({
+  suppliers,
+}: {
+  suppliers: (Supplier & { user: User })[];
+}) {
   const [files, setFiles] = useState<(string | null)[]>([]);
+  const [isLoading, setIsLoading] = useState<{
+    status: boolean;
+    method: null | "verify" | "reject";
+  }>({ status: false, method: null });
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -36,6 +45,7 @@ export function SupplierVerification({ suppliers }: { suppliers: Supplier[] }) {
   }, [suppliers]);
 
   const verifySupplier = async (id: string) => {
+    setIsLoading({ status: true, method: "verify" });
     try {
       const response = await fetch(`/api/supplier/verify/${id}`, {
         method: "POST",
@@ -55,10 +65,13 @@ export function SupplierVerification({ suppliers }: { suppliers: Supplier[] }) {
       } else {
         alert("An error occurred while verifying the supplier.");
       }
+    } finally {
+      setIsLoading({ status: false, method: null });
     }
   };
 
   const rejectSupplier = async (id: string) => {
+    setIsLoading({ status: true, method: "reject" });
     try {
       const response = await fetch(`/api/supplier/reject/${id}`, {
         method: "POST",
@@ -78,6 +91,8 @@ export function SupplierVerification({ suppliers }: { suppliers: Supplier[] }) {
       } else {
         alert("An error occurred while rejecting the supplier.");
       }
+    } finally {
+      setIsLoading({ status: false, method: null });
     }
   };
 
@@ -86,15 +101,30 @@ export function SupplierVerification({ suppliers }: { suppliers: Supplier[] }) {
       {suppliers.map((supplier) => (
         <Card className="my-3" key={supplier.id}>
           <CardHeader>
-            <CardTitle>{supplier.businessName}</CardTitle>
-            <CardDescription className="flex flex-row gap-2 items-center">
-              <MapPin />
-              {supplier.businessLocation}
-            </CardDescription>
+            <CardTitle className="text-3xl">{supplier.businessName}</CardTitle>
+            <div className="flex flex-col gap-2 text-muted-foreground">
+              <div className="flex flex-row gap-2 items-center text-base">
+                <UserRound />
+                {supplier.user.displayName}
+              </div>
+              <div className="flex flex-row gap-2 items-center text-base">
+                <MapPin />
+                <a
+                  className="underline"
+                  href={supplier.businessLocation}
+                  target="_blank"
+                >
+                  {supplier.businessLocation}
+                </a>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
-            Business Documents:
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <p className="text-lg">Business Documents:</p>
+            <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4">
+              {files.length === 0 && (
+                <Skeleton className="h-[300px] w-[450px] rounded-lg" />
+              )}
               {files.map((file, index) =>
                 file ? (
                   <Image
@@ -114,18 +144,30 @@ export function SupplierVerification({ suppliers }: { suppliers: Supplier[] }) {
           <CardFooter className="flex gap-4">
             <Button
               onClick={() => verifySupplier(supplier.userId)}
-              disabled={supplier.verified}
+              disabled={supplier.verified || isLoading.status}
             >
-              <Check className="mr-2 h-4 w-4" />
-              Verify
+              {isLoading.method === "verify" ? (
+                <InlineLoading message="Verifying" />
+              ) : (
+                <>
+                  <Check className="mr-2 h-4 w-4" />
+                  Verify
+                </>
+              )}
             </Button>
             <Button
               onClick={() => rejectSupplier(supplier.userId)}
               variant="destructive"
-              disabled={supplier.verified}
+              disabled={supplier.verified || isLoading.status}
             >
-              <X className="mr-2 h-4 w-4" />
-              Reject
+              {isLoading.method === "reject" ? (
+                <InlineLoading message="Rejecting" />
+              ) : (
+                <>
+                  <X className="mr-2 h-4 w-4" />
+                  Reject
+                </>
+              )}
             </Button>
           </CardFooter>
         </Card>
