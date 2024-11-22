@@ -88,13 +88,21 @@ export function SheetMenu({ user, supplier }: SheetMenuProps) {
           >
             <CircleUser className="mr-2" /> Profile
           </Button>
-          {isSupplier && (
+          {isSupplier ? (
             <Button
               variant="ghost"
               className="w-full justify-start"
               onClick={() => router.push("/supplier-dashboard")}
             >
               <Building className="mr-2" /> Supplier Dashboard
+            </Button>
+          ) : (
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => router.push("/apply-supplier")}
+            >
+              <Building className="mr-2" /> Apply as a Supplier
             </Button>
           )}
           {user.role === "ADMIN" && (
@@ -107,6 +115,10 @@ export function SheetMenu({ user, supplier }: SheetMenuProps) {
               Admin Dashboard
             </Button>
           )}
+          <Button variant="ghost" className="w-full justify-start">
+            <Flag className="mr-2" />
+            Report an Issue
+          </Button>
           <Button
             variant="ghost"
             className="w-full justify-start"
@@ -114,10 +126,6 @@ export function SheetMenu({ user, supplier }: SheetMenuProps) {
           >
             <LogOut className="mr-2" />
             Logout
-          </Button>
-          <Button variant="ghost" className="w-full justify-start">
-            <Flag />
-            Report an Issue
           </Button>
         </nav>
       </SheetContent>
