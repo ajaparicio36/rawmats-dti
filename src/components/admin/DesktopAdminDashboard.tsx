@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Mail, Package } from "lucide-react";
 import logo from "../../public/logo.png";
 import { useState } from "react";
-import { ItemVerification } from "@/components/admin/ItemVerification";
+import { ItemVerification } from "@/components/Admin/ItemVerification";
 import { Product } from "@prisma/client";
 
 const DesktopAdminDashboard = ({

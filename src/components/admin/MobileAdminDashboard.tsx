@@ -9,7 +9,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "../../public/logo.png";
 import { useState } from "react";
 import { Product } from "@prisma/client";
-import { ItemVerification } from "@/components/admin/ItemVerification";
+import { ItemVerification } from "@/components/Admin/ItemVerification";
 
 const MobileAdminDashboard = ({
   fetchedProducts,
