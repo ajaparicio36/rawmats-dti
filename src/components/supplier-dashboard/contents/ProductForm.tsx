@@ -1,4 +1,5 @@
 "use client";
+"use client";
 
 import { useState } from "react";
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
@@ -28,6 +29,8 @@ export default function ProductListingForm({
 
     setLoading(true);
     setError(null);
+    setLoading(true);
+    setError(null);
 
     try {
       let imagePath = null;
@@ -51,9 +54,11 @@ export default function ProductListingForm({
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.error || "Error creating product");
+        throw new Error(data.error || "Error creating product");
       }
 
       const product = await response.json();
+      onAddProduct(product);
       onAddProduct(product);
 
       setProductName("");
@@ -64,10 +69,13 @@ export default function ProductListingForm({
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
+        setError(error.message);
       } else {
+        setError("An unexpected error occurred.");
         setError("An unexpected error occurred.");
       }
     } finally {
+      setLoading(false);
       setLoading(false);
     }
   };

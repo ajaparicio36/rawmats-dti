@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -8,17 +8,21 @@ import ProductListingForm from "@/components/supplier-dashboard/contents/Product
 import ProductList from "@/components/supplier-dashboard/contents/ProductList";
 import { Product } from "@/types/types";
 
-const MobileSupplier = ({ fetchedProducts, userID }: { fetchedProducts: {
-  id: string;
-  name: string;
-  supplierId: string;
-  price: number;
-  description: string;
-  verified: boolean;
-  verifiedDate: Date;
-  dateAdded: Date;
-}[],
-  userID: string
+const MobileSupplier = ({
+  fetchedProducts,
+  userID,
+}: {
+  fetchedProducts: {
+    id: string;
+    name: string;
+    supplierId: string;
+    price: number;
+    description: string;
+    verified: boolean;
+    verifiedDate: Date;
+    dateAdded: Date;
+  }[];
+  userID: string;
 }) => {
   const [products, setProducts] = useState<Product[]>([]);
 
@@ -36,7 +40,10 @@ const MobileSupplier = ({ fetchedProducts, userID }: { fetchedProducts: {
         </TabsList>
 
         <TabsContent value="create-listing">
-          <ProductListingForm onAddProduct={handleAddProduct} supplierId={userID} />
+          <ProductListingForm
+            onAddProduct={handleAddProduct}
+            supplierId={userID}
+          />
           <ProductList products={fetchedProducts} />
         </TabsContent>
 

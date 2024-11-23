@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 interface Product {
   id: string;
@@ -17,14 +17,14 @@ const ManageListings = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('/api/product');
+        const response = await fetch("/api/product");
         if (!response.ok) {
-          throw new Error('Failed to fetch products');
+          throw new Error("Failed to fetch products");
         }
         const data = await response.json();
         setProducts(data);
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error("Error fetching products:", error);
       } finally {
         setLoading(false);
       }
@@ -35,13 +35,13 @@ const ManageListings = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`/api/product/${id}`, { method: 'DELETE' });
+      const response = await fetch(`/api/product/${id}`, { method: "DELETE" });
       if (!response.ok) {
-        throw new Error('Failed to delete product');
+        throw new Error("Failed to delete product");
       }
       setProducts(products.filter((product) => product.id !== id));
     } catch (error) {
-      console.error('Error deleting product:', error);
+      console.error("Error deleting product:", error);
     }
   };
 
@@ -58,7 +58,9 @@ const ManageListings = () => {
               <h2 className="text-lg font-semibold">{product.name}</h2>
               <p className="text-gray-600">Price: ${product.price}</p>
               <p className="text-gray-800">{product.description}</p>
-              <p>Status: {product.verified ? 'Verified' : 'Pending Verification'}</p>
+              <p>
+                Status: {product.verified ? "Verified" : "Pending Verification"}
+              </p>
               <button
                 onClick={() => handleDelete(product.id)}
                 className="mt-2 bg-red-500 text-white py-1 px-4 rounded"

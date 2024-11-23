@@ -5,15 +5,21 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import prisma from "@/utils/prisma/client";
 
-const DesktopSupplier = dynamic(() => import("@/components/supplier-dashboard/DesktopSupplier"), {
-  loading: () => <p>Loading desktop supplier dashboard...</p>,
-  ssr: true,
-});
+const DesktopSupplier = dynamic(
+  () => import("@/components/supplier-dashboard/DesktopSupplier"),
+  {
+    loading: () => <p>Loading desktop supplier dashboard...</p>,
+    ssr: true,
+  },
+);
 
-const MobileSupplier = dynamic(() => import("@/components/supplier-dashboard/MobileSupplier"), {
-  loading: () => <p>Loading mobile supplier dashboard...</p>,
-  ssr: true,
-});
+const MobileSupplier = dynamic(
+  () => import("@/components/supplier-dashboard/MobileSupplier"),
+  {
+    loading: () => <p>Loading mobile supplier dashboard...</p>,
+    ssr: true,
+  },
+);
 
 const SupplierDashboard = async () => {
   const supabase = createClient();
@@ -25,21 +31,21 @@ const SupplierDashboard = async () => {
   const isSupplier = await prisma.supplier.findUnique({
     where: {
       userId: data.user.id,
-      verified: true
-    }
-  })
+      verified: true,
+    },
+  });
 
   if (!isSupplier) {
-    redirect('/')
+    redirect("/");
   }
 
   const products = await prisma.product.findMany({
     where: {
       supplier: {
-        userId: data.user.id
-      }
-    }
-  })
+        userId: data.user.id,
+      },
+    },
+  });
 
   return (
     <div className="w-full min-h-screen flex items-center justify-center">
@@ -48,7 +54,7 @@ const SupplierDashboard = async () => {
           <DesktopSupplier fetchedProducts={products} userID={isSupplier.id} />
         </div>
         <div className="md:hidden w-full h-screen">
-          <MobileSupplier fetchedProducts={products} userID={isSupplier.id}  />
+          <MobileSupplier fetchedProducts={products} userID={isSupplier.id} />
         </div>
       </Suspense>
     </div>

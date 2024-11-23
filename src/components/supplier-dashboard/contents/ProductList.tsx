@@ -1,4 +1,5 @@
 // import Image from 'next/image';
+// import Image from 'next/image';
 
 interface ProductListProps {
   products: {
@@ -10,7 +11,7 @@ interface ProductListProps {
     verified: boolean;
     verifiedDate: Date;
     dateAdded: Date;
-    // image?: string; 
+    // image?: string;
   }[];
 }
 
@@ -21,7 +22,10 @@ export default function ProductList({ products }: ProductListProps) {
       {products.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
-            <div key={product.id} className="border rounded-lg shadow-md p-4 flex flex-col items-center">
+            <div
+              key={product.id}
+              className="border rounded-lg shadow-md p-4 flex flex-col items-center"
+            >
               {/* {product.image && (
                 <div className="w-32 h-32 overflow-hidden rounded-md mb-4">
                   <Image
@@ -36,8 +40,12 @@ export default function ProductList({ products }: ProductListProps) {
                 </div>
               )} */}
               <h3 className="text-lg font-semibold">{product.name}</h3>
-              <p className="text-gray-600 mt-2 text-sm">{product.description}</p>
-              <p className="text-green-500 mt-2 font-semibold">${product.price.toFixed(2)}</p>
+              <p className="text-gray-600 mt-2 text-sm">
+                {product.description}
+              </p>
+              <p className="text-green-500 mt-2 font-semibold">
+                ${product.price.toFixed(2)}
+              </p>
             </div>
           ))}
         </div>
@@ -47,4 +55,3 @@ export default function ProductList({ products }: ProductListProps) {
     </div>
   );
 }
-

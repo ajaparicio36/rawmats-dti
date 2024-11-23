@@ -1,7 +1,6 @@
-import prisma from '@/utils/prisma/client';
-import { revalidatePath } from 'next/cache';
-import { NextRequest, NextResponse } from 'next/server';
-
+import prisma from "@/utils/prisma/client";
+import { revalidatePath } from "next/cache";
+import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async () => {
   try {
@@ -14,11 +13,13 @@ export const GET = async () => {
     });
     return NextResponse.json(products);
   } catch (error) {
-    console.error('Error fetching products:', error);
-    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+    console.error("Error fetching products:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch products" },
+      { status: 500 },
+    );
   }
 };
-
 
 // export const GET = async () => {
 //   // This route gets ALL products
@@ -33,8 +34,11 @@ export const POST = async (req: NextRequest) => {
 
     if (!name || !description || !price || !supplierId) {
       return NextResponse.json(
-        { error: 'Missing required fields: name, description, price, or supplierId' },
-        { status: 400 }
+        {
+          error:
+            "Missing required fields: name, description, price, or supplierId",
+        },
+        { status: 400 },
       );
     }
 
@@ -47,15 +51,18 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
-    revalidatePath("/","layout")
+    revalidatePath("/", "layout");
     return NextResponse.json(product, { status: 201 });
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error('Error creating product:', error.message);
+      console.error("Error creating product:", error.message);
       return NextResponse.json({ error: error.message }, { status: 500 });
     } else {
-      console.error('Unexpected error:', error);
-      return NextResponse.json({ error: 'An unexpected error occurred.' }, { status: 500 });
+      console.error("Unexpected error:", error);
+      return NextResponse.json(
+        { error: "An unexpected error occurred." },
+        { status: 500 },
+      );
     }
   }
 };
