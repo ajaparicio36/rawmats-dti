@@ -1,14 +1,12 @@
+"use client";
 
-'use client';
-
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Product } from '@/types/types';
+import { useState } from "react";
+import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Product } from "@/types/types";
 import { uploadProductImage } from "@/utils/supabase/product";
-
 
 export default function ProductListingForm({
   onAddProduct,
@@ -17,9 +15,9 @@ export default function ProductListingForm({
   onAddProduct: (product: Product) => void;
   supplierId: string;
 }) {
-  const [productName, setProductName] = useState('');
-  const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
+  const [productName, setProductName] = useState("");
+  const [price, setPrice] = useState("");
+  const [description, setDescription] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -35,11 +33,12 @@ export default function ProductListingForm({
       let imagePath = null;
 
       if (image) {
-        imagePath = await uploadProductImage(image);
+        const fileName = `${supplierId}-${productName}-${Date.now()}`;
+        imagePath = await uploadProductImage(image, fileName);
       }
 
-      const response = await fetch('/api/product', {
-        method: 'POST',
+      const response = await fetch("/api/product", {
+        method: "POST",
         body: JSON.stringify({
           name: productName,
           description,
@@ -51,22 +50,22 @@ export default function ProductListingForm({
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || 'Error creating product');
+        throw new Error(data.error || "Error creating product");
       }
 
       const product = await response.json();
       onAddProduct(product);
 
-      setProductName('');
-      setPrice('');
-      setDescription('');
+      setProductName("");
+      setPrice("");
+      setDescription("");
       setImage(null);
       setShowForm(false);
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError('An unexpected error occurred.');
+        setError("An unexpected error occurred.");
       }
     } finally {
       setLoading(false);
@@ -154,7 +153,7 @@ export default function ProductListingForm({
                   className="bg-green-500 text-white"
                   disabled={loading}
                 >
-                  {loading ? 'Submitting...' : 'Submit'}
+                  {loading ? "Submitting..." : "Submit"}
                 </Button>
               </div>
             </form>
@@ -164,4 +163,3 @@ export default function ProductListingForm({
     </>
   );
 }
-
