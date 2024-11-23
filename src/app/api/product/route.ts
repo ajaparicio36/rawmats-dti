@@ -30,7 +30,7 @@ export const GET = async () => {
 export const POST = async (req: NextRequest) => {
   try {
     const body = await req.json();
-    const { name, description, price, supplierId } = body;
+    const { name, description, price, supplierId, image } = body;
 
     if (!name || !description || !price || !supplierId) {
       return NextResponse.json(
@@ -48,6 +48,7 @@ export const POST = async (req: NextRequest) => {
         description,
         price: parseFloat(price),
         supplierId,
+        image,
       },
     });
 
