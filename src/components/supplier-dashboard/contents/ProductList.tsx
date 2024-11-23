@@ -1,4 +1,4 @@
-// import Image from 'next/image';
+import Image from 'next/image';
 // import Image from 'next/image';
 
 interface ProductListProps {
@@ -11,7 +11,7 @@ interface ProductListProps {
     verified: boolean;
     verifiedDate: Date;
     dateAdded: Date;
-    // image?: string;
+    image?: string;
   }[];
 }
 
@@ -26,7 +26,7 @@ export default function ProductList({ products }: ProductListProps) {
               key={product.id}
               className="border rounded-lg shadow-md p-4 flex flex-col items-center"
             >
-              {/* {product.image && (
+              {product.image && (
                 <div className="w-32 h-32 overflow-hidden rounded-md mb-4">
                   <Image
                     src={product.image}
@@ -38,7 +38,7 @@ export default function ProductList({ products }: ProductListProps) {
                     quality={75} // Optional: Set image quality to balance performance and clarity
                   />
                 </div>
-              )} */}
+              )}
               <h3 className="text-lg font-semibold">{product.name}</h3>
               <p className="text-gray-600 mt-2 text-sm">
                 {product.description}

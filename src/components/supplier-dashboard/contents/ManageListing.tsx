@@ -52,9 +52,12 @@ const ManageListings = () => {
   return (
     <div>
       {products.length > 0 ? (
-        <ul className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {products.map((product) => (
-            <li key={product.id} className="border p-4 rounded-lg">
+            <div
+              key={product.id}
+              className="border p-4 rounded-lg shadow-md flex flex-col space-y-2"
+            >
               <h2 className="text-lg font-semibold">{product.name}</h2>
               <p className="text-gray-600">Price: ${product.price}</p>
               <p className="text-gray-800">{product.description}</p>
@@ -67,9 +70,9 @@ const ManageListings = () => {
               >
                 Delete
               </button>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : (
         <p>No listings available.</p>
       )}
