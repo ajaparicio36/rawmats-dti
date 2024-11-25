@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 import animatePlugin from "tailwindcss-animate";
-
+import { PluginAPI } from "tailwindcss/types/config";
 const config: Config = {
   darkMode: ["class"],
   content: [
@@ -51,6 +51,50 @@ const config: Config = {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        rawmats: {
+          primary: {
+            900: "#050418",
+            700: "#0A0830",
+            500: "#1A1660",
+            300: "#2A2490",
+            100: "#3A32C0",
+          },
+          secondary: {
+            900: "#4A90B3",
+            700: "#9BD0F3",
+            500: "#B5DFF6",
+            300: "#CFEEF9",
+            100: "#E9F8FC",
+          },
+          accent: {
+            900: "#012647",
+            700: "#013F79",
+            500: "#0258AB",
+            300: "#0371DD",
+            100: "#048AFF",
+          },
+          neutral: {
+            900: "#4B5563",
+            700: "#9CA3AF",
+            500: "#F3F4F6",
+          },
+          text: {
+            700: "#040029",
+            500: "#0C0066",
+          },
+          shade: {
+            light: "#F1F0F0",
+            dark: "#050418",
+          },
+          background: {
+            700: "#DBEFFC",
+          },
+          feedback: {
+            success: "#22C55E",
+            error: "#EF4444",
+            warning: "#F59E0B",
+          },
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -59,6 +103,21 @@ const config: Config = {
       },
     },
   },
-  plugins: [animatePlugin],
+  plugins: [
+    animatePlugin,
+    function ({ addUtilities }: PluginAPI) {
+      addUtilities({
+        ".scrollbar-hide": {
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+
+          "-ms-overflow-style": "none",
+          "scrollbar-width": "none",
+        },
+      });
+    },
+  ],
 };
+
 export default config;
