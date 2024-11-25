@@ -1,0 +1,20 @@
+# Use Node 20 for NextJS 14 compatibility
+FROM node:20-slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy source files
+COPY . .
+
+# Create Prisma Types
+RUN npx prisma generate
+
+# Build the application (if needed for tests)
+RUN npm run build
