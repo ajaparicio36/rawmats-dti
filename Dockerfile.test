@@ -13,5 +13,8 @@ RUN npm ci
 # Copy source files
 COPY . .
 
+# Create Prisma Types
+RUN npx prisma generate
+
 # Build the application (if needed for tests)
 RUN npm run build
