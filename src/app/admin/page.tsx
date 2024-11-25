@@ -6,7 +6,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
 const DesktopAdminDashboard = dynamic(
-  () => import("@/components/Admin/DesktopAdminDashboard"),
+  () => import("@/components/admin/DesktopAdminDashboard"),
   {
     loading: () => <p>Loading desktop admin dashboard...</p>,
     ssr: true,
@@ -14,7 +14,7 @@ const DesktopAdminDashboard = dynamic(
 );
 
 const MobileAdminDashboard = dynamic(
-  () => import("@/components/Admin/MobileAdminDashboard"),
+  () => import("@/components/admin/MobileAdminDashboard"),
   {
     loading: () => <p>Loading mobile admin dashboard...</p>,
     ssr: true,
@@ -27,11 +27,30 @@ const AdminDashboard = async () => {
   if (error || !data.user) {
     redirect("/login");
   }
+
   const fetchedProducts = await prisma.product.findMany({
     where: {
       verified: false,
     },
   });
+
+  for (const product of fetchedProducts) {
+    const { data, error } = await supabase.storage
+      .from("photos")
+      .createSignedUrl(`${product.image}`, 3600);
+
+    if (error) {
+      console.error(
+        "Error fetching signed URL for product image:",
+        error.message,
+      );
+    }
+
+    if (data) {
+      product.image = data.signedUrl;
+    }
+  }
+
   const fetchedSuppliers = await prisma.supplier.findMany({
     where: {
       verified: false,
