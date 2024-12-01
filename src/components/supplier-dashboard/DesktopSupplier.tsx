@@ -7,7 +7,8 @@ import ProductListingForm from "@/components/supplier-dashboard/contents/Product
 import ProductList from "@/components/supplier-dashboard/contents/ProductList";
 import { useState } from "react";
 import { Product } from "@/types/types";
-import {CubeIcon, FolderOpenIcon, BellIcon} from "@heroicons/react/24/outline";
+import { CubeIcon, FolderOpenIcon, BellIcon, HomeIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 const DesktopSupplier = ({
   fetchedProducts,
@@ -33,7 +34,7 @@ const DesktopSupplier = ({
   };
 
   return (
-    <div className="max-h-screen w-full flex overflow-hidden ">
+    <div className="max-h-screen w-full flex overflow-hidden">
       <div className="w-64 bg-[#B9EBFC] p-4 sticky top-0 left-0 h-screen shadow-2xl bg-opacity-50 z-10">
         <div className="flex flex-col items-center mb-6">
           <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center mt-10">
@@ -51,6 +52,17 @@ const DesktopSupplier = ({
           className="flex flex-col mt-20"
         >
           <TabsList className="flex flex-col items-start bg-transparent mt-10">
+            <TabsTrigger
+              value="home"
+              className="flex items-center justify-start text-left hover:bg-white hover:text-[#034169] rounded-md px-6 py-2 w-full transition-all mb-3"
+            >
+              <Link href="/" passHref>
+                <div className="flex items-center">
+                  <HomeIcon className="mr-2 h-5 w-5" />
+                  <span className="text-[#034169]">Home</span>
+                </div>
+              </Link>
+            </TabsTrigger>
             <TabsTrigger
               value="products"
               className="flex items-center justify-start text-left hover:bg-white hover:text-[#034169] rounded-md px-6 py-2 w-full transition-all mb-3"
@@ -77,11 +89,9 @@ const DesktopSupplier = ({
       </div>
 
       <div className="flex-1 flex flex-col overflow-auto">
-        <div className="bg-[#A3E6FD] shadow p-9 bg-opacity-75 z-20 sticky top-0 w-full">
-        </div>
+        <div className="bg-[#A3E6FD] shadow p-9 bg-opacity-75 z-20 sticky top-0 w-full"></div>
 
         <div className="flex-1 p-6">
-          {" "}
           <Tabs value={tabValue} onValueChange={setTabValue}>
             <TabsContent value="products">
               <ProductListingForm

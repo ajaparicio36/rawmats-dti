@@ -7,11 +7,8 @@ import ProductListingForm from "@/components/supplier-dashboard/contents/Product
 import ProductList from "@/components/supplier-dashboard/contents/ProductList";
 import { useState } from "react";
 import { Product } from "@/types/types";
-import {
-  CubeIcon,
-  FolderOpenIcon,
-  BellIcon,
-} from "@heroicons/react/24/outline";
+import {CubeIcon, FolderOpenIcon, BellIcon, HomeIcon} from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 const MobileSupplier = ({
   fetchedProducts,
@@ -62,9 +59,11 @@ const MobileSupplier = ({
 
             <TabsList className="fixed bottom-0 left-0 right-0 p-6 bg-[#B9EBFC] shadow-lg md:hidden flex items-center justify-between space-x-6">
               <div className="flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
-                  <span className="text-xl font-bold text-white">A</span>
-                </div>
+                <Link href="/" passHref>
+                  <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center hover:bg-gray-400">
+                    <HomeIcon className="h-6 w-6 text-gray-700 hover:text-gray-900" />
+                  </div>
+                </Link>
               </div>
 
               <TabsTrigger
