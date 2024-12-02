@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mail, Package } from "lucide-react";
+import { ChartArea, Mail, Package } from "lucide-react";
 import logo from "../../public/logo.png";
 import { useState } from "react";
 import { ItemVerification } from "@/components/admin/ItemVerification";
@@ -74,6 +74,10 @@ const DesktopAdminDashboard = ({
           className="flex-1"
         >
           <TabsList className="flex flex-col w-full h-auto">
+            <TabsTrigger value="analytics" className="justify-start mb-2">
+              <ChartArea className="mr-2 h-4 w-4" />
+              Analytics
+            </TabsTrigger>
             <TabsTrigger value="supplier" className="justify-start mb-2">
               <Mail className="mr-2 h-4 w-4" />
               Supplier Verification
@@ -92,6 +96,10 @@ const DesktopAdminDashboard = ({
           onValueChange={setSelectedTab}
           className="w-full"
         >
+          <TabsContent value="analytics">
+            <h2 className="text-2xl font-bold mb-4">Analytics</h2>
+            Placeholder
+          </TabsContent>
           <TabsContent value="supplier">
             <h2 className="text-2xl font-bold mb-4">Supplier Verification</h2>
             {fetchedSuppliers.length === 0 && (
