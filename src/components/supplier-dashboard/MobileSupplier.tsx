@@ -23,6 +23,7 @@ const MobileSupplier = ({
     verified: boolean;
     verifiedDate: Date;
     dateAdded: Date;
+    image?: string;
   }[];
   userID: string;
   // supplierName: string;
@@ -50,7 +51,7 @@ const MobileSupplier = ({
             </TabsContent>
 
             <TabsContent value="manage-listing">
-              <ManageListings />
+              <ManageListings fetchedProducts={fetchedProducts} />
             </TabsContent>
 
             <TabsContent value="notifications">
