@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mail, Package, Menu } from "lucide-react";
+import { Mail, Package, Menu, ChartArea } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "../../public/logo.png";
 import { useState } from "react";
@@ -90,6 +90,10 @@ const MobileAdminDashboard = ({
               className="flex-1"
             >
               <TabsList className="flex flex-col w-full h-auto">
+                <TabsTrigger value="analytics" className="justify-start mb-2">
+                  <ChartArea className="mr-2 h-4 w-4" />
+                  Analytics
+                </TabsTrigger>
                 <TabsTrigger value="supplier" className="justify-start mb-2">
                   <Mail className="mr-2 h-4 w-4" />
                   Suplier Verification
@@ -110,6 +114,10 @@ const MobileAdminDashboard = ({
           onValueChange={setSelectedTab}
           className="w-full"
         >
+          <TabsContent value="analytics">
+            <h2 className="text-2xl font-bold mb-4">Analytics</h2>
+            Placeholder
+          </TabsContent>
           <TabsContent value="supplier">
             <h2 className="text-2xl font-bold mb-4">Supplier Verification</h2>
             {fetchedSuppliers.length === 0 && (
