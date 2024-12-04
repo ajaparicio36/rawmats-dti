@@ -10,7 +10,6 @@ import logo from "../../public/logo.png";
 import { Product, Supplier, User } from "@prisma/client";
 import { ItemVerification } from "@/components/Admin/ItemVerification";
 import { SupplierVerification } from "@/components/Admin/SupplierVerification";
-import { syncProductsToAlgolia } from "@/utils/syncAlgolia";
 
 const MobileAdminDashboard = ({
   fetchedProducts,
@@ -61,11 +60,28 @@ const MobileAdminDashboard = ({
   const handleSync = async () => {
     try {
       setIsSyncing(true);
-      await syncProductsToAlgolia();
-      alert("Products successfully synced to Algolia.");
+
+      const response = await fetch("/api/algolia-sync", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error || "Failed to sync products to Algolia.",
+        );
+      }
+
+      const data = await response.json();
+      alert(`Products successfully synced to Algolia: ${data.syncedRecords}`);
     } catch (error) {
       console.error("Error syncing products to Algolia:", error);
-      alert("Failed to sync products to Algolia.");
+
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("An unknown error occurred.");
+      }
     } finally {
       setIsSyncing(false);
     }
@@ -114,6 +130,19 @@ const MobileAdminDashboard = ({
                 </TabsTrigger>
               </TabsList>
             </Tabs>
+            <div className="p-4 border-t">
+              <Button
+                onClick={handleSync}
+                variant="secondary"
+                className="w-full mb-2"
+                disabled={isSyncing}
+              >
+                {isSyncing ? "Syncing..." : "Sync to Algolia"}
+              </Button>
+              <Button variant="outline" className="w-full" asChild>
+                <a href="/">Go to Home</a>
+              </Button>
+            </div>
           </SheetContent>
         </Sheet>
       </header>
@@ -133,15 +162,6 @@ const MobileAdminDashboard = ({
           </TabsContent>
           <TabsContent value="item">
             <h2 className="text-2xl font-bold mb-4">Item Verification</h2>
-            <div className="flex justify-between items-center mb-4">
-              <Button
-                onClick={handleSync}
-                variant="secondary"
-                disabled={isSyncing}
-              >
-                {isSyncing ? "Syncing..." : "Sync to Algolia"}
-              </Button>
-            </div>
             <ItemVerification
               products={fetchedProducts}
               verifyProduct={handleVerify}

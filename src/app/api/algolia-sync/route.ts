@@ -1,3 +1,4 @@
+import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { searchClient } from "@algolia/client-search";
 
@@ -8,10 +9,8 @@ const client = searchClient(
   process.env.NEXT_PUBLIC_ALGOLIA_ADMIN_KEY!,
 );
 
-export async function syncProductsToAlgolia() {
+export async function POST() {
   try {
-    console.log("Starting sync...");
-
     const products = await prisma.product.findMany({
       where: { verified: true },
       include: { supplier: true },
@@ -29,16 +28,26 @@ export async function syncProductsToAlgolia() {
       verified: product.verified,
     }));
 
-    const response = await client.saveObjects({
+    const responses = await client.saveObjects({
       indexName: process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME!,
       objects: records,
     });
 
-    console.log("Successfully synced products to Algolia");
-    return response;
+    const totalSynced = responses.reduce(
+      (sum, batch) => sum + batch.objectIDs.length,
+      0,
+    );
+
+    return NextResponse.json({
+      message: "Products successfully synced to Algolia.",
+      syncedRecords: totalSynced,
+    });
   } catch (error) {
     console.error("Error syncing products to Algolia:", error);
-    throw error;
+    return NextResponse.json(
+      { error: "Failed to sync products to Algolia." },
+      { status: 500 },
+    );
   } finally {
     await prisma.$disconnect();
   }

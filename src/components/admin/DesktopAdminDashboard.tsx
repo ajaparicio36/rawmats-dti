@@ -10,7 +10,6 @@ import logo from "../../public/logo.png";
 import { Product, Supplier, User } from "@prisma/client";
 import { ItemVerification } from "@/components/Admin/ItemVerification";
 import { SupplierVerification } from "./SupplierVerification";
-import { syncProductsToAlgolia } from "@/utils/syncAlgolia";
 
 const DesktopAdminDashboard = ({
   fetchedProducts,
@@ -61,11 +60,28 @@ const DesktopAdminDashboard = ({
   const handleSync = async () => {
     try {
       setIsSyncing(true);
-      await syncProductsToAlgolia();
-      alert("Products successfully synced to Algolia.");
+
+      const response = await fetch("/api/algolia-sync", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error || "Failed to sync products to Algolia.",
+        );
+      }
+
+      const data = await response.json();
+      alert(`Products successfully synced to Algolia: ${data.syncedRecords}`);
     } catch (error) {
       console.error("Error syncing products to Algolia:", error);
-      alert("Failed to sync products to Algolia.");
+
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("An unknown error occurred.");
+      }
     } finally {
       setIsSyncing(false);
     }
@@ -101,6 +117,14 @@ const DesktopAdminDashboard = ({
           </TabsList>
         </Tabs>
         <div className="p-4 border-t">
+          <Button
+            onClick={handleSync}
+            variant="secondary"
+            className="w-full mb-2 bg-rawmats-primary-100 hover:bg-rawmats-primary-500 text-white"
+            disabled={isSyncing}
+          >
+            {isSyncing ? "Syncing..." : "Sync to Algolia"}
+          </Button>
           <Button variant="outline" className="w-full" asChild>
             <Link href="/">Go to Home</Link>
           </Button>
@@ -115,11 +139,6 @@ const DesktopAdminDashboard = ({
         >
           <TabsContent value="item">
             <h2 className="text-2xl font-bold mb-4">Item Verification</h2>
-            <div className="mb-4">
-              <Button onClick={handleSync} disabled={isSyncing}>
-                {isSyncing ? "Syncing..." : "Sync Products to Algolia"}
-              </Button>
-            </div>
             <ItemVerification
               products={fetchedProducts}
               verifyProduct={handleVerify}
