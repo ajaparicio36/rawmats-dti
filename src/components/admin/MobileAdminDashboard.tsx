@@ -1,16 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Mail, Package, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "../../public/logo.png";
-import { useState } from "react";
 import { Product, Supplier, User } from "@prisma/client";
 import { ItemVerification } from "@/components/Admin/ItemVerification";
-import { SupplierVerification } from "..//Admin/SupplierVerification";
+import { SupplierVerification } from "@/components/Admin/SupplierVerification";
+import { syncProductsToAlgolia } from "@/utils/syncAlgolia";
 
 const MobileAdminDashboard = ({
   fetchedProducts,
@@ -20,6 +20,7 @@ const MobileAdminDashboard = ({
   fetchedSuppliers: (Supplier & { user: User })[];
 }) => {
   const [selectedTab, setSelectedTab] = useState("supplier");
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const handleVerify = async (id: string) => {
     try {
@@ -57,6 +58,19 @@ const MobileAdminDashboard = ({
     }
   };
 
+  const handleSync = async () => {
+    try {
+      setIsSyncing(true);
+      await syncProductsToAlgolia();
+      alert("Products successfully synced to Algolia.");
+    } catch (error) {
+      console.error("Error syncing products to Algolia:", error);
+      alert("Failed to sync products to Algolia.");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-background">
       <header className="flex items-center justify-between p-4 bg-card border-b">
@@ -65,7 +79,7 @@ const MobileAdminDashboard = ({
           alt="RAWMATS Logo"
           width={100}
           height={50}
-          className="max-w-full h-auto "
+          className="max-w-full h-auto"
         />
         <Sheet>
           <SheetTrigger asChild>
@@ -92,7 +106,7 @@ const MobileAdminDashboard = ({
               <TabsList className="flex flex-col w-full h-auto">
                 <TabsTrigger value="supplier" className="justify-start mb-2">
                   <Mail className="mr-2 h-4 w-4" />
-                  Suplier Verification
+                  Supplier Verification
                 </TabsTrigger>
                 <TabsTrigger value="item" className="justify-start">
                   <Package className="mr-2 h-4 w-4" />
@@ -119,6 +133,15 @@ const MobileAdminDashboard = ({
           </TabsContent>
           <TabsContent value="item">
             <h2 className="text-2xl font-bold mb-4">Item Verification</h2>
+            <div className="flex justify-between items-center mb-4">
+              <Button
+                onClick={handleSync}
+                variant="secondary"
+                disabled={isSyncing}
+              >
+                {isSyncing ? "Syncing..." : "Sync to Algolia"}
+              </Button>
+            </div>
             <ItemVerification
               products={fetchedProducts}
               verifyProduct={handleVerify}
