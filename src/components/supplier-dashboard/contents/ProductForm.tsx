@@ -17,7 +17,8 @@ export default function ProductListingForm({
 }) {
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
+  const [packaging, setPackaging] = useState("");
+  const [stocks, setStocks] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -37,11 +38,13 @@ export default function ProductListingForm({
         imagePath = "/" + (await uploadProductImage(image, fileName));
       }
 
+      const fullDescription = `Packaging: ${packaging}\nStocks: ${stocks}`;
+
       const response = await fetch("/api/product", {
         method: "POST",
         body: JSON.stringify({
           name: productName,
-          description,
+          description: fullDescription,
           price,
           supplierId,
           image: imagePath,
@@ -58,7 +61,8 @@ export default function ProductListingForm({
 
       setProductName("");
       setPrice("");
-      setDescription("");
+      setPackaging("");
+      setStocks("");
       setImage(null);
       setShowForm(false);
     } catch (error: unknown) {
@@ -132,13 +136,25 @@ export default function ProductListingForm({
               </div>
 
               <div>
-                <Label htmlFor="description">Description</Label>
-                <textarea
-                  id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Description"
-                  className="w-full p-2 border rounded"
+                <Label htmlFor="packaging">Packaging</Label>
+                <Input
+                  id="packaging"
+                  type="text"
+                  value={packaging}
+                  onChange={(e) => setPackaging(e.target.value)}
+                  placeholder="e.g., Box, Bag"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="stocks">Stocks</Label>
+                <Input
+                  id="stocks"
+                  type="number"
+                  value={stocks}
+                  onChange={(e) => setStocks(e.target.value)}
+                  placeholder="Available Stock Count"
                   required
                 />
               </div>
@@ -179,9 +195,3 @@ export default function ProductListingForm({
     </>
   );
 }
-
-
-
-
-
-
