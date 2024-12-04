@@ -79,6 +79,10 @@ export const DELETE = async (req: NextRequest) => {
       );
     }
 
+    await prisma.favorite.deleteMany({
+      where: { productId: id },
+    });
+
     await prisma.product.delete({
       where: { id },
     });

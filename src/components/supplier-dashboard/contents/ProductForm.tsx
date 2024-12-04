@@ -19,6 +19,7 @@ export default function ProductListingForm({
   const [price, setPrice] = useState("");
   const [packaging, setPackaging] = useState("");
   const [stocks, setStocks] = useState("");
+  const [longDescription, setLongDescription] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -38,7 +39,7 @@ export default function ProductListingForm({
         imagePath = "/" + (await uploadProductImage(image, fileName));
       }
 
-      const fullDescription = `Packaging: ${packaging}\nStocks: ${stocks}`;
+      const fullDescription = `Packaging: ${packaging}\nStocks: ${stocks}\nDescription: ${longDescription}`;
 
       const response = await fetch("/api/product", {
         method: "POST",
@@ -63,6 +64,7 @@ export default function ProductListingForm({
       setPrice("");
       setPackaging("");
       setStocks("");
+      setLongDescription("");
       setImage(null);
       setShowForm(false);
     } catch (error: unknown) {
@@ -107,8 +109,8 @@ export default function ProductListingForm({
 
       {showForm && (
         <Dialog open={showForm} onOpenChange={setShowForm}>
-          <DialogOverlay className="fixed inset-0 bg-black bg-opacity-50" />
-          <DialogContent className="bg-white p-6 rounded shadow-md w-full max-w-md md:max-w-lg mx-auto my-6 md:my-20">
+          <DialogOverlay className="fixed inset-0 bg-black bg-opacity-50 " />
+          <DialogContent className="bg-white p-4 sm:p-6 rounded shadow-md w-full max-w-xs sm:max-w-sm md:max-w-lg max-h-screen overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">Create New Product</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -155,6 +157,19 @@ export default function ProductListingForm({
                   value={stocks}
                   onChange={(e) => setStocks(e.target.value)}
                   placeholder="Available Stock Count"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="longDescription">Product Description</Label>
+                <textarea
+                  id="longDescription"
+                  value={longDescription}
+                  onChange={(e) => setLongDescription(e.target.value)}
+                  placeholder="Detailed description of the product"
+                  className="border rounded-md w-full p-2 max-h-[50px]"
+                  rows={3} 
                   required
                 />
               </div>
