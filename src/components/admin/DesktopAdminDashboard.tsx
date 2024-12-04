@@ -9,6 +9,7 @@ import { useState } from "react";
 import { ItemVerification } from "@/components/admin/ItemVerification";
 import { Product, Supplier, User } from "@prisma/client";
 import { SupplierVerification } from "./SupplierVerification";
+import Analytics from "./Analytics";
 
 const DesktopAdminDashboard = ({
   fetchedProducts,
@@ -17,7 +18,7 @@ const DesktopAdminDashboard = ({
   fetchedProducts: Product[];
   fetchedSuppliers: (Supplier & { user: User })[];
 }) => {
-  const [selectedTab, setSelectedTab] = useState("supplier");
+  const [selectedTab, setSelectedTab] = useState("analytics");
 
   const handleVerify = async (id: string) => {
     try {
@@ -97,8 +98,7 @@ const DesktopAdminDashboard = ({
           className="w-full"
         >
           <TabsContent value="analytics">
-            <h2 className="text-2xl font-bold mb-4">Analytics</h2>
-            Placeholder
+            <Analytics />
           </TabsContent>
           <TabsContent value="supplier">
             <h2 className="text-2xl font-bold mb-4">Supplier Verification</h2>
