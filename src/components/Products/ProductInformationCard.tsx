@@ -21,91 +21,92 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { getUserId } from "@/utils/getUserId";
 
-export default function ProductInformationCard() {
+export default function ProductInformationCard({ userId }: { userId: string }) {
   const params = useParams<{ id: string }>();
   const id: string = `${params.id}`;
-  const [userId, setUserId] = useState<string | null>(null);
   const [product, setProduct] = useState<Product | null>(null);
   const [supplier, setSupplier] = useState<Supplier | null>(null);
-  const [favorite, setFavorite] = useState<Favorite | null>(null);
+  const [favoritedItem, setFavoritedItem] = useState<Favorite | null>(null);
   const [loading, setLoading] = useState(true);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [locationName, setLocationName] = useState<string>("");
 
   useEffect(() => {
-    const fetchUserId = async () => {
-      const id = await getUserId();
-      setUserId(id);
-    };
-
-    const fetchFavorite = async () => {
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        const response = await fetch(
-          `/api/products/${product?.id}/favorite/${userId}`,
-        );
-        const { favorite } = await response.json();
-        setFavorite(favorite);
-      } catch (error) {
-        console.error("Error fetching favorite:", error);
-      }
-    };
-
-    const getProductAndSupplier = async () => {
-      try {
-        const response = await fetch(`/api/product/${id}`);
-        const { product, supplier } = await response.json();
+        // First fetch product and supplier
+        const productResponse = await fetch(`/api/product/${id}`);
+        const { product, supplier } = await productResponse.json();
         setProduct(product);
         setSupplier(supplier);
-        setLoading(false);
+
+        // Then fetch related data in parallel once we have product/supplier
+        await Promise.all([
+          // Fetch favorite status
+          (async () => {
+            if (product.id) {
+              const favoriteResponse = await fetch(
+                `/api/product/${product.id}/favorite/${userId}`,
+              );
+              const { favorite } = await favoriteResponse.json();
+              console.log(favorite);
+              if (favorite) {
+                setFavoritedItem(favorite);
+              }
+            }
+          })(),
+
+          // Fetch image
+          (async () => {
+            const imageResponse = await fetch(`/api/product/${id}/image`);
+            const data = await imageResponse.json();
+            setImageUrl(data.signedUrl);
+          })(),
+
+          // Fetch location name if needed
+          (async () => {
+            if (supplier?.businessLocation?.includes("google.com/maps")) {
+              try {
+                const locationResponse = await fetch(`/api/supplier/location`, {
+                  method: "POST",
+                  body: JSON.stringify({
+                    locationLink: supplier.businessLocation,
+                  }),
+                });
+                const { locationName } = await locationResponse.json();
+                setLocationName(locationName);
+              } catch (error) {
+                console.error("Error fetching location name:", error);
+                setLocationName(supplier.businessLocation);
+              }
+            } else {
+              setLocationName(supplier?.businessLocation || "");
+            }
+          })(),
+        ]);
       } catch (error) {
-        console.error("Error fetching product:", error);
+        console.error("Error in data fetching:", error);
+      } finally {
         setLoading(false);
       }
     };
 
-    const fetchImage = async () => {
-      const response = await fetch(`/api/product/${id}/image`);
-      const data = await response.json();
-      setImageUrl(data.signedUrl);
-    };
-
-    const fetchLocationName = async () => {
-      if (supplier?.businessLocation.includes("google.com/maps")) {
-        try {
-          const response = await fetch(`/api/supplier/location`, {
-            method: "POST",
-            body: JSON.stringify({ locationLink: supplier.businessLocation }),
-          });
-          const { locationName } = await response.json();
-          setLocationName(locationName);
-        } catch (error) {
-          console.error("Error fetching location name:", error);
-          setLocationName(supplier.businessLocation);
-        }
-      } else {
-        setLocationName(supplier?.businessLocation || "");
-      }
-    };
-
-    fetchImage();
-    fetchFavorite();
-    fetchUserId();
-    getProductAndSupplier();
-    fetchLocationName();
-  }, [id, userId, product, supplier]);
+    fetchData();
+  }, [id, userId]); // Remove supplier.businessLocation dependency as it's handled inside
 
   const handleFavorite = async () => {
     try {
       const response = await fetch(
-        `/api/products/${product?.id}/favorite/${userId}`,
+        `/api/product/${product?.id}/favorite/${userId}`,
         {
-          method: favorite ? "DELETE" : "POST",
+          method: favoritedItem ? "DELETE" : "POST",
+          body: JSON.stringify({ favorite: favoritedItem }),
         },
       );
-      const updatedFavorite = await response.json();
-      setFavorite(updatedFavorite);
+      const { favorite } = await response.json();
+      setFavoritedItem(favorite);
     } catch (error) {
       console.error("Error updating favorite:", error);
     }
@@ -208,13 +209,11 @@ export default function ProductInformationCard() {
                     onClick={handleFavorite}
                     className="shrink-0"
                   >
-                    <HeartIcon
-                      className={`w-5 h-5 ${
-                        favorite
-                          ? "fill-rawmats-feedback-error text-rawmats-feedback-error"
-                          : "text-rawmats-neutral-900"
-                      }`}
-                    />
+                    {favoritedItem ? (
+                      <HeartIcon className="w-5 h-5 fill-rawmats-feedback-error text-rawmats-feedback-error" />
+                    ) : (
+                      <HeartIcon className="w-5 h-5 text-rawmats-neutral-900" />
+                    )}
                   </Button>
                   <Button variant="outline" size="icon" className="shrink-0">
                     <Share2 className="w-5 h-5" />

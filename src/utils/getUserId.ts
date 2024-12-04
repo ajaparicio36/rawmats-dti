@@ -1,6 +1,5 @@
 "use server";
-
-import { createClient } from "./supabase/server";
+import { createClient } from "./supabase/client";
 
 export const getUserId = async () => {
   try {
@@ -15,8 +14,7 @@ export const getUserId = async () => {
       throw new Error("User not found");
     }
 
-    const { user } = data;
-    return user.id;
+    return data.user.id;
   } catch (error) {
     console.log(error);
     return null;
