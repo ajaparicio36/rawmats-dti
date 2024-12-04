@@ -21,10 +21,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { getUserId } from "@/utils/getUserId";
 
 export default function ProductInformationCard() {
   const params = useParams<{ id: string }>();
-  const id = `${params.id}`;
+  const id: string = `${params.id}`;
+  const [userId, setUserId] = useState<string | null>(null);
   const [product, setProduct] = useState<Product | null>(null);
   const [supplier, setSupplier] = useState<Supplier | null>(null);
   const [favorite, setFavorite] = useState<Favorite | null>(null);
@@ -33,13 +35,29 @@ export default function ProductInformationCard() {
   const [locationName, setLocationName] = useState<string>("");
 
   useEffect(() => {
+    const fetchUserId = async () => {
+      const id = await getUserId();
+      setUserId(id);
+    };
+
+    const fetchFavorite = async () => {
+      try {
+        const response = await fetch(
+          `/api/products/${product?.id}/favorite/${userId}`,
+        );
+        const { favorite } = await response.json();
+        setFavorite(favorite);
+      } catch (error) {
+        console.error("Error fetching favorite:", error);
+      }
+    };
+
     const getProductAndSupplier = async () => {
       try {
         const response = await fetch(`/api/product/${id}`);
-        const { product, supplier, favorite } = await response.json();
+        const { product, supplier } = await response.json();
         setProduct(product);
         setSupplier(supplier);
-        setFavorite(favorite);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -72,15 +90,20 @@ export default function ProductInformationCard() {
     };
 
     fetchImage();
+    fetchFavorite();
+    fetchUserId();
     getProductAndSupplier();
     fetchLocationName();
-  }, [id, supplier?.businessLocation]);
+  }, [id, userId, product, supplier]);
 
   const handleFavorite = async () => {
     try {
-      const response = await fetch(`/api/products/${product?.id}/favorite`, {
-        method: favorite ? "DELETE" : "POST",
-      });
+      const response = await fetch(
+        `/api/products/${product?.id}/favorite/${userId}`,
+        {
+          method: favorite ? "DELETE" : "POST",
+        },
+      );
       const updatedFavorite = await response.json();
       setFavorite(updatedFavorite);
     } catch (error) {
