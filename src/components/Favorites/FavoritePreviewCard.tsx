@@ -1,18 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  MapPin,
-  Star,
-  PoundSterlingIcon as PhilippinePeso,
-  Building,
-  MoreVertical,
-} from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { MapPin, Star, Building, MoreVertical } from "lucide-react";
 import { ProductPreview } from "@/utils/Products";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Popover,
   PopoverContent,
@@ -31,6 +25,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { AddToAlbumDialog } from "@/components/Albums/AddToAlbumDialog";
+import { Badge } from "@/components/ui/badge";
 
 interface Album {
   id: string;
@@ -50,10 +45,41 @@ const FavoritePreviewCard: React.FC<FavoritePreviewCardProps> = ({
   albums,
 }) => {
   const router = useRouter();
-  const [imageUrl, setImageUrl] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<string>("/products/default.jpg");
+  const [imageError, setImageError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [locationName, setLocationName] = useState<string>("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [imageResponse, locationResponse] = await Promise.all([
+          fetch(`/api/product/${id}/image`, { next: { revalidate: 3600 } }),
+          fetch(`/api/supplier/location`, {
+            method: "POST",
+            body: JSON.stringify({ locationLink: supplier.businessLocation }),
+          }),
+        ]);
+
+        if (!imageResponse.ok) throw new Error("Failed to fetch image");
+        if (!locationResponse.ok) throw new Error("Failed to fetch location");
+
+        const imageData = await imageResponse.json();
+        const { locationName } = await locationResponse.json();
+
+        setImageUrl(imageData.publicUrl);
+        setLocationName(locationName || supplier.businessLocation);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setImageError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id, supplier.businessLocation]);
 
   const handleRemoveFavorite = async () => {
     setIsAlertOpen(true);
@@ -61,75 +87,38 @@ const FavoritePreviewCard: React.FC<FavoritePreviewCardProps> = ({
 
   const confirmRemoveFavorite = async () => {
     try {
-      await fetch(`/api/product/${id}/favorite/${userId}`, {
+      const response = await fetch(`/api/product/${id}/favorite/${userId}`, {
         method: "DELETE",
       });
+      if (!response.ok) throw new Error("Failed to remove favorite");
       router.refresh();
     } catch (error) {
       console.error("Error removing favorite:", error);
+    } finally {
+      setIsAlertOpen(false);
     }
   };
 
-  useEffect(() => {
-    const fetchImage = async () => {
-      try {
-        const response = await fetch(`/api/product/${id}/image`, {
-          next: {
-            revalidate: 3600,
-          },
-          cache: "force-cache",
-        });
-        const data = await response.json();
-        setImageUrl(data.signedUrl);
-      } catch (error) {
-        console.error("Error fetching image:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchImage();
-  }, [id]);
-
-  useEffect(() => {
-    const fetchLocationName = async () => {
-      if (supplier.businessLocation.includes("google.com/maps")) {
-        try {
-          const response = await fetch(`/api/supplier/location`, {
-            method: "POST",
-            body: JSON.stringify({ locationLink: supplier.businessLocation }),
-          });
-          const { locationName } = await response.json();
-          setLocationName(locationName);
-        } catch (error) {
-          console.error("Error fetching location name:", error);
-          setLocationName(supplier.businessLocation);
-        }
-      } else {
-        setLocationName(supplier.businessLocation);
-      }
-    };
-    fetchLocationName();
-  }, [supplier.businessLocation]);
-
-  const onClickComponent = () => {
+  const handleCardClick = () => {
     router.push(`/product/${id}`);
   };
 
   return (
-    <Card className="w-full max-w-md overflow-hidden cursor-pointer transition-shadow hover:shadow-md">
-      <div
-        onClick={onClickComponent}
-        className="h-48 w-full overflow-hidden bg-gray-100"
-      >
+    <Card
+      className="w-full max-w-md overflow-hidden cursor-pointer transition-shadow hover:shadow-md"
+      onClick={handleCardClick}
+    >
+      <div className="relative h-48 w-full overflow-hidden bg-gray-100">
         {loading ? (
           <Skeleton className="h-full w-full" />
         ) : (
           <Image
-            width={512}
-            height={192}
-            src={imageUrl}
+            src={imageError ? "/products/default.jpg" : imageUrl}
             alt={name}
-            className="w-full h-full object-cover"
+            layout="fill"
+            objectFit="cover"
+            loading="lazy"
+            onError={() => setImageError(true)}
           />
         )}
       </div>
@@ -137,18 +126,25 @@ const FavoritePreviewCard: React.FC<FavoritePreviewCardProps> = ({
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg font-semibold truncate">
             {name}
-            <div className="flex text-gray-500 items-center text-sm mb-2">
-              <MapPin strokeWidth={2.5} className="w-4 h-4 mr-1" />
+            <div className="flex text-gray-500 items-center text-sm mt-1">
+              <MapPin className="w-4 h-4 mr-1" />
               <span className="truncate">{locationName}</span>
             </div>
           </CardTitle>
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-56">
+            <PopoverContent
+              className="w-56"
+              onClick={(e) => e.stopPropagation()}
+            >
               <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
                 <AlertDialogTrigger asChild>
                   <Button
@@ -189,18 +185,19 @@ const FavoritePreviewCard: React.FC<FavoritePreviewCardProps> = ({
           </Popover>
         </div>
       </CardHeader>
-      <CardContent onClick={onClickComponent} className="p-4 pt-0">
-        <div className="flex text-rawmats-primary-300 items-center text-sm mb-2">
-          <PhilippinePeso strokeWidth={2.5} className="w-4 h-4 mr-1" />
-          <span>{price}</span>
+      <CardContent className="p-4 pt-0">
+        <div className="flex justify-between items-center mb-2">
+          <Badge variant="secondary" className="text-rawmats-primary-300">
+            ₱{price.toFixed(2)}
+          </Badge>
+          <div className="flex items-center text-sm text-gray-500">
+            <Star className="w-4 h-4 mr-1 text-yellow-500" />
+            <span>0.0</span>
+          </div>
         </div>
-        <div className="flex items-center text-sm text-gray-500 mb-2">
+        <div className="flex items-center text-sm text-gray-500">
           <Building className="w-4 h-4 mr-1" />
-          <span>{supplier.businessName}</span>
-        </div>
-        <div className="flex items-center text-sm text-gray-500 mb-2">
-          <Star className="w-4 h-4 mr-1 text-yellow-500" />
-          <span>0.0</span>
+          <span className="truncate">{supplier.businessName}</span>
         </div>
       </CardContent>
     </Card>
