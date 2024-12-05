@@ -3,12 +3,13 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import ProductPreviewCard from "./ProductPreviewCard";
 import { Products } from "@/utils/Products";
 
-const ProductCarousel: React.FC<Products> = ({ products }) => {
+const ProductCarousel: React.FC<Products> = ({ products, userId }) => {
   return (
     <ScrollArea className="w-full whitespace-nowrap rounded-md ">
       <div className="flex w-max space-x-4 p-4">
         {products.map((product) => (
           <ProductPreviewCard
+            userId={userId}
             key={product.id}
             id={product.id}
             name={product.name}
