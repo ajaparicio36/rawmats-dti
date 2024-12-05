@@ -64,7 +64,10 @@ export default async function Home({
             Daily Discover
           </h2>
           <div className="font-bold text-rawmats-primary-700 mb-6">
-            <ProductCarousel products={dailyDiscoverProducts} />
+            <ProductCarousel
+              userId={user.id}
+              products={dailyDiscoverProducts}
+            />
           </div>
         </section>
 
@@ -75,6 +78,7 @@ export default async function Home({
           <div className="self-center grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {newArrivalsProducts.map((product) => (
               <ProductPreviewCard
+                userId={user.id}
                 key={product.id}
                 id={product.id}
                 name={product.name}
@@ -92,6 +96,7 @@ export default async function Home({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
             {paginatedProducts.map((product) => (
               <ProductPreviewCard
+                userId={user.id}
                 key={product.id}
                 id={product.id}
                 name={product.name}
