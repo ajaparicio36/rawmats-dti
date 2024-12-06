@@ -93,14 +93,14 @@ const MobileAdminDashboard = ({
         <Image
           src={logo}
           alt="RAWMATS Logo"
-          width={100}
-          height={50}
+          width={150}
+          height={80}
           className="max-w-full h-auto"
         />
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon">
-              <Menu className="h-6 w-6" />
+              <Menu className="h-10 w-10" />
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-64 p-0">
@@ -110,7 +110,7 @@ const MobileAdminDashboard = ({
                 alt="RAWMATS Logo"
                 width={150}
                 height={50}
-                className="max-w-full h-auto self-center"
+                className="max-w-full h-auto ml-8"
               />
             </div>
             <Tabs
@@ -130,11 +130,11 @@ const MobileAdminDashboard = ({
                 </TabsTrigger>
               </TabsList>
             </Tabs>
-            <div className="p-4 border-t">
+            <div className="p-4 border-t mt-auto">
               <Button
                 onClick={handleSync}
                 variant="secondary"
-                className="w-full mb-2"
+                className="w-full mb-2 bg-rawmats-primary-100 hover:bg-rawmats-primary-500 text-white"
                 disabled={isSyncing}
               >
                 {isSyncing ? "Syncing..." : "Sync to Algolia"}

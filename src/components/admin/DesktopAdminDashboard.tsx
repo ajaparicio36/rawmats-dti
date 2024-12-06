@@ -90,7 +90,7 @@ const DesktopAdminDashboard = ({
   return (
     <div className="flex h-screen w-full bg-background">
       <aside className="flex flex-col w-1/5 min-w-[240px] max-w-[270px] bg-card border-r">
-        <div className="p-4 border-b self-center">
+        <div className="p-4 self-center">
           <Image
             src={logo}
             alt="RAWMATS Logo"
