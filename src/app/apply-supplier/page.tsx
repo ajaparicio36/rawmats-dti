@@ -1,32 +1,14 @@
 import React, { Suspense } from "react";
-import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/utils/prisma/client";
-
-const DesktopSignup = dynamic(
-  () => import("@/components/ApplySupplier/DesktopSignup"),
-  {
-    loading: () => <p>Loading desktop signup...</p>,
-    ssr: true,
-  },
-);
-
-const MobileSignup = dynamic(
-  () => import("@/components/ApplySupplier/MobileSignup"),
-  {
-    loading: () => <p>Loading mobile signup...</p>,
-    ssr: true,
-  },
-);
-
-const API_KEY = process.env.GOOGLE_MAPS_API_KEY as string;
-const mapId = process.env.GOOGLE_MAPS_MAP_ID as string;
+import DesktopSignup from "@/components/ApplySupplier/DesktopSignup";
+import MobileSignup from "@/components/ApplySupplier/MobileSignup";
 
 export default async function ApplySupplier() {
   const supabase = await createClient();
-
   const { data, error } = await supabase.auth.getUser();
+
   if (error || !data?.user) {
     redirect("/login");
   }
@@ -40,6 +22,9 @@ export default async function ApplySupplier() {
   if (applicationSent) {
     redirect("/");
   }
+
+  const API_KEY = process.env.GOOGLE_MAPS_API_KEY as string;
+  const mapId = process.env.GOOGLE_MAPS_MAP_ID as string;
 
   return (
     <div className="h-screen w-screen flex flex-col">
