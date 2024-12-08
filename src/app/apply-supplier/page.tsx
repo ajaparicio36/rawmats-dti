@@ -1,9 +1,9 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/utils/prisma/client";
-import DesktopSignup from "@/components/ApplySupplier/DesktopSignup";
-import MobileSignup from "@/components/ApplySupplier/MobileSignup";
+import DynamicScreen from "@/components/AuthComponents/DynamicScreen";
+import SupplierForm from "@/components/ApplySupplier/SupplierForm";
 
 export default async function ApplySupplier() {
   const supabase = await createClient();
@@ -27,15 +27,12 @@ export default async function ApplySupplier() {
   const mapId = process.env.GOOGLE_MAPS_MAP_ID as string;
 
   return (
-    <div className="h-screen w-screen flex flex-col">
-      <Suspense fallback={<div>Loading...</div>}>
-        <div className="hidden md:block">
-          <DesktopSignup apiKey={API_KEY} mapId={mapId} user={data.user} />
-        </div>
-        <div className="md:hidden w-full h-screen">
-          <MobileSignup apiKey={API_KEY} mapId={mapId} user={data.user} />
-        </div>
-      </Suspense>
-    </div>
+    <DynamicScreen
+      header="Connect. Collaborate. Succeed."
+      message="Your trusted partner in business registration!"
+      body={<SupplierForm apiKey={API_KEY} mapId={mapId} user={data.user} />}
+      user={data.user}
+      isSupplierForm={true}
+    />
   );
 }
