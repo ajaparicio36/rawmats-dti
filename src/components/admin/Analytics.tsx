@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -7,8 +8,31 @@ import {
   CardTitle,
 } from "../ui/card";
 import { DatePickerWithRange } from "../ui/date-range-picker";
+import useSWR from "swr";
+import { format, subDays } from "date-fns";
+import { DateRange } from "react-day-picker";
+
+const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export default function Analytics() {
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: subDays(new Date(), 30),
+    to: new Date(),
+  });
+  console.log(date);
+
+  const range = date
+    ? `${format(date.from || new Date(), "yyyy-MM-dd")},${format(
+        date.to || new Date(),
+        "yyyy-MM-dd",
+      )}`
+    : null;
+  const { data } = useSWR(
+    `/api/analytics${range ? "?range=" + range : ""}`,
+    fetcher,
+  );
+  console.log(data);
+
   return (
     <>
       <div className="flex-col flex">
@@ -16,8 +40,24 @@ export default function Analytics() {
           <div className="flex items-center justify-between space-y-2 flex-col lg:flex-row">
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
             <div className="flex items-center space-x-2">
-              <DatePickerWithRange />
-              <Button>Download</Button>
+              <DatePickerWithRange date={date} setDate={setDate} />
+              {date ? (
+                <Button onClick={() => setDate(undefined)}>Lifetime</Button>
+              ) : (
+                <Button
+                  onClick={() =>
+                    setDate({
+                      from: subDays(new Date(), 30),
+                      to: new Date(),
+                    })
+                  }
+                >
+                  This month
+                </Button>
+              )}
+              <Button className="bg-green-700 hover:bg-green-800">
+                Download
+              </Button>
             </div>
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
