@@ -1,17 +1,11 @@
 import { useState } from "react";
 import { Button } from "../ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { DatePickerWithRange } from "../ui/date-range-picker";
 import useSWR from "swr";
 import { format, subDays } from "date-fns";
 import { DateRange } from "react-day-picker";
-import { UserCog, Users } from "lucide-react";
+import { PackageSearch, UserCog, Users } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -61,34 +55,59 @@ export default function Analytics() {
     fetcher,
   );
 
+  const {
+    data: products,
+    error: productError,
+    isLoading: productLoading,
+  } = useSWR<{ verified: number; notVerified: number }>(
+    `/api/analytics/products${range ? "?range=" + range : ""}`,
+    fetcher,
+  );
+
+  const {
+    data: topSuppliers,
+    error: topSupplierError,
+    isLoading: topSupplierLoading,
+  } = useSWR<
+    {
+      productCount: number;
+      businessName: string | undefined;
+      businessLocation: string | undefined;
+    }[]
+  >(`/api/analytics/top-suppliers${range ? "?range=" + range : ""}`, fetcher);
+
+  console.log(topSuppliers);
+
   return (
     <>
       <div className="flex-col flex">
         <div className="flex-1 space-y-6">
           <div className="flex items-center justify-between space-y-2 flex-col lg:flex-row">
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-            <div className="flex items-center space-x-2">
-              <DatePickerWithRange date={date} setDate={setDate} />
-              {range ? (
-                <Button onClick={() => setDate(undefined)}>Lifetime</Button>
-              ) : (
-                <Button
-                  onClick={() =>
-                    setDate({
-                      from: subDays(new Date(), 30),
-                      to: new Date(),
-                    })
-                  }
-                >
-                  This month
-                </Button>
-              )}
+            <div className="flex flex-col lg:flex-row justify-center items-center space-y-2 lg:space-y-0 lg:space-x-2">
+              <div className="flex flex-row gap-2">
+                <DatePickerWithRange date={date} setDate={setDate} />
+                {range ? (
+                  <Button onClick={() => setDate(undefined)}>Lifetime</Button>
+                ) : (
+                  <Button
+                    onClick={() =>
+                      setDate({
+                        from: subDays(new Date(), 30),
+                        to: new Date(),
+                      })
+                    }
+                  >
+                    This month
+                  </Button>
+                )}
+              </div>
               <Button className="bg-green-700 hover:bg-green-800">
                 Download
               </Button>
             </div>
           </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Users</CardTitle>
@@ -101,10 +120,10 @@ export default function Analytics() {
                   <div className="text-2xl font-bold">
                     Failed to load, try again later
                   </div>
-                ) : newUsers ? (
+                ) : newUsers !== undefined ? (
                   <>
                     <div className="text-2xl font-bold">{newUsers} </div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs lg:text-sm text-muted-foreground">
                       {range
                         ? `new user${newUsers !== 1 ? "s" : ""} from the specified range`
                         : `total user${newUsers !== 1 ? "s" : ""}`}
@@ -131,13 +150,13 @@ export default function Analytics() {
                   <>
                     <div className="text-2xl font-bold">
                       {suppliers.verified}{" "}
-                      <span className="text-base font-normal">
+                      <span className="text-sm lg:text-base font-normal">
                         supplier{suppliers.verified !== 1 ? "s" : ""} verified
                       </span>
                     </div>
                     <div className="text-2xl font-bold">
                       {suppliers.notVerified}{" "}
-                      <span className="text-base font-normal">
+                      <span className="text-sm lg:text-base font-normal">
                         supplier{suppliers.notVerified !== 1 ? "s" : ""} not
                         verified
                       </span>
@@ -150,69 +169,88 @@ export default function Analytics() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Sales</CardTitle>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  className="h-4 w-4 text-muted-foreground"
-                >
-                  <rect width="20" height="14" x="2" y="5" rx="2" />
-                  <path d="M2 10h20" />
-                </svg>
+                <CardTitle className="text-sm font-medium">Products</CardTitle>
+                <PackageSearch className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">+12,234</div>
-                <p className="text-xs text-muted-foreground">
-                  +19% from last month
-                </p>
+                {productLoading ? (
+                  <Loader />
+                ) : productError ? (
+                  <div className="text-2xl font-bold">
+                    Failed to load, try again later
+                  </div>
+                ) : products ? (
+                  <>
+                    <div className="text-2xl font-bold">
+                      {products.verified}{" "}
+                      <span className="text-sm lg:text-base font-normal">
+                        product{products.verified !== 1 ? "s" : ""} verified
+                      </span>
+                    </div>
+                    <div className="text-2xl font-bold">
+                      {products.notVerified}{" "}
+                      <span className="text-sm lg:text-base font-normal">
+                        product{products.notVerified !== 1 ? "s" : ""} not
+                        verified
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-2xl font-bold">No data available</div>
+                )}
               </CardContent>
             </Card>
-            <Card>
+            <Card className="col-span-1 md:col-span-2">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Active Now
+                <CardTitle className="text-lg font-bold flex flex-col md:flex-row md:items-center md:gap-3 mb-2">
+                  Top Suppliers
+                  <div className="font-medium text-xs lg:text-sm text-muted-foreground">
+                    {range
+                      ? `from the specified range`
+                      : `lifetime top suppliers`}
+                  </div>
                 </CardTitle>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  className="h-4 w-4 text-muted-foreground"
-                >
-                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                </svg>
+                <div className="text-sm font-medium text-right">
+                  Product Count
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">+573</div>
-                <p className="text-xs text-muted-foreground">
-                  +201 since last hour
-                </p>
+                {topSupplierLoading ? (
+                  <Loader />
+                ) : topSupplierError ? (
+                  <div className="text-2xl font-bold">
+                    Failed to load, try again later
+                  </div>
+                ) : topSuppliers && topSuppliers.length > 0 ? (
+                  <div className="space-y-4">
+                    {topSuppliers.map((supplier, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between"
+                      >
+                        <div className="flex-grow">
+                          <div className="flex items-center space-x-2 font-medium text-base">
+                            <span>{index + 1}.</span>
+                            <span>{supplier.businessName}</span>
+                          </div>
+                          <a
+                            className="block text-sm text-muted-foreground underline"
+                            href={supplier.businessLocation}
+                            target="_blank"
+                          >
+                            {supplier.businessLocation}
+                          </a>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-medium">{supplier.productCount}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-2xl font-bold">No data available</div>
+                )}
               </CardContent>
-            </Card>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-4">
-              <CardHeader>
-                <CardTitle>Overview</CardTitle>
-              </CardHeader>
-              <CardContent className="pl-2">{/* <Overview /> */}</CardContent>
-            </Card>
-            <Card className="col-span-3">
-              <CardHeader>
-                <CardTitle>Recent Sales</CardTitle>
-                <CardDescription>
-                  You made 265 sales this month.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>{/* <RecentSales /> */}</CardContent>
             </Card>
           </div>
         </div>
