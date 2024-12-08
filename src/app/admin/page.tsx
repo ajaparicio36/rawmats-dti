@@ -37,6 +37,7 @@ const AdminDashboard = async () => {
     },
   });
 
+  // redirect if user is not an admin
   if (isAdmin && isAdmin.role !== "ADMIN") {
     redirect("/");
   }
