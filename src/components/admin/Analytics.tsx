@@ -11,15 +11,30 @@ import { DatePickerWithRange } from "../ui/date-range-picker";
 import useSWR from "swr";
 import { format, subDays } from "date-fns";
 import { DateRange } from "react-day-picker";
+import { UserCog, Users } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
+
+function Loader() {
+  return (
+    <div className="flex flex-row gap-2 items-center">
+      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+      <p className="text-lg font-bold">Loading</p>
+    </div>
+  );
+}
 
 export default function Analytics() {
   const [date, setDate] = useState<DateRange | undefined>({
     from: subDays(new Date(), 30),
     to: new Date(),
   });
-  console.log(date);
 
   const range = date
     ? `${format(date.from || new Date(), "yyyy-MM-dd")},${format(
@@ -27,11 +42,24 @@ export default function Analytics() {
         "yyyy-MM-dd",
       )}`
     : null;
-  const { data } = useSWR(
-    `/api/analytics${range ? "?range=" + range : ""}`,
+
+  const {
+    data: newUsers,
+    error: newUserError,
+    isLoading: newUserLoading,
+  } = useSWR<number>(
+    `/api/analytics/new-users${range ? "?range=" + range : ""}`,
     fetcher,
   );
-  console.log(data);
+
+  const {
+    data: suppliers,
+    error: supplierError,
+    isLoading: supplierLoading,
+  } = useSWR<{ verified: number; notVerified: number }>(
+    `/api/analytics/suppliers${range ? "?range=" + range : ""}`,
+    fetcher,
+  );
 
   return (
     <>
@@ -41,7 +69,7 @@ export default function Analytics() {
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
             <div className="flex items-center space-x-2">
               <DatePickerWithRange date={date} setDate={setDate} />
-              {date ? (
+              {range ? (
                 <Button onClick={() => setDate(undefined)}>Lifetime</Button>
               ) : (
                 <Button
@@ -63,54 +91,61 @@ export default function Analytics() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Total Revenue
-                </CardTitle>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  className="h-4 w-4 text-muted-foreground"
-                >
-                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                </svg>
+                <CardTitle className="text-sm font-medium">Users</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">$45,231.89</div>
-                <p className="text-xs text-muted-foreground">
-                  +20.1% from last month
-                </p>
+                {newUserLoading ? (
+                  <Loader />
+                ) : newUserError ? (
+                  <div className="text-2xl font-bold">
+                    Failed to load, try again later
+                  </div>
+                ) : newUsers ? (
+                  <>
+                    <div className="text-2xl font-bold">{newUsers} </div>
+                    <p className="text-xs text-muted-foreground">
+                      {range
+                        ? `new user${newUsers !== 1 ? "s" : ""} from the specified range`
+                        : `total user${newUsers !== 1 ? "s" : ""}`}
+                    </p>
+                  </>
+                ) : (
+                  <div className="text-2xl font-bold">No data available</div>
+                )}
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Subscriptions
-                </CardTitle>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  className="h-4 w-4 text-muted-foreground"
-                >
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
+                <CardTitle className="text-sm font-medium">Suppliers</CardTitle>
+                <UserCog className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">+2350</div>
-                <p className="text-xs text-muted-foreground">
-                  +180.1% from last month
-                </p>
+                {supplierLoading ? (
+                  <Loader />
+                ) : supplierError ? (
+                  <div className="text-2xl font-bold">
+                    Failed to load, try again later
+                  </div>
+                ) : suppliers ? (
+                  <>
+                    <div className="text-2xl font-bold">
+                      {suppliers.verified}{" "}
+                      <span className="text-base font-normal">
+                        supplier{suppliers.verified !== 1 ? "s" : ""} verified
+                      </span>
+                    </div>
+                    <div className="text-2xl font-bold">
+                      {suppliers.notVerified}{" "}
+                      <span className="text-base font-normal">
+                        supplier{suppliers.notVerified !== 1 ? "s" : ""} not
+                        verified
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-2xl font-bold">No data available</div>
+                )}
               </CardContent>
             </Card>
             <Card>
