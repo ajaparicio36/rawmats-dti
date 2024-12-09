@@ -113,7 +113,7 @@ export default function Analytics() {
           <div className="flex items-center justify-between space-y-2 flex-col lg:flex-row">
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
             <div className="flex flex-col lg:flex-row justify-center items-center space-y-2 lg:space-y-0 lg:space-x-2">
-              <div className="flex flex-row gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <DatePickerWithRange date={date} setDate={setDate} />
                 {range ? (
                   <Button onClick={() => setDate(undefined)}>Lifetime</Button>

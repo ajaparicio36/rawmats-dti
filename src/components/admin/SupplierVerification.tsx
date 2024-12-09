@@ -101,20 +101,22 @@ export function SupplierVerification({
   };
 
   return (
-    <ScrollArea>
+    <ScrollArea className="h-full">
       {suppliers.map((supplier) => (
         <Card className="my-3" key={supplier.id}>
           <CardHeader>
-            <CardTitle className="text-3xl">{supplier.businessName}</CardTitle>
+            <CardTitle className="text-xl md:text-3xl">
+              {supplier.businessName}
+            </CardTitle>
             <div className="flex flex-col gap-2 text-muted-foreground">
-              <div className="flex flex-row gap-2 items-center text-base">
-                <UserRound />
+              <div className="flex flex-row gap-2 items-center text-sm md:text-base">
+                <UserRound className="size-4 sm:size-5 md:size-6" />
                 {supplier.user.displayName}
               </div>
-              <div className="flex flex-row gap-2 items-center text-base">
-                <MapPin />
+              <div className="flex flex-row gap-2 items-center text-[10px] md:text-base">
+                <MapPin className="size-4 sm:size-5 md:size-6 shrink-0" />
                 <a
-                  className="underline"
+                  className="underline shrink"
                   href={supplier.businessLocation}
                   target="_blank"
                 >
@@ -124,8 +126,8 @@ export function SupplierVerification({
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-lg">Business Documents:</p>
-            <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4">
+            <p className="text-base md:text-lg">Business Documents:</p>
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
               {(!files[supplier.userId] ||
                 files[supplier.userId].length === 0) && (
                 <Skeleton className="h-[300px] w-[450px] rounded-lg" />
