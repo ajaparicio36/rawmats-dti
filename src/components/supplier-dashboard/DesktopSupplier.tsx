@@ -7,7 +7,11 @@ import ProductListingForm from "@/components/supplier-dashboard/contents/Product
 import ProductList from "@/components/supplier-dashboard/contents/ProductList";
 import { useState } from "react";
 import { Product } from "@/types/types";
-import {CubeIcon, FolderOpenIcon, BellIcon, HomeIcon,
+import {
+  CubeIcon,
+  FolderOpenIcon,
+  BellIcon,
+  HomeIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
@@ -58,17 +62,16 @@ const DesktopSupplier = ({
           className="flex flex-col mt-20"
         >
           <TabsList className="flex flex-col items-start bg-transparent mt-10">
-            <TabsTrigger
-              value="home"
+            <Link
+              href="/"
               className="flex items-center justify-start text-left hover:bg-white hover:text-[#034169] rounded-md px-6 py-2 w-full transition-all mb-3"
             >
-              <Link href="/" passHref>
-                <div className="flex items-center">
-                  <HomeIcon className="mr-2 h-5 w-5" />
-                  <span className="text-[#034169]">Home</span>
-                </div>
-              </Link>
-            </TabsTrigger>
+              <div className="flex items-center">
+                <HomeIcon className="mr-2 h-5 w-5" />
+                <span className="text-[#034169]">Home</span>
+              </div>
+            </Link>
+
             <TabsTrigger
               value="products"
               className="flex items-center justify-start text-left hover:bg-white hover:text-[#034169] rounded-md px-6 py-2 w-full transition-all mb-3"

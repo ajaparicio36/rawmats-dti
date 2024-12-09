@@ -87,7 +87,7 @@ export default function ProductListingForm({
       <div className="fixed bottom-4 right-4 z-20">
         <Button
           onClick={() => setShowForm(true)}
-          className="bg-blue-500 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600"
+          className="bg-blue-300 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-500"
           aria-label="Add New Product"
         >
           <svg
@@ -197,7 +197,7 @@ export default function ProductListingForm({
                 </Button>
                 <Button
                   type="submit"
-                  className="bg-green-500 text-white"
+                  className="bg-blue-300 text-white"
                   disabled={loading}
                 >
                   {loading ? "Submitting..." : "Submit"}
