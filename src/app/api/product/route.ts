@@ -21,12 +21,6 @@ export const GET = async () => {
   }
 };
 
-// export const GET = async () => {
-//   // This route gets ALL products
-//   // Use prisma to retrieve data AND include supplier data to get supplier business name
-//   // We will limit it to supplier name only, so we can save bandwidth
-// };
-
 export const POST = async (req: NextRequest) => {
   try {
     const body = await req.json();
