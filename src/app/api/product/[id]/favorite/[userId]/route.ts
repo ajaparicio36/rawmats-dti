@@ -46,7 +46,7 @@ export const POST = async (
       },
     });
 
-    return NextResponse.json(favorite, { status: 200 });
+    return NextResponse.json({ favorite }, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ status: 400 });
