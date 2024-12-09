@@ -7,12 +7,14 @@ import ProductListingForm from "@/components/supplier-dashboard/contents/Product
 import ProductList from "@/components/supplier-dashboard/contents/ProductList";
 import { useState } from "react";
 import { Product } from "@/types/types";
-import {CubeIcon, FolderOpenIcon, BellIcon, HomeIcon} from "@heroicons/react/24/outline";
+import {CubeIcon, FolderOpenIcon, BellIcon, HomeIcon,
+} from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 const DesktopSupplier = ({
   fetchedProducts,
   userID,
+  supplierName,
 }: {
   fetchedProducts: {
     id: string;
@@ -26,6 +28,7 @@ const DesktopSupplier = ({
     image?: string;
   }[];
   userID: string;
+  supplierName: string;
 }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [tabValue, setTabValue] = useState("products");
@@ -39,10 +42,12 @@ const DesktopSupplier = ({
       <div className="w-64 bg-[#B9EBFC] p-4 sticky top-0 left-0 h-screen shadow-2xl bg-opacity-50 z-10">
         <div className="flex flex-col items-center mb-6">
           <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center mt-10">
-            <span className="text-xl font-bold text-white">A</span>
+            <span className="text-xl font-bold text-white">
+              {supplierName.charAt(0).toUpperCase()}
+            </span>
           </div>
           <h2 className="mt-4 text-lg font-semibold text-[#034169]">
-            {/* Welcome, {supplierName}! */}
+            Welcome, {supplierName}!
           </h2>
           <p className="text-sm text-[#034169]">RawMats Supplier</p>
         </div>

@@ -13,6 +13,7 @@ import Link from "next/link";
 const MobileSupplier = ({
   fetchedProducts,
   userID,
+  supplierName,
 }: {
   fetchedProducts: {
     id: string;
@@ -26,7 +27,7 @@ const MobileSupplier = ({
     image?: string;
   }[];
   userID: string;
-  // supplierName: string;
+  supplierName: string;
 }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [tabValue, setTabValue] = useState("create-listing");
@@ -61,7 +62,7 @@ const MobileSupplier = ({
             <TabsList className="fixed bottom-0 left-0 right-0 p-6 bg-[#B9EBFC] shadow-lg md:hidden flex items-center justify-between space-x-6">
               <div className="flex flex-col items-center">
                 <Link href="/" passHref>
-                  <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center hover:bg-gray-400">
+                  <div className="w-10 h-10 flex items-center justify-center hover:bg-gray-400">
                     <HomeIcon className="h-6 w-6 text-gray-700 hover:text-gray-900" />
                   </div>
                 </Link>
@@ -86,6 +87,17 @@ const MobileSupplier = ({
                 className="flex flex-col items-center space-y-1"
               >
                 <BellIcon className="h-6 w-6 text-gray-700 hover:text-gray-900" />
+              </TabsTrigger>
+
+              <TabsTrigger
+                value="profile"
+                className="flex flex-col items-center space-y-1"
+              >
+                <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center hover:bg-gray-400">
+                  <span className="text-xl font-bold text-white">
+                    {supplierName.charAt(0).toUpperCase()}
+                  </span>
+                </div>
               </TabsTrigger>
             </TabsList>
           </Tabs>
