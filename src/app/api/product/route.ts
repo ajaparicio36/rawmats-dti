@@ -54,17 +54,12 @@ export const POST = async (req: NextRequest) => {
 
     revalidatePath("/", "layout");
     return NextResponse.json(product, { status: 201 });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Error creating product:", error.message);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    } else {
-      console.error("Unexpected error:", error);
-      return NextResponse.json(
-        { error: "An unexpected error occurred." },
-        { status: 500 }
-      );
-    }
+  } catch (error) {
+    console.error("Error creating product:", error);
+    return NextResponse.json(
+      { error: "An unexpected error occurred while creating the product." },
+      { status: 500 },
+    );
   }
 };
 
