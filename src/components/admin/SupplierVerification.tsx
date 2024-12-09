@@ -20,7 +20,7 @@ export function SupplierVerification({
 }: {
   suppliers: (Supplier & { user: User })[];
 }) {
-  const [files, setFiles] = useState<(string | null)[]>([]);
+  const [files, setFiles] = useState<Record<string, string[]>>({});
   const [isLoading, setIsLoading] = useState<{
     status: boolean;
     method: null | "verify" | "reject";
@@ -28,17 +28,21 @@ export function SupplierVerification({
 
   useEffect(() => {
     const fetchFiles = async () => {
+      const filesMap: Record<string, string[]> = {}; // Define the type for filesMap
+
       await Promise.all(
         suppliers.map(async (supplier) => {
-          const files = await retrieveFile(supplier.userId);
+          const rawFiles = await retrieveFile(supplier.userId);
 
-          if (!files) {
-            setFiles([]);
-          } else {
-            setFiles(files);
-          }
+          const filteredFiles = (rawFiles || []).filter(
+            (file): file is string => file !== null,
+          ); // Remove nulls
+
+          filesMap[supplier.userId] = filteredFiles;
         }),
       );
+
+      setFiles(filesMap);
     };
 
     fetchFiles();
@@ -122,10 +126,11 @@ export function SupplierVerification({
           <CardContent>
             <p className="text-lg">Business Documents:</p>
             <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4">
-              {files.length === 0 && (
+              {(!files[supplier.userId] ||
+                files[supplier.userId].length === 0) && (
                 <Skeleton className="h-[300px] w-[450px] rounded-lg" />
               )}
-              {files.map((file, index) =>
+              {files[supplier.userId]?.map((file, index) =>
                 file ? (
                   <Image
                     key={index}
