@@ -76,7 +76,35 @@ export default function Analytics() {
     }[]
   >(`/api/analytics/top-suppliers${range ? "?range=" + range : ""}`, fetcher);
 
-  console.log(topSuppliers);
+  const handleDownload = async () => {
+    const response = await fetch("/api/analytics/download", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        dateRequested: new Date().toLocaleString(),
+        range: range ?? "lifetime",
+        newUsers: newUsers ?? 0,
+        suppliers: suppliers,
+        products: products,
+        topSuppliers: topSuppliers,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("Failed to download file");
+      return;
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `rawmats_analytics_${new Date().toISOString()}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
 
   return (
     <>
@@ -102,7 +130,10 @@ export default function Analytics() {
                   </Button>
                 )}
               </div>
-              <Button className="bg-green-700 hover:bg-green-800">
+              <Button
+                onClick={handleDownload}
+                className="bg-green-700 hover:bg-green-800"
+              >
                 Download
               </Button>
             </div>
