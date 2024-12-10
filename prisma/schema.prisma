@@ -14,16 +14,17 @@ datasource db {
 }
 
 model User {
-  id             String     @id @default(cuid())
-  email          String     @unique
+  id             String         @id @default(cuid())
+  email          String         @unique
   displayName    String
-  profilePicture String     @default("/users/default.jpg")
-  phoneNumber    String     @default("None")
-  role           Role       @default(USER)
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  profilePicture String         @default("/users/default.jpg")
+  phoneNumber    String         @default("None")
+  role           Role           @default(USER)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   supplier       Supplier? // Optional because not every user is a supplier
   favorites      Favorite[] // One user can have many favorites
+  notifications  Notification[]
 }
 
 enum Role {
@@ -76,4 +77,13 @@ model Album {
   name        String
   description String
   favorites   Favorite[] // An album can contain many favorites
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  content   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
 }
