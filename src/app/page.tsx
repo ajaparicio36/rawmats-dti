@@ -33,11 +33,12 @@ export default async function Home({
   }
 
   const supplier = await prisma.supplier.findUnique({
-    where: { userId: user.id },
+    where: { userId: user.id, verified: true },
   });
 
   const allProducts: ProductWithSupplier[] = await prisma.product.findMany({
     include: { supplier: true },
+    where: { verified: true },
     orderBy: { dateAdded: "desc" },
     where: { verified: true },
   });

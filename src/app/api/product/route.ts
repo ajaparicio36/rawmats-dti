@@ -16,7 +16,7 @@ export const GET = async () => {
     console.error("Error fetching products:", error);
     return NextResponse.json(
       { error: "Failed to fetch products" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 };
@@ -32,7 +32,7 @@ export const POST = async (req: NextRequest) => {
           error:
             "Missing required fields: name, description, price, or supplierId",
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -53,6 +53,39 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json(
       { error: "An unexpected error occurred while creating the product." },
       { status: 500 },
+    );
+  }
+};
+
+export const DELETE = async (req: NextRequest) => {
+  try {
+    const { id } = await req.json();
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Product ID is required" },
+        { status: 400 }
+      );
+    }
+
+    await prisma.favorite.deleteMany({
+      where: { productId: id },
+    });
+
+    await prisma.product.delete({
+      where: { id },
+    });
+
+    revalidatePath("/", "layout");
+    return NextResponse.json(
+      { message: "Product deleted successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    return NextResponse.json(
+      { error: "Failed to delete product" },
+      { status: 500 }
     );
   }
 };
