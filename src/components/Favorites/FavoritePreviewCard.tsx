@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -43,43 +42,32 @@ const FavoritePreviewCard: React.FC<FavoritePreviewCardProps> = ({
   supplier,
   price,
   albums,
+  image,
 }) => {
   const router = useRouter();
-  const [imageUrl, setImageUrl] = useState<string>("/products/default.jpg");
-  const [imageError, setImageError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [locationName, setLocationName] = useState<string>("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [imageError, setImageError] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [imageResponse, locationResponse] = await Promise.all([
-          fetch(`/api/product/${id}/image`, { next: { revalidate: 3600 } }),
-          fetch(`/api/supplier/location`, {
-            method: "POST",
-            body: JSON.stringify({ locationLink: supplier.businessLocation }),
-          }),
-        ]);
-
-        if (!imageResponse.ok) throw new Error("Failed to fetch image");
+        const locationResponse = await fetch(`/api/supplier/location`, {
+          method: "POST",
+          body: JSON.stringify({ locationLink: supplier.businessLocation }),
+        });
         if (!locationResponse.ok) throw new Error("Failed to fetch location");
-
-        const imageData = await imageResponse.json();
         const { locationName } = await locationResponse.json();
-
-        setImageUrl(imageData.publicUrl);
         setLocationName(locationName || supplier.businessLocation);
       } catch (error) {
         console.error("Error fetching data:", error);
-        setImageError(true);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
-  }, [id, supplier.businessLocation]);
+  }, [supplier.businessLocation]);
 
   const handleRemoveFavorite = async () => {
     setIsAlertOpen(true);
@@ -113,7 +101,7 @@ const FavoritePreviewCard: React.FC<FavoritePreviewCardProps> = ({
           <Skeleton className="h-full w-full" />
         ) : (
           <Image
-            src={imageError ? "/products/default.jpg" : imageUrl}
+            src={imageError ? "/products/default.jpg" : image}
             alt={name}
             layout="fill"
             objectFit="cover"
