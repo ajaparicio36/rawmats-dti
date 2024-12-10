@@ -170,8 +170,6 @@
 //   );
 // }
 
-
-
 "use client";
 
 import { useState } from "react";
@@ -208,7 +206,7 @@ export default function ProductListingForm({
 
       if (image) {
         const fileName = `${supplierId}-${productName}-${Date.now()}`;
-        imagePath = "/" + (await uploadProductImage(image, fileName));
+        imagePath = await uploadProductImage(image, fileName);
       }
 
       const response = await fetch("/api/product", {
@@ -355,9 +353,3 @@ export default function ProductListingForm({
     </>
   );
 }
-
-
-
-
-
-

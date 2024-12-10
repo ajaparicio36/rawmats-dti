@@ -39,6 +39,7 @@ export default async function Home({
   const allProducts: ProductWithSupplier[] = await prisma.product.findMany({
     include: { supplier: true },
     orderBy: { dateAdded: "desc" },
+    where: { verified: true },
   });
 
   const dailyDiscoverProducts = allProducts.slice(0, 8);

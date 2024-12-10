@@ -47,23 +47,6 @@ const SupplierDashboard = async () => {
     },
   });
 
-  for (const product of products) {
-    const { data, error } = await supabase.storage
-      .from("photos")
-      .createSignedUrl(`${product.image}`, 3600);
-
-    if (error) {
-      console.error(
-        "Error fetching signed URL for product image:",
-        error.message,
-      );
-    }
-
-    if (data) {
-      product.image = data.signedUrl;
-    }
-  }
-
   return (
     <div className="w-full min-h-screen flex items-center justify-center">
       <Suspense fallback={<div>Loading...</div>}>
