@@ -40,7 +40,6 @@ export default async function Home({
     include: { supplier: true },
     where: { verified: true },
     orderBy: { dateAdded: "desc" },
-    where: { verified: true },
   });
 
   const dailyDiscoverProducts = allProducts.slice(0, 8);
