@@ -16,7 +16,7 @@ export const GET = async () => {
     console.error("Error fetching products:", error);
     return NextResponse.json(
       { error: "Failed to fetch products" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };
@@ -25,14 +25,13 @@ export const POST = async (req: NextRequest) => {
   try {
     const body = await req.json();
     const { name, description, price, supplierId, image } = body;
-
     if (!name || !description || !price || !supplierId) {
       return NextResponse.json(
         {
           error:
             "Missing required fields: name, description, price, or supplierId",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -45,7 +44,6 @@ export const POST = async (req: NextRequest) => {
         image,
       },
     });
-
     revalidatePath("/", "layout");
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
@@ -64,7 +62,7 @@ export const DELETE = async (req: NextRequest) => {
     if (!id) {
       return NextResponse.json(
         { error: "Product ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -79,13 +77,13 @@ export const DELETE = async (req: NextRequest) => {
     revalidatePath("/", "layout");
     return NextResponse.json(
       { message: "Product deleted successfully" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error deleting product:", error);
     return NextResponse.json(
       { error: "Failed to delete product" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };
