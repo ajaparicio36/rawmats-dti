@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { User, Supplier } from "@prisma/client";
+import { useRouter } from "next/navigation";
 import SearchModal from "./SearchModal";
 import { SheetMenu } from "./SheetMenu";
 
@@ -13,13 +14,17 @@ interface NavbarProps {
 }
 
 export default function NavBar({ user, supplier }: NavbarProps) {
+  const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
     <nav className="w-full bg-rawmats-secondary-700 border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-center py-4">
-          <h1 className="text-3xl text-white">
+          <h1
+            onClick={() => router.push("/")}
+            className="text-3xl px-2 py-1 rounded-md text-white hover:cursor-pointer hover:bg-rawmats-secondary-900"
+          >
             <span className="font-bold">RAW</span>MATS
           </h1>
         </div>

@@ -25,7 +25,6 @@ export const POST = async (req: NextRequest) => {
   try {
     const body = await req.json();
     const { name, description, price, supplierId, image } = body;
-
     if (!name || !description || !price || !supplierId) {
       return NextResponse.json(
         {
@@ -45,7 +44,6 @@ export const POST = async (req: NextRequest) => {
         image,
       },
     });
-
     revalidatePath("/", "layout");
     return NextResponse.json(product, { status: 201 });
   } catch (error) {

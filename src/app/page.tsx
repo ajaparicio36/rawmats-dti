@@ -73,6 +73,7 @@ export default async function Home({
                 name={product.name}
                 price={product.price}
                 supplier={product.supplier}
+                image={product.image}
               />
             ))}
           </div>
@@ -90,6 +91,7 @@ export default async function Home({
                 name={product.name}
                 price={product.price}
                 supplier={product.supplier}
+                image={product.image}
               />
             ))}
           </div>
