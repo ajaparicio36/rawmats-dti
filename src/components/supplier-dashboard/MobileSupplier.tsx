@@ -7,7 +7,12 @@ import ProductListingForm from "@/components/supplier-dashboard/contents/Product
 import ProductList from "@/components/supplier-dashboard/contents/ProductList";
 import { useState } from "react";
 import { Product } from "@/types/types";
-import {CubeIcon, FolderOpenIcon, BellIcon, HomeIcon} from "@heroicons/react/24/outline";
+import {
+  CubeIcon,
+  FolderOpenIcon,
+  BellIcon,
+  HomeIcon,
+} from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 const MobileSupplier = ({

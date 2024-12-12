@@ -10,7 +10,7 @@ const DesktopSupplier = dynamic(
   {
     loading: () => <p>Loading desktop supplier dashboard...</p>,
     ssr: true,
-  }
+  },
 );
 
 const MobileSupplier = dynamic(
@@ -18,7 +18,7 @@ const MobileSupplier = dynamic(
   {
     loading: () => <p>Loading mobile supplier dashboard...</p>,
     ssr: true,
-  }
+  },
 );
 
 const SupplierDashboard = async () => {
@@ -58,7 +58,7 @@ const SupplierDashboard = async () => {
     if (error) {
       console.error(
         "Error fetching signed URL for product image:",
-        error.message
+        error.message,
       );
     }
 

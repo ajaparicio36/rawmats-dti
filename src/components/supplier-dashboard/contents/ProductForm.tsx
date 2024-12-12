@@ -169,7 +169,7 @@ export default function ProductListingForm({
                   onChange={(e) => setLongDescription(e.target.value)}
                   placeholder="Detailed description of the product"
                   className="border rounded-md w-full p-2 max-h-[50px]"
-                  rows={3} 
+                  rows={3}
                   required
                 />
               </div>
