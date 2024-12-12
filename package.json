@@ -7,10 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky",
-    "test": "jest"
+    "prepare": "husky"
   },
   "dependencies": {
+    "@algolia/client-search": "^5.15.0",
     "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^3.9.1",
     "@json2csv/formatters": "^7.0.6",
