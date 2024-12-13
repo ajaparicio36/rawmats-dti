@@ -1,4 +1,4 @@
-import { Product, Supplier } from "@prisma/client";
+import { Product, Supplier, User } from "@prisma/client";
 
 export interface ProductWithSupplier extends Product {
   supplier: Supplier;
@@ -19,4 +19,28 @@ export interface ProductPreview {
     businessName: string;
     businessLocation: string;
   };
+}
+
+export interface SupplierWithUser extends Supplier {
+  user: User;
+}
+
+export interface SupplierDashboardProps {
+  initialProducts: ProductWithSupplier[];
+  supplier: SupplierWithUser;
+}
+
+export interface ProductsPageProps {
+  products: ProductWithSupplier[];
+  supplierId: string;
+  supplierName: string;
+}
+
+export interface ManageProductsPageProps {
+  products: ProductWithSupplier[];
+  supplierName: string;
+}
+
+export interface NotificationsPageProps {
+  supplierName: string;
 }

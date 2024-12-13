@@ -1,13 +1,26 @@
+"use client";
+
 import React, { useState } from "react";
 import Image from "next/image";
-import { Product } from "@/types/types";
+import { ProductWithSupplier } from "@/utils/Products";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { formatDate } from "@/utils/formatDate";
 
-const ManageListings = ({
-  fetchedProducts,
-}: {
-  fetchedProducts: Product[];
-}) => {
-  const [products, setProducts] = useState<Product[]>(fetchedProducts);
+interface ManageListingsProps {
+  fetchedProducts: ProductWithSupplier[];
+}
+
+const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
+  const [products, setProducts] =
+    useState<ProductWithSupplier[]>(fetchedProducts);
 
   const handleDelete = async (id: string) => {
     try {
@@ -32,51 +45,62 @@ const ManageListings = ({
   };
 
   return (
-    <div className="mt-6">
-      {products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-center">
+    <ScrollArea className="h-[calc(100vh-4rem)] w-full">
+      <div className="w-full mx-auto border p-4 mb-12">
+        <Accordion type="single" collapsible className="w-full">
           {products.map((product) => (
-            <div
-              key={product.id}
-              className="max-w-[250px] border rounded-lg shadow-xl overflow-hidden bg-[#F2F8FC] hover:shadow-2xl transition-shadow duration-300"
-            >
-              {product.image && (
-                <div className="relative w-full h-40">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    style={{ objectFit: "cover" }}
-                    className="rounded-t-lg"
-                    loading="lazy"
-                    quality={75}
-                  />
+            <AccordionItem key={product.id} value={product.id}>
+              <AccordionTrigger className="flex justify-between items-center p-4 hover:bg-gray-50">
+                <div className="flex items-center space-x-4">
+                  <span className="font-medium">{product.name}</span>
+                  <Badge variant={product.verified ? "default" : "secondary"}>
+                    {product.verified ? "Verified" : "Pending"}
+                  </Badge>
                 </div>
-              )}
-              <div className="p-4 flex flex-col items-center">
-                <h3 className="text-base font-semibold text-gray-800">
-                  {product.name}
-                </h3>
-                <p className="text-gray-600 mt-2 text-sm text-center">
-                  {product.description}
-                </p>
-                <p className="text-green-500 mt-4 text-lg font-semibold">
-                  ${product.price.toFixed(2)}
-                </p>
-                <button
-                  onClick={() => handleDelete(product.id)}
-                  className="mt-4 bg-red-200 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-opacity-50 rounded-xl py-1 px-4 transition-all duration-300"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
+                <span className="text-sm text-gray-500">
+                  {formatDate(product.dateAdded)}
+                </span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="p-4 space-y-4">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="w-full md:w-1/3 aspect-square relative">
+                      <Image
+                        src={product.image || "/placeholder.svg"}
+                        alt={product.name}
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-lg"
+                      />
+                    </div>
+                    <div className="w-full md:w-2/3 space-y-2">
+                      <p className="text-lg font-semibold">{product.name}</p>
+                      <p className="text-gray-600">{product.description}</p>
+                      <p className="text-green-600 font-semibold">
+                        ₱{product.price.toFixed(2)}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Added on: {formatDate(product.dateAdded)}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Verified on: {formatDate(product.verifiedDate)}
+                      </p>
+                      <Button
+                        onClick={() => handleDelete(product.id)}
+                        variant="destructive"
+                        className="mt-4"
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
-      ) : (
-        <p className="text-center text-gray-500">No products created yet.</p>
-      )}
-    </div>
+        </Accordion>
+      </div>
+    </ScrollArea>
   );
 };
 
