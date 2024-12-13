@@ -1,3 +1,5 @@
+"use client";
+
 const Notification = () => {
   return (
     <div>
