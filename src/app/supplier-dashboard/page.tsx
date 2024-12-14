@@ -2,7 +2,7 @@ import React from "react";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import prisma from "@/utils/prisma/client";
-import SupplierScreen from "@/components/supplier-dashboard/SupplierScreen";
+import SupplierScreen from "@/components/SupplierDashboard/SupplierScreen";
 import { SupplierDashboardProps } from "@/utils/Products";
 
 const SupplierDashboard = async () => {

@@ -2,10 +2,10 @@ import React from "react";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import prisma from "@/utils/prisma/client";
-import SidebarComponent from "@/components/supplier-dashboard/Sidebar";
+import SidebarComponent from "@/components/SupplierDashboard/Sidebar";
 import { SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
-import ProductList from "@/components/supplier-dashboard/contents/ProductList";
-import ProductForm from "@/components/supplier-dashboard/contents/ProductForm";
+import ProductList from "@/components/SupplierDashboard/contents/ProductList";
+import ProductForm from "@/components/SupplierDashboard/contents/ProductForm";
 import { ProductWithSupplier } from "@/utils/Products";
 
 const ProductsPage = async () => {

@@ -2,7 +2,7 @@ import React from "react";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import prisma from "@/utils/prisma/client";
-import SidebarComponent from "@/components/supplier-dashboard/Sidebar";
+import SidebarComponent from "@/components/SupplierDashboard/Sidebar";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { NotificationsPageProps } from "@/utils/Products";
 

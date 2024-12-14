@@ -5,12 +5,12 @@ import prisma from "@/utils/prisma/client";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import LoadingModal from "@/components/Loading/LoadingModal";
-import SidebarComponent from "@/components/supplier-dashboard/Sidebar";
+import SidebarComponent from "@/components/SupplierDashboard/Sidebar";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { ManageProductsPageProps } from "@/utils/Products";
 
 const DynamicManageListings = dynamic(
-  () => import("@/components/supplier-dashboard/contents/ManageListing"),
+  () => import("@/components/SupplierDashboard/contents/ManageListing"),
   {
     loading: () => <p>Loading manage listings...</p>,
     ssr: true,
