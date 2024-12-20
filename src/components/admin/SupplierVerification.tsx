@@ -28,7 +28,7 @@ export function SupplierVerification({
 
   useEffect(() => {
     const fetchFiles = async () => {
-      const filesMap: Record<string, string[]> = {}; // Define the type for filesMap
+      const filesMap: Record<string, string[]> = {};
 
       await Promise.all(
         suppliers.map(async (supplier) => {
@@ -36,7 +36,7 @@ export function SupplierVerification({
 
           const filteredFiles = (rawFiles || []).filter(
             (file): file is string => file !== null,
-          ); // Remove nulls
+          );
 
           filesMap[supplier.userId] = filteredFiles;
         }),
@@ -126,24 +126,30 @@ export function SupplierVerification({
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-base md:text-lg">Business Documents:</p>
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+            <p className="text-base md:text-lg mb-4">Business Documents:</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {(!files[supplier.userId] ||
                 files[supplier.userId].length === 0) && (
-                <Skeleton className="h-[300px] w-[450px] rounded-lg" />
+                <Skeleton className="h-[300px] w-full rounded-lg" />
               )}
               {files[supplier.userId]?.map((file, index) =>
                 file ? (
-                  <Image
-                    key={index}
-                    src={file}
-                    width={100}
-                    height={100}
-                    alt="business document"
-                    className="h-auto w-auto"
-                  />
+                  <div key={index} className="relative aspect-[4/3] w-full">
+                    <Image
+                      src={file}
+                      alt={`Business document ${index + 1}`}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-lg"
+                    />
+                  </div>
                 ) : (
-                  <div key={index}>Img not found</div>
+                  <div
+                    key={index}
+                    className="h-[300px] w-full flex items-center justify-center bg-muted rounded-lg"
+                  >
+                    Image not found
+                  </div>
                 ),
               )}
             </div>
