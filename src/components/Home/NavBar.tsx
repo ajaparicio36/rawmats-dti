@@ -57,7 +57,11 @@ export default function NavBar({ user, supplier }: NavbarProps) {
       </div>
 
       {isSearchOpen && (
-        <SearchModal onClose={() => setIsSearchOpen(false)} products={[]} />
+        <SearchModal
+          onClose={() => setIsSearchOpen(false)}
+          products={[]}
+          userId={user.id}
+        />
       )}
     </nav>
   );

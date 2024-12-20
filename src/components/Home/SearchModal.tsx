@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { ProductWithSupplier } from "@/utils/Products";
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
@@ -7,9 +8,14 @@ import ProductPreviewCard from "@/components/Products/ProductPreviewCard";
 interface SearchModalProps {
   onClose: () => void;
   products: ProductWithSupplier[];
+  userId: string;
 }
 
-export default function SearchModal({ onClose, products }: SearchModalProps) {
+export default function SearchModal({
+  onClose,
+  products,
+  userId,
+}: SearchModalProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredProducts = products.filter((product) =>
@@ -45,6 +51,8 @@ export default function SearchModal({ onClose, products }: SearchModalProps) {
                 name={product.name}
                 price={product.price}
                 supplier={product.supplier} // Pass supplier details properly
+                userId={userId}
+                image={product.image}
               />
             ))
           ) : (

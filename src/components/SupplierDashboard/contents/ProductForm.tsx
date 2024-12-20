@@ -1,20 +1,19 @@
 "use client";
-import { useState, useCallback } from "react";
-import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Product } from "@/types/types";
 import { uploadProductImage } from "@/utils/supabase/product";
 import ImageCropper from "./ImageCropper";
+import { useRouter } from "next/navigation";
 
-export default function ProductListingForm({
-  onAddProduct,
-  supplierId,
-}: {
-  onAddProduct: (product: Product) => void;
+interface ProductFormProps {
   supplierId: string;
-}) {
+}
+
+export default function ProductForm({ supplierId }: ProductFormProps) {
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
   const [packaging, setPackaging] = useState("");
@@ -26,6 +25,8 @@ export default function ProductListingForm({
   const [error, setError] = useState<string | null>(null);
   const [showCropper, setShowCropper] = useState(false);
   const [cropImage, setCropImage] = useState<string | null>(null);
+
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,9 +56,8 @@ export default function ProductListingForm({
         const data = await response.json();
         throw new Error(data.error || "Error creating product");
       }
-      const product = await response.json();
-      onAddProduct(product);
       resetForm();
+      router.refresh(); // Refresh the page to show the new product
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
@@ -83,20 +83,17 @@ export default function ProductListingForm({
     }
   };
 
-  const handleCropComplete = useCallback(async (croppedImage: Blob) => {
+  const handleCropComplete = async (croppedImage: Blob) => {
     try {
       const formData = new FormData();
       formData.append("image", croppedImage, "cropped_image.jpg");
-
       const response = await fetch("/api/process-image", {
         method: "POST",
         body: formData,
       });
-
       if (!response.ok) {
         throw new Error("Error processing image");
       }
-
       const processedImageBlob = await response.blob();
       setImage(
         new File([processedImageBlob], "processed_image.jpg", {
@@ -108,7 +105,7 @@ export default function ProductListingForm({
       console.error("Error processing image:", error);
       setError("Error processing image. Please try again.");
     }
-  }, []);
+  };
 
   const resetForm = () => {
     setProductName("");
@@ -124,28 +121,12 @@ export default function ProductListingForm({
 
   return (
     <>
-      <div className="fixed bottom-4 right-4 z-20">
-        <Button
-          onClick={() => setShowForm(true)}
-          className="bg-blue-300 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-500"
-          aria-label="Add New Product"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 4.5v15m7.5-7.5h-15"
-            />
-          </svg>
-        </Button>
-      </div>
+      <Button
+        onClick={() => setShowForm(true)}
+        className="bg-blue-500 text-white hover:bg-blue-600"
+      >
+        Add Product
+      </Button>
       {showForm && (
         <Dialog open={showForm} onOpenChange={setShowForm}>
           <DialogOverlay className="fixed inset-0 bg-black bg-opacity-50" />
@@ -219,7 +200,7 @@ export default function ProductListingForm({
                 </Button>
                 <Button
                   type="submit"
-                  className="bg-blue-300 text-white"
+                  className="bg-blue-500 text-white"
                   disabled={loading}
                 >
                   {loading ? "Submitting..." : "Submit"}
