@@ -5,8 +5,8 @@ import { searchClient } from "@algolia/client-search";
 const prisma = new PrismaClient();
 
 const client = searchClient(
-  process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!,
-  process.env.NEXT_PUBLIC_ALGOLIA_ADMIN_KEY!,
+  process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || "",
+  process.env.NEXT_PUBLIC_ALGOLIA_ADMIN_KEY || "",
 );
 
 export async function POST() {
