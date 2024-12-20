@@ -1,25 +1,9 @@
 import React from "react";
-import dynamic from "next/dynamic";
-import { Suspense } from "react";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import prisma from "@/utils/prisma/client";
-
-const DesktopSupplier = dynamic(
-  () => import("@/components/supplier-dashboard/DesktopSupplier"),
-  {
-    loading: () => <p>Loading desktop supplier dashboard...</p>,
-    ssr: true,
-  },
-);
-
-const MobileSupplier = dynamic(
-  () => import("@/components/supplier-dashboard/MobileSupplier"),
-  {
-    loading: () => <p>Loading mobile supplier dashboard...</p>,
-    ssr: true,
-  },
-);
+import SupplierScreen from "@/components/SupplierDashboard/SupplierScreen";
+import { SupplierDashboardProps } from "@/utils/Products";
 
 const SupplierDashboard = async () => {
   const supabase = createClient();
@@ -28,54 +12,35 @@ const SupplierDashboard = async () => {
     redirect("/");
   }
 
-  const isSupplier = await prisma.supplier.findUnique({
+  const supplier = await prisma.supplier.findUnique({
     where: {
       userId: data.user.id,
       verified: true,
     },
+    include: {
+      user: true,
+    },
   });
 
-  if (!isSupplier) {
+  if (!supplier) {
     redirect("/");
   }
 
   const products = await prisma.product.findMany({
     where: {
-      supplier: {
-        userId: data.user.id,
-      },
+      supplierId: supplier.id,
+    },
+    include: {
+      supplier: true,
     },
   });
 
-  for (const product of products) {
-    const { data, error } = await supabase.storage
-      .from("photos")
-      .createSignedUrl(`${product.image}`, 3600);
+  const props: SupplierDashboardProps = {
+    initialProducts: products,
+    supplier: supplier,
+  };
 
-    if (error) {
-      console.error(
-        "Error fetching signed URL for product image:",
-        error.message,
-      );
-    }
-
-    if (data) {
-      product.image = data.signedUrl;
-    }
-  }
-
-  return (
-    <div className="w-full min-h-screen flex items-center justify-center">
-      <Suspense fallback={<div>Loading...</div>}>
-        <div className="hidden md:flex w-full h-screen items-center justify-center">
-          <DesktopSupplier fetchedProducts={products} userID={isSupplier.id} />
-        </div>
-        <div className="md:hidden w-full h-screen">
-          <MobileSupplier fetchedProducts={products} userID={isSupplier.id} />
-        </div>
-      </Suspense>
-    </div>
-  );
+  return <SupplierScreen {...props} />;
 };
 
 export default SupplierDashboard;
