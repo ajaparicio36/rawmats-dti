@@ -53,41 +53,41 @@ const config: Config = {
         },
         rawmats: {
           primary: {
-            900: "#050418",
-            700: "#0A0830",
-            500: "#1A1660",
-            300: "#2A2490",
-            100: "#3A32C0",
+            "100": "#3A32C0",
+            "300": "#2A2490",
+            "500": "#1A1660",
+            "700": "#0A0830",
+            "900": "#050418",
           },
           secondary: {
-            900: "#4A90B3",
-            700: "#9BD0F3",
-            500: "#B5DFF6",
-            300: "#CFEEF9",
-            100: "#E9F8FC",
+            "100": "#E9F8FC",
+            "300": "#CFEEF9",
+            "500": "#B5DFF6",
+            "700": "#9BD0F3",
+            "900": "#4A90B3",
           },
           accent: {
-            900: "#012647",
-            700: "#013F79",
-            500: "#0258AB",
-            300: "#0371DD",
-            100: "#048AFF",
+            "100": "#048AFF",
+            "300": "#0371DD",
+            "500": "#0258AB",
+            "700": "#013F79",
+            "900": "#012647",
           },
           neutral: {
-            900: "#4B5563",
-            700: "#9CA3AF",
-            500: "#F3F4F6",
+            "500": "#F3F4F6",
+            "700": "#9CA3AF",
+            "900": "#4B5563",
           },
           text: {
-            700: "#040029",
-            500: "#0C0066",
+            "500": "#0C0066",
+            "700": "#040029",
           },
           shade: {
             light: "#F1F0F0",
             dark: "#050418",
           },
           background: {
-            700: "#DBEFFC",
+            "700": "#DBEFFC",
           },
           feedback: {
             success: "#22C55E",
@@ -95,11 +95,43 @@ const config: Config = {
             warning: "#F59E0B",
           },
         },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "accordion-down": {
+          from: {
+            height: "0",
+          },
+          to: {
+            height: "var(--radix-accordion-content-height)",
+          },
+        },
+        "accordion-up": {
+          from: {
+            height: "var(--radix-accordion-content-height)",
+          },
+          to: {
+            height: "0",
+          },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },

@@ -20,7 +20,7 @@ export function SupplierVerification({
 }: {
   suppliers: (Supplier & { user: User })[];
 }) {
-  const [files, setFiles] = useState<(string | null)[]>([]);
+  const [files, setFiles] = useState<Record<string, string[]>>({});
   const [isLoading, setIsLoading] = useState<{
     status: boolean;
     method: null | "verify" | "reject";
@@ -28,17 +28,21 @@ export function SupplierVerification({
 
   useEffect(() => {
     const fetchFiles = async () => {
+      const filesMap: Record<string, string[]> = {};
+
       await Promise.all(
         suppliers.map(async (supplier) => {
-          const files = await retrieveFile(supplier.userId);
+          const rawFiles = await retrieveFile(supplier.userId);
 
-          if (!files) {
-            setFiles([]);
-          } else {
-            setFiles(files);
-          }
+          const filteredFiles = (rawFiles || []).filter(
+            (file): file is string => file !== null,
+          );
+
+          filesMap[supplier.userId] = filteredFiles;
         }),
       );
+
+      setFiles(filesMap);
     };
 
     fetchFiles();
@@ -97,20 +101,22 @@ export function SupplierVerification({
   };
 
   return (
-    <ScrollArea>
+    <ScrollArea className="h-full">
       {suppliers.map((supplier) => (
         <Card className="my-3" key={supplier.id}>
           <CardHeader>
-            <CardTitle className="text-3xl">{supplier.businessName}</CardTitle>
+            <CardTitle className="text-xl md:text-3xl">
+              {supplier.businessName}
+            </CardTitle>
             <div className="flex flex-col gap-2 text-muted-foreground">
-              <div className="flex flex-row gap-2 items-center text-base">
-                <UserRound />
+              <div className="flex flex-row gap-2 items-center text-sm md:text-base">
+                <UserRound className="size-4 sm:size-5 md:size-6" />
                 {supplier.user.displayName}
               </div>
-              <div className="flex flex-row gap-2 items-center text-base">
-                <MapPin />
+              <div className="flex flex-row gap-2 items-center text-[10px] md:text-base">
+                <MapPin className="size-4 sm:size-5 md:size-6 shrink-0" />
                 <a
-                  className="underline"
+                  className="underline shrink"
                   href={supplier.businessLocation}
                   target="_blank"
                 >
@@ -120,31 +126,39 @@ export function SupplierVerification({
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-lg">Business Documents:</p>
-            <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4">
-              {files.length === 0 && (
-                <Skeleton className="h-[300px] w-[450px] rounded-lg" />
+            <p className="text-base md:text-lg mb-4">Business Documents:</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {(!files[supplier.userId] ||
+                files[supplier.userId].length === 0) && (
+                <Skeleton className="h-[300px] w-full rounded-lg" />
               )}
-              {files.map((file, index) =>
+              {files[supplier.userId]?.map((file, index) =>
                 file ? (
-                  <Image
-                    key={index}
-                    src={file}
-                    width={100}
-                    height={100}
-                    alt="business document"
-                    className="h-auto w-auto"
-                  />
+                  <div key={index} className="relative aspect-[4/3] w-full">
+                    <Image
+                      src={file}
+                      alt={`Business document ${index + 1}`}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-lg"
+                    />
+                  </div>
                 ) : (
-                  <div key={index}>Img not found</div>
+                  <div
+                    key={index}
+                    className="h-[300px] w-full flex items-center justify-center bg-muted rounded-lg"
+                  >
+                    Image not found
+                  </div>
                 ),
               )}
             </div>
           </CardContent>
-          <CardFooter className="flex gap-4">
+          <CardFooter className="flex gap-4 justify-center">
             <Button
               onClick={() => verifySupplier(supplier.userId)}
               disabled={supplier.verified || isLoading.status}
+              className="flex-1 bg-rawmats-primary-300 hover:bg-rawmats-feedback-success hover:text-rawmats-text-500 max-w-[25%]"
             >
               {isLoading.method === "verify" ? (
                 <InlineLoading message="Verifying" />
@@ -159,6 +173,7 @@ export function SupplierVerification({
               onClick={() => rejectSupplier(supplier.userId)}
               variant="destructive"
               disabled={supplier.verified || isLoading.status}
+              className="flex-1 bg-rawmats-feedback-error hover:bg-red-600 max-w-[25%]"
             >
               {isLoading.method === "reject" ? (
                 <InlineLoading message="Rejecting" />
