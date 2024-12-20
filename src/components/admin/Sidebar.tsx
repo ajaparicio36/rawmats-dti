@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
@@ -18,6 +18,7 @@ import {
   Package,
   LogOut,
   Home,
+  RefreshCw,
 } from "lucide-react";
 import logo from "@/public/logo.png";
 import {
@@ -40,6 +41,30 @@ interface SidebarProps {
 
 export function Sidebar({ selectedTab, setSelectedTab }: SidebarProps) {
   const router = useRouter();
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  const syncProductsToAlgolia = async () => {
+    try {
+      setIsSyncing(true);
+      const response = await fetch("/api/algolia-sync", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to sync products to Algolia");
+      }
+
+      alert("Products successfully synced to Algolia!");
+    } catch (error) {
+      console.error("Error syncing products to Algolia:", error);
+      alert("Failed to sync products to Algolia.");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   const logoutUser = async () => {
     try {
@@ -102,6 +127,21 @@ export function Sidebar({ selectedTab, setSelectedTab }: SidebarProps) {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
+          {/* Sync to Algolia Button */}
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={syncProductsToAlgolia}
+              disabled={isSyncing}
+              className={`flex flex-row items-center justify-center ${
+                isSyncing ? "cursor-not-allowed opacity-50" : ""
+              }`}
+            >
+              <RefreshCw className="mr-2 h-4 w-4" />
+              {isSyncing ? "Syncing..." : "Sync to Algolia"}
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          {/* Go Back to Home Button */}
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={() => router.push("/")}
@@ -111,6 +151,8 @@ export function Sidebar({ selectedTab, setSelectedTab }: SidebarProps) {
               Go Back to Home
             </SidebarMenuButton>
           </SidebarMenuItem>
+
+          {/* Logout Button */}
           <SidebarMenuItem>
             <AlertDialog>
               <AlertDialogTrigger asChild>

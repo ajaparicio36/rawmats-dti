@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 import { ProductWithSupplier } from "@/utils/Products";
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
