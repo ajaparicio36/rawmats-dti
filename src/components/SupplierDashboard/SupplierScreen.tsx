@@ -3,7 +3,7 @@
 import React from "react";
 import { SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { SupplierDashboardProps } from "@/utils/Products";
-import { SupplierSidebar } from "./sidebar/SupplierSidebar";
+import { SupplierSidebar } from "../Sidebar/SupplierSidebar";
 
 const SupplierScreen: React.FC<SupplierDashboardProps> = ({ supplier }) => {
   return (
