@@ -8,7 +8,11 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import ProductCarousel from "@/components/Products/ProductCarousel";
-import { AnimatedDiv } from "@/components/Home/AnimatedComponents";
+import {
+  AnimatedDiv,
+  AnimatedMain,
+  AnimatedFooter,
+} from "@/components/Home/AnimatedComponents";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -64,13 +68,13 @@ export default async function Home({
   const totalPages = Math.ceil(allProducts.length / ITEMS_PER_PAGE);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rawmats-background-700 to-rawmats-secondary-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-50">
       <NavBar user={user} supplier={supplier} />
-      <AnimatedDiv
+      <AnimatedMain
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8"
+        className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 space-y-6"
       >
         {!searchQuery && (
           <>
@@ -78,9 +82,9 @@ export default async function Home({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="mb-12"
+              className="mb-6"
             >
-              <h2 className="text-2xl font-bold text-rawmats-primary-700 mb-6">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent mb-4">
                 Daily Discover
               </h2>
               <ProductCarousel
@@ -92,12 +96,12 @@ export default async function Home({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="mb-12"
+              className="mb-6"
             >
-              <h2 className="text-2xl font-bold text-rawmats-primary-700 mb-6">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent mb-4">
                 New Arrivals
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {newArrivalsProducts.map((product) => (
                   <ProductPreviewCard
                     key={product.id}
@@ -118,10 +122,10 @@ export default async function Home({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
         >
-          <h2 className="text-2xl font-bold text-rawmats-primary-700 mb-6">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent mb-4">
             {searchQuery ? `Search Results for "${searchQuery}"` : "Browse All"}
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
             {paginatedProducts.map((product) => (
               <ProductPreviewCard
                 key={product.id}
@@ -140,7 +144,12 @@ export default async function Home({
             transition={{ duration: 0.5, delay: 0.8 }}
             className="flex justify-center items-center gap-4"
           >
-            <Button variant="outline" disabled={page <= 1} asChild>
+            <Button
+              variant="outline"
+              disabled={page <= 1}
+              asChild
+              className="bg-gradient-to-r from-blue-50 to-white hover:from-blue-100 hover:to-blue-50"
+            >
               <Link
                 href={`/?page=${Math.max(1, page - 1)}&search=${searchQuery}`}
               >
@@ -148,10 +157,15 @@ export default async function Home({
                 Previous
               </Link>
             </Button>
-            <span className="text-rawmats-text-700">
+            <span className="text-blue-600 font-medium">
               Page {page} of {totalPages}
             </span>
-            <Button variant="outline" disabled={page >= totalPages} asChild>
+            <Button
+              variant="outline"
+              disabled={page >= totalPages}
+              asChild
+              className="bg-gradient-to-r from-blue-50 to-white hover:from-blue-100 hover:to-blue-50"
+            >
               <Link
                 href={`/?page=${Math.min(totalPages, page + 1)}&search=${searchQuery}`}
               >
@@ -161,19 +175,19 @@ export default async function Home({
             </Button>
           </AnimatedDiv>
         </AnimatedDiv>
-      </AnimatedDiv>
-      <AnimatedDiv
+      </AnimatedMain>
+      <AnimatedFooter
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 1 }}
-        className="bg-rawmats-primary-900 text-rawmats-secondary-100 py-6 mt-16"
+        className="bg-gradient-to-r from-blue-600 to-blue-400 text-white py-4 mt-8"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm">
             &copy; 2023 RawMats. All rights reserved.
           </p>
         </div>
-      </AnimatedDiv>
+      </AnimatedFooter>
     </div>
   );
 }

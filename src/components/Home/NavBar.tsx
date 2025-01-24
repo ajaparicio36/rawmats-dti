@@ -6,11 +6,7 @@ import { Input } from "@/components/ui/input";
 import type { User, Supplier } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { SheetMenu } from "./SheetMenu";
-import {
-  AnimatedNav,
-  AnimatedH1,
-  AnimatedDiv,
-} from "@/components/Home/AnimatedComponents";
+import { AnimatedNav, AnimatedH1, AnimatedDiv } from "./AnimatedComponents";
 import { SearchSuggestions } from "./SearchSuggestions";
 
 interface NavbarProps {
@@ -68,20 +64,20 @@ export default function NavBar({ user, supplier }: NavbarProps) {
       initial={{ opacity: 0, y: -50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full bg-rawmats-secondary-700 border-b"
+      className="w-full bg-gradient-to-r from-blue-400 via-blue-300 to-blue-400"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-center py-4">
+        <div className="flex justify-center py-2">
           <AnimatedH1
             whileHover={{ scale: 1.05 }}
             onClick={() => router.push("/")}
-            className="text-3xl px-2 py-1 rounded-md text-white hover:cursor-pointer hover:bg-rawmats-secondary-900"
+            className="text-5xl md:text-6xl px-4 py-2 rounded-md text-white hover:cursor-pointer transition-colors duration-200 font-extrabold tracking-wider bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent"
           >
-            <span className="font-bold">RAW</span>MATS
+            RAWMATS
           </AnimatedH1>
         </div>
 
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 pb-4">
           <div className="flex items-center">
             <SheetMenu user={user} supplier={supplier} />
           </div>
@@ -89,18 +85,19 @@ export default function NavBar({ user, supplier }: NavbarProps) {
           <div className="flex-1 max-w-2xl mx-4" ref={searchRef}>
             <form onSubmit={handleSearch} className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                <Search className="h-5 w-5 text-rawmats-neutral-900" />
+                <Search className="h-5 w-5 text-blue-500" />
               </div>
               <AnimatedDiv
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                className="bg-white/20 backdrop-blur-sm rounded-full shadow-lg"
               >
                 <Input
                   type="text"
-                  placeholder="Search"
+                  placeholder="Search products..."
                   value={searchQuery}
                   onChange={handleInputChange}
-                  className="w-full pl-10 bg-white text-rawmats-neutral-900 border-transparent focus:border-transparent focus:ring-0 rounded-full"
+                  className="w-full pl-10 bg-white/80 text-blue-900 border-transparent focus:border-transparent focus:ring-2 focus:ring-blue-400 rounded-full placeholder-blue-400"
                 />
               </AnimatedDiv>
               {showSuggestions && (

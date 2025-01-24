@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { AnimatedDiv } from "@/components/Home/AnimatedComponents";
 import type { ProductWithSupplier } from "@/utils/Products";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface SearchSuggestionsProps {
   query: string;
@@ -10,6 +11,7 @@ interface SearchSuggestionsProps {
 
 export function SearchSuggestions({ query, onSelect }: SearchSuggestionsProps) {
   const [suggestions, setSuggestions] = useState<ProductWithSupplier[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     if (query.length > 1) {
@@ -32,6 +34,11 @@ export function SearchSuggestions({ query, onSelect }: SearchSuggestionsProps) {
     }
   }, [query]);
 
+  const handleProductClick = (product: ProductWithSupplier) => {
+    onSelect(product.name);
+    router.push(`/product/${product.id}`);
+  };
+
   if (suggestions.length === 0) return null;
 
   return (
@@ -47,7 +54,7 @@ export function SearchSuggestions({ query, onSelect }: SearchSuggestionsProps) {
           <li key={product.id}>
             <button
               className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-rawmats-primary-100 focus:outline-none focus:bg-rawmats-primary-100"
-              onClick={() => onSelect(product.name)}
+              onClick={() => handleProductClick(product)}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -67,7 +74,7 @@ export function SearchSuggestions({ query, onSelect }: SearchSuggestionsProps) {
                   </div>
                 </div>
                 <div className="text-sm font-semibold text-gray-700">
-                  ${product.price.toFixed(2)}
+                  ₱{product.price.toFixed(2)}
                 </div>
               </div>
             </button>
