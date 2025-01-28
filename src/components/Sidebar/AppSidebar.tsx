@@ -136,12 +136,20 @@ const data = {
   ],
 };
 
-export function AppSidebar({
+interface SupplierSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  name: string;
+  email: string;
+  avatar: string;
+  accessRole: Array<"admin" | "supplier">;
+}
+
+export function SupplierSidebar({
+  name,
+  email,
+  avatar,
   accessRole,
   ...props
-}: React.ComponentProps<typeof Sidebar> & {
-  accessRole: Array<"admin" | "supplier">;
-}) {
+}: SupplierSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -152,7 +160,7 @@ export function AppSidebar({
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={{ name, email, avatar }} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

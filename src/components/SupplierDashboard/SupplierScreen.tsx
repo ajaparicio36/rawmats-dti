@@ -3,7 +3,7 @@
 import React from "react";
 import { SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { SupplierDashboardProps } from "@/utils/Products";
-import { AppSidebar } from "../Sidebar/AppSidebar";
+import { SupplierSidebar } from "../Sidebar/AppSidebar";
 
 const SupplierScreen: React.FC<SupplierDashboardProps> = ({
   supplier,
@@ -16,7 +16,12 @@ const SupplierScreen: React.FC<SupplierDashboardProps> = ({
 
   return (
     <div className="flex h-screen w-full bg-background">
-      <AppSidebar accessRole={accessRole} />
+      <SupplierSidebar
+        accessRole={accessRole}
+        name={supplier.user.displayName}
+        email={supplier.user.email}
+        avatar={"" /* Implement after profile pages */}
+      />
       <SidebarInset className="flex flex-col w-full overflow-hidden">
         <div className="bg-[#A3E6FD]/30 border-b px-8 py-6 flex items-center">
           <SidebarTrigger className="mr-4" />
