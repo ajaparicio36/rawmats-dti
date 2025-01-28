@@ -28,11 +28,6 @@ import {
 
 // This is sample data.
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: [
     {
       name: "Acme Inc",
@@ -156,9 +151,18 @@ const data = {
   ],
 };
 
+interface SupplierSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  name: string;
+  email: string;
+  avatar: string;
+}
+
 export function SupplierSidebar({
+  name,
+  email,
+  avatar,
   ...props
-}: React.ComponentProps<typeof Sidebar>) {
+}: SupplierSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -169,7 +173,7 @@ export function SupplierSidebar({
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={{ name, email, avatar }} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
