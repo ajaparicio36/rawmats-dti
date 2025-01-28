@@ -2,10 +2,16 @@
 
 import React from "react";
 import { SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
-import { SupplierDashboardProps } from "@/utils/Products";
 import { SupplierSidebar } from "../Sidebar/SupplierSidebar";
 
-const SupplierScreen: React.FC<SupplierDashboardProps> = ({ supplier }) => {
+interface SupplierScreenProps {
+  supplier: {
+    businessName: string;
+  };
+  children: React.ReactNode;  
+}
+
+const SupplierScreen: React.FC<SupplierScreenProps> = ({ children }) => {
   return (
     <div className="flex h-screen w-full bg-background">
       <SupplierSidebar />
@@ -15,7 +21,7 @@ const SupplierScreen: React.FC<SupplierDashboardProps> = ({ supplier }) => {
           <h1 className="text-2xl font-semibold text-[#034169]">Dashboard</h1>
         </div>
         <div className="flex-1 p-8 overflow-auto">
-          <p>Profile page is not implemented yet. {supplier.businessName}</p>
+          {children} 
         </div>
       </SidebarInset>
     </div>
