@@ -2,12 +2,9 @@
 
 import * as React from "react";
 import {
-  AudioWaveform,
   BookOpen,
   Bot,
-  Command,
   Frame,
-  GalleryVerticalEnd,
   Map,
   PieChart,
   Settings2,
@@ -17,7 +14,7 @@ import {
 import { NavMain } from "./SidebarMain";
 import { NavProjects } from "./SidebarNavigation";
 import { NavUser } from "./SidebarUser";
-import { TeamSwitcher } from "./NavigationSwitcher";
+import { NavigationSwitcher } from "./NavigationSwitcher";
 import {
   Sidebar,
   SidebarContent,
@@ -28,23 +25,11 @@ import {
 
 // This is sample data.
 const data = {
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
   navMain: [
     {
       title: "Playground",
@@ -155,18 +140,20 @@ interface SupplierSidebarProps extends React.ComponentProps<typeof Sidebar> {
   name: string;
   email: string;
   avatar: string;
+  accessRole: Array<"admin" | "supplier">;
 }
 
 export function SupplierSidebar({
   name,
   email,
   avatar,
+  accessRole,
   ...props
 }: SupplierSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <NavigationSwitcher accessRole={accessRole} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

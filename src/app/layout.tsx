@@ -1,6 +1,8 @@
 import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import "./globals.css";
+import { cookies } from "next/headers";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,9 +16,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = cookies();
+  const defaultOpen = cookieStore.get("sidebar:state")?.value === "true";
+
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased`}>{children}</body>
+      <body className={`${inter.className} antialiased`}>
+        <SidebarProvider defaultOpen={defaultOpen}>{children}</SidebarProvider>
+      </body>
     </html>
   );
 }
