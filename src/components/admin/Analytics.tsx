@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { format, subDays } from "date-fns";
 import { DateRange } from "react-day-picker";
 import { PackageSearch, UserCog, Users } from "lucide-react";
+import { SidebarTrigger } from "../ui/sidebar";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -111,7 +112,10 @@ export default function Analytics() {
       <div className="flex-col flex">
         <div className="flex-1 space-y-6">
           <div className="flex items-center justify-between space-y-2 flex-col lg:flex-row">
-            <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+            <div className="flex flex-row justify-center items-center w-full md:w-auto relative">
+              <SidebarTrigger className="absolute md:static left-0 md:mr-4 border size-8 bg-gray-100" />
+              <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+            </div>
             <div className="flex flex-col lg:flex-row justify-center items-center space-y-2 lg:space-y-0 lg:space-x-2">
               <div className="flex flex-col sm:flex-row gap-2">
                 <DatePickerWithRange date={date} setDate={setDate} />

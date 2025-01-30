@@ -1,3 +1,5 @@
+"use client";
+
 import { Check, MapPin, UserRound, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +17,7 @@ import { retrieveFile } from "@/utils/supabase/files";
 import Image from "next/image";
 import InlineLoading from "../Loading/InlineLoading";
 
-export function SupplierVerification({
+export function SupplierVerificationComponent({
   suppliers,
 }: {
   suppliers: (Supplier & { user: User })[];

@@ -25,32 +25,15 @@ import {
 } from "@/components/ui/sidebar";
 
 export function NavigationSwitcher({
-  accessRole,
+  isAdmin = false,
+  isSupplier = false,
 }: {
-  accessRole: Array<"admin" | "supplier">;
+  isAdmin?: boolean;
+  isSupplier?: boolean;
 }) {
   const { isMobile } = useSidebar();
   const pathname = usePathname();
   const router = useRouter();
-
-  const currentRoute: Record<string, string> = {
-    "/": "Home",
-    "/supplier-dashboard": "Supplier Dashboard",
-    "/admin": "Admin Dashboard",
-  };
-
-  const routes = [
-    { path: "/", label: "Home", logo: HouseIcon, name: "home" },
-    {
-      path: "/supplier-dashboard",
-      label: "Supplier Dashboard",
-      logo: GalleryVerticalEnd,
-      name: "supplier",
-    },
-    { path: "/admin", label: "Admin Dashboard", logo: Command, name: "admin" },
-  ];
-
-  const activeRoute = routes.find((route) => route.path === pathname);
 
   return (
     <SidebarMenu>
@@ -62,13 +45,19 @@ export function NavigationSwitcher({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                {React.createElement(activeRoute!.logo, {
-                  className: "size-4",
-                })}
+                {pathname === "/" && <HouseIcon className="size-4" />}
+                {pathname === "/supplier-dashboard" && (
+                  <GalleryVerticalEnd className="size-4" />
+                )}
+                {pathname.startsWith("/admin") && (
+                  <Command className="size-4" />
+                )}
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
-                  {currentRoute[pathname]}
+                  {pathname === "/" && "Home"}
+                  {pathname === "/supplier-dashboard" && "Supplier Dashboard"}
+                  {pathname.startsWith("/admin") && "Admin Dashboard"}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto" />
@@ -80,27 +69,53 @@ export function NavigationSwitcher({
             side={isMobile ? "bottom" : "right"}
             sideOffset={4}
           >
-            {routes.map(
-              (route) =>
-                // does not display routes that are not in the accessRole array
-                (route.name === "home" ||
-                  accessRole.includes(route.name as "admin" | "supplier")) && (
-                  <DropdownMenuItem
-                    key={route.path}
-                    onClick={() => router.push(route.path)}
-                    className={`gap-2 p-2 ${
-                      pathname === route.path
-                        ? "cursor-not-allowed bg-gray-200"
-                        : "cursor-pointer"
-                    }`}
-                    disabled={pathname === route.path}
-                  >
-                    <div className="flex size-6 items-center justify-center rounded-sm border">
-                      <route.logo className="size-4 shrink-0" />
-                    </div>
-                    {route.label}
-                  </DropdownMenuItem>
-                ),
+            <DropdownMenuItem
+              onClick={() => router.push("/")}
+              className={`gap-2 p-2 ${
+                pathname === "/"
+                  ? "cursor-not-allowed bg-gray-200"
+                  : "cursor-pointer"
+              }`}
+              disabled={pathname === "/"}
+            >
+              <div className="flex size-6 items-center justify-center rounded-sm border">
+                <HouseIcon className="size-4 shrink-0" />
+              </div>
+              Home
+            </DropdownMenuItem>
+
+            {isSupplier && (
+              <DropdownMenuItem
+                onClick={() => router.push("/supplier-dashboard")}
+                className={`gap-2 p-2 ${
+                  pathname === "/supplier-dashboard"
+                    ? "cursor-not-allowed bg-gray-200"
+                    : "cursor-pointer"
+                }`}
+                disabled={pathname === "/supplier-dashboard"}
+              >
+                <div className="flex size-6 items-center justify-center rounded-sm border">
+                  <GalleryVerticalEnd className="size-4 shrink-0" />
+                </div>
+                Supplier Dashboard
+              </DropdownMenuItem>
+            )}
+
+            {isAdmin && (
+              <DropdownMenuItem
+                onClick={() => router.push("/admin")}
+                className={`gap-2 p-2 ${
+                  pathname.startsWith("/admin")
+                    ? "cursor-not-allowed bg-gray-200"
+                    : "cursor-pointer"
+                }`}
+                disabled={pathname.startsWith("/admin")}
+              >
+                <div className="flex size-6 items-center justify-center rounded-sm border">
+                  <Command className="size-4 shrink-0" />
+                </div>
+                Admin
+              </DropdownMenuItem>
             )}
           </DropdownMenuContent>
         </DropdownMenu>

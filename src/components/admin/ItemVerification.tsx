@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -33,8 +35,6 @@ import {
 
 interface ItemVerificationProps {
   products: Product[];
-  verifyProduct: (id: string) => void;
-  rejectProduct: (id: string) => void;
 }
 
 const rejectionReasons = [
@@ -47,16 +47,48 @@ const rejectionReasons = [
 
 const fallbackImageUrl = "/placeholder.svg";
 
-export function ItemVerification({
-  products,
-  verifyProduct,
-  rejectProduct,
-}: ItemVerificationProps) {
+export function ItemVerificationComponent({ products }: ItemVerificationProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
   const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
   const [comment, setComment] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const verifyProduct = async (id: string) => {
+    try {
+      const response = await fetch(`/api/product/verify/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to verify product");
+      }
+      alert("Product verified successfully.");
+    } catch (error) {
+      console.error("Error verifying product:", error);
+    }
+  };
+
+  const rejectProduct = async (id: string) => {
+    try {
+      const response = await fetch(`/api/product/reject/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to reject product");
+      }
+      alert("Product rejected successfully.");
+    } catch (error) {
+      console.error("Error rejecting product:", error);
+    }
+  };
 
   const openRejectModal = (productId: string) => {
     setSelectedProduct(productId);
@@ -85,8 +117,10 @@ export function ItemVerification({
     product.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  return (
-    <>
+  return products.length === 0 ? (
+    <p>No products to verify currently</p>
+  ) : (
+    <div className="h-screen">
       <div className="p-4 flex items-center gap-2">
         <Input
           type="text"
@@ -100,7 +134,7 @@ export function ItemVerification({
         </Button>
       </div>
 
-      <ScrollArea className="h-[calc(100vh-16rem)]">
+      <ScrollArea className="h-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
           {filteredProducts.map((product) => (
             <Link
@@ -245,6 +279,6 @@ export function ItemVerification({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }
