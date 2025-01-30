@@ -22,8 +22,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
   verified,
 }) => {
   return (
-    <Card className="w-full max-w-md overflow-hidden transition-shadow hover:shadow-md">
-      <div className="relative h-48 w-full overflow-hidden bg-gray-100">
+    <Card className="w-60 overflow-hidden transition-shadow hover:shadow-md">
+      <div className="relative h-60 w-full overflow-hidden bg-gray-100">
         {image && (
           <Image
             src={image}
@@ -34,9 +34,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
           />
         )}
       </div>
-      <CardHeader className="p-4">
+      <CardHeader className="p-3">
         <div className="flex justify-between items-start">
-          <CardTitle className="text-lg font-semibold truncate">
+          <CardTitle className="text-sm font-semibold truncate">
             {name}
           </CardTitle>
           <Badge variant={verified ? "default" : "secondary"}>
@@ -44,7 +44,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="p-4 pt-0">
+      <CardContent className="p-3 pt-0">
         <div className="flex justify-between items-center mb-2">
           <Badge variant="secondary" className="text-rawmats-primary-300">
             ₱{price.toFixed(2)}

@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import Image from "next/image";
 import { ProductWithSupplier } from "@/utils/Products";
@@ -26,7 +27,7 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`/api/product`, {
+      const response = await fetch("/api/product", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -50,7 +51,7 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
 
   const handleEditComplete = (updatedProduct: ProductWithSupplier) => {
     setProducts(
-      products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)),
+      products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
     );
     setEditingProduct(null);
   };
@@ -58,19 +59,32 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
   return (
     <ScrollArea className="h-[calc(100vh-4rem)] w-full">
       <div className="w-full mx-auto border p-4 mb-12">
+        <div className="grid grid-cols-4 gap-4 p-4 font-semibold bg-gray-100 border-b">
+          <span className="text-left">Products</span>
+          <span className="text-left">Status</span>
+          <span className="text-left">Verified Date</span>
+          <span className="text-left">Added Date</span>
+        </div>
         <Accordion type="single" collapsible className="w-full">
           {products.map((product) => (
             <AccordionItem key={product.id} value={product.id}>
-              <AccordionTrigger className="flex justify-between items-center p-4 hover:bg-gray-50">
-                <div className="flex items-center space-x-4">
-                  <span className="font-medium">{product.name}</span>
-                  <Badge variant={product.verified ? "default" : "secondary"}>
-                    {product.verified ? "Verified" : "Pending"}
-                  </Badge>
+              <AccordionTrigger className="flex items-center justify-between p-4 hover:bg-gray-50">
+                <div className="grid grid-cols-4 gap-4 w-full">
+                  <div className="flex items-center space-x-4">
+                    <span className="font-medium">{product.name}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Badge variant={product.verified ? "default" : "secondary"}>
+                      {product.verified ? "Verified" : "Pending"}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-500">
+                    {product.verified ? formatDate(product.verifiedDate) : "-"}
+                  </div>
+                  <div className="flex items-center text-sm text-gray-500">
+                    {formatDate(product.dateAdded)}
+                  </div>
                 </div>
-                <span className="text-sm text-gray-500">
-                  {formatDate(product.dateAdded)}
-                </span>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="p-4 space-y-4">
@@ -93,9 +107,11 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
                       <p className="text-sm text-gray-500">
                         Added on: {formatDate(product.dateAdded)}
                       </p>
-                      <p className="text-sm text-gray-500">
-                        Verified on: {formatDate(product.verifiedDate)}
-                      </p>
+                      {product.verified && (
+                        <p className="text-sm text-gray-500">
+                          Verified on: {formatDate(product.verifiedDate)}
+                        </p>
+                      )}
                       <div className="flex space-x-2 mt-4">
                         <Button
                           onClick={() => handleEdit(product)}
