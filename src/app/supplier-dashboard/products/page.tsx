@@ -2,9 +2,8 @@ import React from "react";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import prisma from "@/utils/prisma/client";
-import SupplierScreen from "@/components/SupplierDashboard/SupplierScreen"; 
+import SupplierScreen from "@/components/SupplierDashboard/SupplierScreen";
 import ProductList from "@/components/SupplierDashboard/contents/ProductList";
-import ProductForm from "@/components/SupplierDashboard/contents/ProductForm";
 import { ProductWithSupplier } from "@/utils/Products";
 
 const ProductsPage = async () => {
@@ -38,13 +37,8 @@ const ProductsPage = async () => {
   })) as ProductWithSupplier[];
 
   return (
-    <SupplierScreen supplier={supplier}> 
-      <div>
-        <ProductForm supplierId={supplier.id} />
-      </div>
-      <div className="flex-1 p-8 overflow-auto">
-        <ProductList products={products} />
-      </div>
+    <SupplierScreen supplier={supplier} showProductForm={true}>
+      <ProductList products={products} />
     </SupplierScreen>
   );
 };
