@@ -19,18 +19,30 @@ interface ProductListProps {
 }
 
 export default function ProductList({ products }: ProductListProps) {
-  const itemsPerPage = 8; 
+  const itemsPerPage = 8;
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(products.length / itemsPerPage);
-
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentProducts = products.slice(startIndex, startIndex + itemsPerPage);
+
+  const verifiedCount = products.filter((product) => product.verified).length;
+  const pendingCount = products.filter((product) => !product.verified).length;
 
   return (
     <div className="mt-6 justify-center">
       {products.length > 0 ? (
         <>
+          <div className="flex justify-between items-center mb-4 px-4 py-2 border rounded-lg bg-gray-100">
+            <div className="text-sm text-gray-600">
+              <strong>Product Health Summary:</strong>
+            </div>
+            <div className="text-sm text-gray-600">
+              <span className="mr-4">Verified: {verifiedCount}</span>
+              <span className="mr-4">Pending: {pendingCount}</span>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-center">
             {currentProducts.map((product) => (
               <ProductCard
