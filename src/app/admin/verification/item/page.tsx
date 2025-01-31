@@ -1,33 +1,13 @@
 import { ItemVerificationComponent } from "@/components/admin/ItemVerification";
 import { SidebarInset } from "@/components/ui/sidebar";
 import prisma from "@/utils/prisma/client";
-import { createClient } from "@/utils/supabase/server";
 
 export default async function ItemVerification() {
-  const supabase = createClient();
-
   const fetchedProducts = await prisma.product.findMany({
     where: {
       verified: false,
     },
   });
-
-  for (const product of fetchedProducts) {
-    const { data, error } = await supabase.storage
-      .from("photos")
-      .createSignedUrl(`${product.image}`, 3600);
-
-    if (error) {
-      console.error(
-        "Error fetching signed URL for product image:",
-        error.message,
-      );
-    }
-
-    if (data) {
-      product.image = data.signedUrl;
-    }
-  }
 
   return (
     <div className="flex h-screen w-full bg-background">
