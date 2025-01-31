@@ -32,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SidebarTrigger } from "../ui/sidebar";
 
 interface ItemVerificationProps {
   products: Product[];
@@ -121,7 +122,13 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
     <p>No products to verify currently</p>
   ) : (
     <div className="h-screen">
-      <div className="p-4 flex items-center gap-2">
+      <div className="flex items-center gap-2 md:gap-10 flex-col md:flex-row">
+        <div className="flex flex-row justify-center items-center w-full md:w-auto relative">
+          <SidebarTrigger className="absolute md:static left-0 md:mr-4 border size-8 bg-gray-100" />
+          <h2 className="text-3xl font-bold tracking-tight">
+            Product Verification
+          </h2>
+        </div>
         <Input
           type="text"
           placeholder="Search products..."

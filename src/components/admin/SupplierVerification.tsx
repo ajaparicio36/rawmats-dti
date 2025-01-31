@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { retrieveFile } from "@/utils/supabase/files";
 import Image from "next/image";
 import InlineLoading from "../Loading/InlineLoading";
+import { SidebarTrigger } from "../ui/sidebar";
 
 export function SupplierVerificationComponent({
   suppliers,
@@ -104,6 +105,12 @@ export function SupplierVerificationComponent({
 
   return (
     <ScrollArea className="h-full">
+      <div className="flex flex-row justify-center md:justify-start items-center w-full md:w-auto relative md:mb-5">
+        <SidebarTrigger className="absolute md:static left-0 md:mr-4 border size-8 bg-gray-100" />
+        <h2 className="text-3xl font-bold tracking-tight">
+          Supplier Verification
+        </h2>
+      </div>
       {suppliers.map((supplier) => (
         <Card className="my-3" key={supplier.id}>
           <CardHeader>
