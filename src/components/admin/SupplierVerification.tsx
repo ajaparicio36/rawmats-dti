@@ -18,6 +18,8 @@ import Image from "next/image";
 import InlineLoading from "../Loading/InlineLoading";
 import { SidebarTrigger } from "../ui/sidebar";
 
+import { Carousel } from "antd";
+
 export function SupplierVerificationComponent({
   suppliers,
 }: {
@@ -136,24 +138,32 @@ export function SupplierVerificationComponent({
           </CardHeader>
           <CardContent>
             <p className="text-base md:text-lg">Business Documents:</p>
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+            <div className="w-[600px]">
+              <Carousel
+                arrows
+                draggable
+                infinite={false}
+                adaptiveHeight
+                className="w-full"
+              >
+                {files[supplier.userId]?.map((file, index) =>
+                  file ? (
+                    <Image
+                      key={index}
+                      src={file}
+                      width={100}
+                      height={100}
+                      alt="business document"
+                      className="h-auto w-auto"
+                    />
+                  ) : (
+                    <div key={index}>Img not found</div>
+                  ),
+                )}
+              </Carousel>
               {(!files[supplier.userId] ||
                 files[supplier.userId].length === 0) && (
                 <Skeleton className="h-[300px] w-[450px] rounded-lg" />
-              )}
-              {files[supplier.userId]?.map((file, index) =>
-                file ? (
-                  <Image
-                    key={index}
-                    src={file}
-                    width={100}
-                    height={100}
-                    alt="business document"
-                    className="h-auto w-auto"
-                  />
-                ) : (
-                  <div key={index}>Img not found</div>
-                ),
               )}
             </div>
           </CardContent>
