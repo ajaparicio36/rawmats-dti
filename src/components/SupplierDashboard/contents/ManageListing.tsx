@@ -5,10 +5,29 @@ import Image from "next/image";
 import { ProductWithSupplier } from "@/utils/Products";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { formatDate } from "@/utils/formatDate";
 import EditProductForm from "./EditProductForm";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface ManageListingsProps {
   fetchedProducts: ProductWithSupplier[];
@@ -17,11 +36,13 @@ interface ManageListingsProps {
 const ITEMS_PER_PAGE = 10;
 
 const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
-  const [products, setProducts] = useState<ProductWithSupplier[]>(fetchedProducts);
-  const [editingProduct, setEditingProduct] = useState<ProductWithSupplier | null>(null);
+  const [products, setProducts] =
+    useState<ProductWithSupplier[]>(fetchedProducts);
+  const [editingProduct, setEditingProduct] =
+    useState<ProductWithSupplier | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState<boolean>(false);
-  const [selectedProduct, setSelectedProduct] = useState<ProductWithSupplier | null>(null);
+  const [selectedProduct, setSelectedProduct] =
+    useState<ProductWithSupplier | null>(null);
 
   const handleDelete = async (id: string) => {
     try {
@@ -39,117 +60,224 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
 
   const handleEditComplete = (updatedProduct: ProductWithSupplier) => {
     setProducts((prevProducts) =>
-      prevProducts.map((product) => (product.id === updatedProduct.id ? updatedProduct : product))
+      prevProducts.map((product) =>
+        product.id === updatedProduct.id ? updatedProduct : product
+      )
     );
     setEditingProduct(null);
   };
 
-  const handleShowDescription = (product: ProductWithSupplier) => {
-    setSelectedProduct(product);
-    setIsDescriptionModalOpen(true);
+  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+  const currentProducts = products.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const formatDateAsNumber = (date: string | Date): string => {
+    if (!date) return "N/A";
+    const parsedDate = new Date(date);
+    const year = parsedDate.getFullYear();
+    const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+    const day = String(parsedDate.getDate()).padStart(2, "0");
+    return `${year}/${month}/${day}`;
   };
 
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
-  const currentProducts = products.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
-
   return (
-    <ScrollArea className="h-[calc(100vh-4rem)] w-full">
-      <div className="w-full p-4">
-        <div className="w-full bg-white shadow-md rounded-lg p-6">
-          <Table>
+    <div className="w-full">
+      <div className="hidden md:block">
+        <div
+          className="bg-white p-10 mt-[-20] rounded-lg"
+          style={{
+            boxShadow:
+              "0 4px 10px rgba(0, 0, 0, 0.1), 0 -4px 10px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Table className="w-full min-w-[600px] rounded-lg shadow-lg overflow-hidden">
             <TableHeader>
               <TableRow>
-                <TableHead>Product</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Added</TableHead>
-                <TableHead>Verified Date</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="whitespace-nowrap">Product</TableHead>
+                <TableHead className="whitespace-nowrap">Status</TableHead>
+                <TableHead className="whitespace-nowrap">Added</TableHead>
+                <TableHead className="whitespace-nowrap">
+                  Verified Date
+                </TableHead>{" "}
+                <TableHead className="whitespace-nowrap">Actions</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody className="space-y-2">
+              {" "}
               {currentProducts.map((product) => (
                 <TableRow
                   key={product.id}
-                  className="cursor-pointer"
-                  onClick={() => handleShowDescription(product)} 
+                  onClick={() => setSelectedProduct(product)}
+                  className="cursor-pointer hover:bg-gray-200 rounded-lg transition-all"
                 >
-                  <TableCell className="flex items-center space-x-3">
+                  <TableCell className="flex items-center space-x-2 min-w-[100px] max-w-full">
                     <Image
                       src={product.image || "/placeholder.svg"}
                       alt={product.name}
-                      width={40}
-                      height={40}
-                      className="rounded-md"
+                      width={50}
+                      height={50}
+                      className="rounded-full"
                     />
-                    <span>{product.name}</span>
+                    <span className="truncate">{product.name}</span>
                   </TableCell>
                   <TableCell>
                     <Badge variant={product.verified ? "default" : "secondary"}>
                       {product.verified ? "Verified" : "Pending"}
                     </Badge>
                   </TableCell>
-                  <TableCell>{formatDate(product.dateAdded)}</TableCell>
-                  <TableCell>{product.verified ? formatDate(product.verifiedDate) : "-"}</TableCell>
-                  <TableCell className="flex space-x-2">
-                    <Button onClick={() => setEditingProduct(product)} variant="outline">Edit</Button>
-                    <Button onClick={() => handleDelete(product.id)} variant="destructive" className="bg-gray-600 text-white hover:bg-red-700"
-                    >Delete</Button>
+                  <TableCell>{formatDateAsNumber(product.dateAdded)}</TableCell>
+                  <TableCell>
+                    {product.verified
+                      ? formatDateAsNumber(product.verifiedDate)
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="flex space-x-10 flex-wrap min-w-[150px]">
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingProduct(product);
+                      }}
+                      variant="outline"
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(product.id);
+                      }}
+                      variant="outline"
+                    >
+                      Delete
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </div>
-
-        <div className="flex justify-between items-center mt-4">
-          <Button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage(currentPage - 1)}
-            variant="outline"
-          >
-            Previous
-          </Button>
-          <span>Page {currentPage} of {totalPages}</span>
-          <Button
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage(currentPage + 1)}
-            variant="outline"
-          >
-            Next
-          </Button>
-        </div>
       </div>
 
-      {isDescriptionModalOpen && selectedProduct && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg w-1/3">
-            <h3 className="text-lg font-semibold">{selectedProduct.name}</h3>
-            <div className="flex items-center mt-4">
-              <div className="ml-4">
-                <p className="text-gray-600">Price: ${selectedProduct.price}</p>
-                <p className="mt-2">{selectedProduct.description}</p>
-                <p className="mt-2">
-                  <Badge variant={selectedProduct.verified ? "default" : "secondary"}>
-                    {selectedProduct.verified ? "Verified" : "Pending"}
+      <div className="md:hidden">
+        <Accordion type="single" collapsible className="w-full">
+          {currentProducts.map((product) => (
+            <AccordionItem key={product.id} value={product.id}>
+              <AccordionTrigger className="flex items-center space-x-3 p-3 border rounded-md">
+                <Image
+                  src={product.image || "/placeholder.svg"}
+                  alt={product.name}
+                  width={40}
+                  height={40}
+                  className="rounded-md"
+                />
+                <span className="font-medium">{product.name}</span>
+              </AccordionTrigger>
+              <AccordionContent className="p-4 bg-gray-100 rounded-lg">
+                <p className="text-sm text-gray-700">
+                  <strong>Status:</strong>{" "}
+                  <Badge variant={product.verified ? "default" : "secondary"}>
+                    {product.verified ? "Verified" : "Pending"}
                   </Badge>
                 </p>
-                <p className="mt-2 text-gray-500">Added: {formatDate(selectedProduct.dateAdded)}</p>
-                {selectedProduct.verified && selectedProduct.verifiedDate && (
-                  <p className="mt-2 text-gray-500">Verified on: {formatDate(selectedProduct.verifiedDate)}</p>
-                )}
-              </div>
-            </div>
-            <div className="flex justify-end mt-4">
-              <Button onClick={() => setIsDescriptionModalOpen(false)} variant="outline">Close</Button>
-            </div>
-          </div>
-        </div>
-      )}
+                <p className="text-sm text-gray-700 mt-1">
+                  <strong>Added:</strong> {formatDate(product.dateAdded)}
+                </p>
+                <p className="text-sm text-gray-700 mt-1">
+                  <strong>Verified Date:</strong>{" "}
+                  {product.verified ? formatDate(product.verifiedDate) : "-"}
+                </p>
+                <div className="flex space-x-5 mt-3">
+                  <Button
+                    onClick={() => setEditingProduct(product)}
+                    variant="outline"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    onClick={() => handleDelete(product.id)}
+                    variant="destructive"
+                    className="bg-gray-600 text-white hover:bg-red-700"
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+
+      <div className="flex justify-between items-center mt-4">
+        <Button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage(currentPage - 1)}
+          variant="outline"
+        >
+          Previous
+        </Button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage(currentPage + 1)}
+          variant="outline"
+        >
+          Next
+        </Button>
+      </div>
 
       {editingProduct && (
-        <EditProductForm product={editingProduct} onClose={() => setEditingProduct(null)} onEdit={handleEditComplete} />
+        <EditProductForm
+          product={editingProduct}
+          onClose={() => setEditingProduct(null)}
+          onEdit={handleEditComplete}
+        />
       )}
-    </ScrollArea>
+
+      <Dialog
+        open={!!selectedProduct}
+        onOpenChange={(open) => !open && setSelectedProduct(null)}
+      >
+        <DialogTrigger />
+        <DialogContent>
+          {selectedProduct && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{selectedProduct.name}</DialogTitle>
+              </DialogHeader>
+              <div className="flex items-center space-x-4">
+                <Image
+                  src={selectedProduct.image || "/placeholder.svg"}
+                  alt={selectedProduct.name}
+                  width={100}
+                  height={100}
+                  className="rounded-md"
+                />
+                <div>
+                  <p>
+                    <strong>Status:</strong>{" "}
+                    {selectedProduct.verified ? "Verified" : "Pending"}
+                  </p>
+                  <p>
+                    <strong>Added:</strong>{" "}
+                    {formatDate(selectedProduct.dateAdded)}
+                  </p>
+                  <p>
+                    <strong>Verified Date:</strong>{" "}
+                    {selectedProduct.verified
+                      ? formatDate(selectedProduct.verifiedDate)
+                      : "-"}
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 

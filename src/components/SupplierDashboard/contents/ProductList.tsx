@@ -10,6 +10,8 @@ interface ProductListProps {
     supplierId: string;
     price: number;
     description: string;
+    packaging: string;
+    stocks: number;
     verified: boolean;
     verifiedDate: Date;
     dateAdded: Date;
@@ -53,6 +55,9 @@ export default function ProductList({ products }: ProductListProps) {
                 price={product.price}
                 image={product.image}
                 verified={product.verified}
+                description={product.description}
+                packaging={product.packaging}
+                stocks={product.stocks}
               />
             ))}
           </div>
@@ -63,17 +68,23 @@ export default function ProductList({ products }: ProductListProps) {
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
                 className={`px-4 py-2 mx-2 border rounded ${
-                  currentPage === 1 ? "text-gray-400 cursor-not-allowed" : "text-blue-600 hover:bg-gray-200"
+                  currentPage === 1
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-blue-600 hover:bg-gray-200"
                 }`}
               >
                 Previous
               </button>
               <span className="px-4 py-2">{`Page ${currentPage} of ${totalPages}`}</span>
               <button
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
                 className={`px-4 py-2 mx-2 border rounded ${
-                  currentPage === totalPages ? "text-gray-400 cursor-not-allowed" : "text-blue-600 hover:bg-gray-200"
+                  currentPage === totalPages
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-blue-600 hover:bg-gray-200"
                 }`}
               >
                 Next
