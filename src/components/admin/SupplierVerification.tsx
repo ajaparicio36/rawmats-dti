@@ -19,6 +19,7 @@ import { SidebarTrigger } from "../ui/sidebar";
 
 import Lightbox from "yet-another-react-lightbox";
 import Inline from "yet-another-react-lightbox/plugins/inline";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 
 export function SupplierVerificationComponent({
@@ -162,7 +163,7 @@ export function SupplierVerificationComponent({
                     }}
                     carousel={{
                       padding: 0,
-                      spacing: 0,
+                      spacing: 10,
                       imageFit: "contain",
                       finite: true,
                     }}
@@ -180,7 +181,8 @@ export function SupplierVerificationComponent({
                     open={open}
                     close={toggleOpen(false)}
                     index={index}
-                    slides={files[supplier.userId]?.map((file) => ({
+                    plugins={[Zoom]}
+                    slides={files[supplier.userId].map((file) => ({
                       src: file,
                     }))}
                     on={{ view: updateIndex }}
@@ -188,6 +190,12 @@ export function SupplierVerificationComponent({
                     controller={{
                       closeOnPullDown: true,
                       closeOnBackdropClick: true,
+                    }}
+                    zoom={{
+                      scrollToZoom: true,
+                      maxZoomPixelRatio: 10,
+                      wheelZoomDistanceFactor: 200,
+                      pinchZoomDistanceFactor: 200,
                     }}
                   />
                 </>
