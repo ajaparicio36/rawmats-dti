@@ -14,11 +14,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Supplier, User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { retrieveFile } from "@/utils/supabase/files";
-import Image from "next/image";
 import InlineLoading from "../Loading/InlineLoading";
 import { SidebarTrigger } from "../ui/sidebar";
 
-import { Carousel } from "antd";
+import Lightbox from "yet-another-react-lightbox";
+import Inline from "yet-another-react-lightbox/plugins/inline";
+import "yet-another-react-lightbox/styles.css";
 
 export function SupplierVerificationComponent({
   suppliers,
@@ -26,6 +27,14 @@ export function SupplierVerificationComponent({
   suppliers: (Supplier & { user: User })[];
 }) {
   const [files, setFiles] = useState<Record<string, string[]>>({});
+  const [open, setOpen] = useState(false);
+  const [index, setIndex] = useState(0);
+
+  const toggleOpen = (state: boolean) => () => setOpen(state);
+
+  const updateIndex = ({ index: current }: { index: number }) =>
+    setIndex(current);
+
   const [isLoading, setIsLoading] = useState<{
     status: boolean;
     method: null | "verify" | "reject";
@@ -139,31 +148,53 @@ export function SupplierVerificationComponent({
           <CardContent>
             <p className="text-base md:text-lg">Business Documents:</p>
             <div className="w-[600px]">
-              <Carousel
-                arrows
-                draggable
-                infinite={false}
-                adaptiveHeight
-                className="w-full"
-              >
-                {files[supplier.userId]?.map((file, index) =>
-                  file ? (
-                    <Image
-                      key={index}
-                      src={file}
-                      width={100}
-                      height={100}
-                      alt="business document"
-                      className="h-auto w-auto"
-                    />
-                  ) : (
-                    <div key={index}>Img not found</div>
-                  ),
-                )}
-              </Carousel>
+              {files[supplier.userId] && (
+                <>
+                  <Lightbox
+                    index={index}
+                    slides={files[supplier.userId].map((file) => ({
+                      src: file,
+                    }))}
+                    plugins={[Inline]}
+                    on={{
+                      view: updateIndex,
+                      click: toggleOpen(true),
+                    }}
+                    carousel={{
+                      padding: 0,
+                      spacing: 0,
+                      imageFit: "contain",
+                      finite: true,
+                    }}
+                    inline={{
+                      style: {
+                        width: "100%",
+                        maxWidth: "900px",
+                        aspectRatio: "3 / 2",
+                        margin: "0 auto",
+                      },
+                    }}
+                  />
+
+                  <Lightbox
+                    open={open}
+                    close={toggleOpen(false)}
+                    index={index}
+                    slides={files[supplier.userId]?.map((file) => ({
+                      src: file,
+                    }))}
+                    on={{ view: updateIndex }}
+                    animation={{ fade: 0 }}
+                    controller={{
+                      closeOnPullDown: true,
+                      closeOnBackdropClick: true,
+                    }}
+                  />
+                </>
+              )}
               {(!files[supplier.userId] ||
                 files[supplier.userId].length === 0) && (
-                <Skeleton className="h-[300px] w-[450px] rounded-lg" />
+                <Skeleton className="h-[350px] w-[500px] rounded-lg" />
               )}
             </div>
           </CardContent>
