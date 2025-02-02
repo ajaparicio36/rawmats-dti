@@ -2,6 +2,14 @@
 import React, { useState } from "react";
 import ProductCard from "./ProductCard";
 import { Supplier } from "@prisma/client";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 interface ProductListProps {
   products: {
@@ -23,28 +31,60 @@ interface ProductListProps {
 export default function ProductList({ products }: ProductListProps) {
   const itemsPerPage = 8;
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortOption, setSortOption] = useState("newest");
 
-  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const filteredProducts = products
+    .filter((product) =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortOption === "price-low") return a.price - b.price;
+      if (sortOption === "price-high") return b.price - a.price;
+      return new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime();
+    });
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentProducts = products.slice(startIndex, startIndex + itemsPerPage);
-
-  const verifiedCount = products.filter((product) => product.verified).length;
-  const pendingCount = products.filter((product) => !product.verified).length;
+  const currentProducts = filteredProducts.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   return (
-    <div className="mt-6 justify-center">
-      {products.length > 0 ? (
-        <>
-          <div className="flex justify-between items-center mb-4 px-4 py-2 border rounded-lg bg-gray-100">
-            <div className="text-sm text-gray-600">
-              <strong>Product Health Summary:</strong>
-            </div>
-            <div className="text-sm text-gray-600">
-              <span className="mr-4">Verified: {verifiedCount}</span>
-              <span className="mr-4">Pending: {pendingCount}</span>
-            </div>
-          </div>
+    <div className="mt-6 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-6">
+        <div className="text-center sm:text-left">
+          <h2 className="text-2xl font-bold text-gray-900">Browse Products</h2>
+          <p className="text-gray-500 text-sm">
+            Create the best raw materials for your business
+          </p>
+        </div>
+        ={" "}
+        <div className="flex gap-3 mt-4 sm:mt-0">
+          <Input
+            type="text"
+            placeholder="Search products..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-64 border rounded-lg px-3 py-2 text-sm"
+          />
 
+          <Select value={sortOption} onValueChange={setSortOption}>
+            <SelectTrigger className="w-40 border rounded-lg px-3 py-2 text-sm bg-white">
+              Sort by
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="newest">Newest</SelectItem>
+              <SelectItem value="price-low">Price: Low to High</SelectItem>
+              <SelectItem value="price-high">Price: High to Low</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {filteredProducts.length > 0 ? (
+        <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-center">
             {currentProducts.map((product) => (
               <ProductCard
@@ -61,39 +101,35 @@ export default function ProductList({ products }: ProductListProps) {
               />
             ))}
           </div>
-
+          ={" "}
           {totalPages > 1 && (
             <div className="flex justify-center mt-6">
-              <button
+              <Button
+                variant="outline"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className={`px-4 py-2 mx-2 border rounded ${
-                  currentPage === 1
-                    ? "text-gray-400 cursor-not-allowed"
-                    : "text-blue-600 hover:bg-gray-200"
-                }`}
+                className="mx-2"
               >
                 Previous
-              </button>
-              <span className="px-4 py-2">{`Page ${currentPage} of ${totalPages}`}</span>
-              <button
+              </Button>
+              <span className="px-4 py-4 text-sm font-medium">
+                Page {currentPage} of {totalPages}
+              </span>
+              <Button
+                variant="outline"
                 onClick={() =>
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
-                className={`px-4 py-2 mx-2 border rounded ${
-                  currentPage === totalPages
-                    ? "text-gray-400 cursor-not-allowed"
-                    : "text-blue-600 hover:bg-gray-200"
-                }`}
+                className="mx-2"
               >
                 Next
-              </button>
+              </Button>
             </div>
           )}
         </>
       ) : (
-        <p className="text-center text-gray-500">No products created yet.</p>
+        <p className="text-center text-gray-500">No products found.</p>
       )}
     </div>
   );
