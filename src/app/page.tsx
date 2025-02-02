@@ -68,13 +68,13 @@ export default async function Home({
   const totalPages = Math.ceil(allProducts.length / ITEMS_PER_PAGE);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-50">
+    <div className="flex flex-col min-h-screen w-screen">
       <NavBar user={user} supplier={supplier} />
       <AnimatedMain
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 space-y-6"
+        className="flex-grow max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 space-y-6"
       >
         {!searchQuery && (
           <>
@@ -180,7 +180,7 @@ export default async function Home({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 1 }}
-        className="bg-gradient-to-r from-blue-600 to-blue-400 text-white py-4 mt-8"
+        className="bg-gradient-to-r from-blue-600 to-blue-400 text-white py-4"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm">

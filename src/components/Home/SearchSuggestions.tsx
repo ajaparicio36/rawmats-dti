@@ -36,7 +36,10 @@ export function SearchSuggestions({ query, onSelect }: SearchSuggestionsProps) {
 
   const handleProductClick = (product: ProductWithSupplier) => {
     onSelect(product.name);
-    router.push(`/product/${product.id}`);
+    const searchParams = new URLSearchParams();
+    searchParams.set("search", product.name);
+    searchParams.set("page", "1");
+    router.push(`/?${searchParams.toString()}`);
   };
 
   if (suggestions.length === 0) return null;
