@@ -10,7 +10,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Supplier, User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { retrieveFile } from "@/utils/supabase/files";
@@ -116,7 +115,7 @@ export function SupplierVerificationComponent({
   };
 
   return (
-    <ScrollArea className="h-full">
+    <div className="h-screen">
       <div className="flex flex-row justify-center md:justify-start items-center w-full md:w-auto relative md:mb-5">
         <SidebarTrigger className="absolute md:static left-0 md:mr-4 border size-8 bg-gray-100" />
         <h2 className="text-3xl font-bold tracking-tight">
@@ -148,7 +147,7 @@ export function SupplierVerificationComponent({
           </CardHeader>
           <CardContent>
             <p className="text-base md:text-lg">Business Documents:</p>
-            <div className="w-[600px]">
+            <div className="w-full max-h-[400px] flex">
               {files[supplier.userId] && (
                 <>
                   <Lightbox
@@ -170,9 +169,10 @@ export function SupplierVerificationComponent({
                     inline={{
                       style: {
                         width: "100%",
-                        maxWidth: "900px",
+                        maxWidth: "700px",
                         aspectRatio: "3 / 2",
-                        margin: "0 auto",
+                        maxHeight: "400px",
+                        objectFit: "contain",
                       },
                     }}
                   />
@@ -239,6 +239,6 @@ export function SupplierVerificationComponent({
           </CardFooter>
         </Card>
       ))}
-    </ScrollArea>
+    </div>
   );
 }
