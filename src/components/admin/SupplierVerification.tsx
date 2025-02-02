@@ -122,123 +122,125 @@ export function SupplierVerificationComponent({
           Supplier Verification
         </h2>
       </div>
-      {suppliers.map((supplier) => (
-        <Card className="my-3" key={supplier.id}>
-          <CardHeader>
-            <CardTitle className="text-xl md:text-3xl">
-              {supplier.businessName}
-            </CardTitle>
-            <div className="flex flex-col gap-2 text-muted-foreground">
-              <div className="flex flex-row gap-2 items-center text-sm md:text-base">
-                <UserRound className="size-4 sm:size-5 md:size-6" />
-                {supplier.user.displayName}
+      <div className="grid grid-cols-1 md:grid-cols-2">
+        {suppliers.map((supplier) => (
+          <Card className="my-3" key={supplier.id}>
+            <CardHeader>
+              <CardTitle className="text-xl md:text-3xl">
+                {supplier.businessName}
+              </CardTitle>
+              <div className="flex flex-col gap-2 text-muted-foreground">
+                <div className="flex flex-row gap-2 items-center text-sm md:text-base">
+                  <UserRound className="size-4 sm:size-5 md:size-6" />
+                  {supplier.user.displayName}
+                </div>
+                <div className="flex flex-row gap-2 items-center text-[10px] md:text-base">
+                  <MapPin className="size-4 sm:size-5 md:size-6 shrink-0" />
+                  <a
+                    className="underline shrink"
+                    href={supplier.businessLocation}
+                    target="_blank"
+                  >
+                    {supplier.businessLocation}
+                  </a>
+                </div>
               </div>
-              <div className="flex flex-row gap-2 items-center text-[10px] md:text-base">
-                <MapPin className="size-4 sm:size-5 md:size-6 shrink-0" />
-                <a
-                  className="underline shrink"
-                  href={supplier.businessLocation}
-                  target="_blank"
-                >
-                  {supplier.businessLocation}
-                </a>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-base md:text-lg">Business Documents:</p>
-            <div className="w-full max-h-[400px] flex">
-              {files[supplier.userId] && (
-                <>
-                  <Lightbox
-                    index={index}
-                    slides={files[supplier.userId].map((file) => ({
-                      src: file,
-                    }))}
-                    plugins={[Inline]}
-                    on={{
-                      view: updateIndex,
-                      click: toggleOpen(true),
-                    }}
-                    carousel={{
-                      padding: 0,
-                      spacing: 10,
-                      imageFit: "contain",
-                      finite: true,
-                    }}
-                    inline={{
-                      style: {
-                        width: "100%",
-                        maxWidth: "700px",
-                        aspectRatio: "3 / 2",
-                        maxHeight: "400px",
-                        objectFit: "contain",
-                      },
-                    }}
-                  />
+            </CardHeader>
+            <CardContent>
+              <p className="text-base md:text-lg">Business Documents:</p>
+              <div className="w-full max-h-[400px] flex">
+                {files[supplier.userId] && (
+                  <>
+                    <Lightbox
+                      index={index}
+                      slides={files[supplier.userId].map((file) => ({
+                        src: file,
+                      }))}
+                      plugins={[Inline]}
+                      on={{
+                        view: updateIndex,
+                        click: toggleOpen(true),
+                      }}
+                      carousel={{
+                        padding: 0,
+                        spacing: 10,
+                        imageFit: "contain",
+                        finite: true,
+                      }}
+                      inline={{
+                        style: {
+                          width: "100%",
+                          maxWidth: "700px",
+                          aspectRatio: "3 / 2",
+                          maxHeight: "400px",
+                          objectFit: "contain",
+                        },
+                      }}
+                    />
 
-                  <Lightbox
-                    open={open}
-                    close={toggleOpen(false)}
-                    index={index}
-                    plugins={[Zoom]}
-                    slides={files[supplier.userId].map((file) => ({
-                      src: file,
-                    }))}
-                    on={{ view: updateIndex }}
-                    animation={{ fade: 0 }}
-                    controller={{
-                      closeOnPullDown: true,
-                      closeOnBackdropClick: true,
-                    }}
-                    zoom={{
-                      scrollToZoom: true,
-                      maxZoomPixelRatio: 10,
-                      wheelZoomDistanceFactor: 200,
-                      pinchZoomDistanceFactor: 200,
-                    }}
-                  />
-                </>
-              )}
-              {(!files[supplier.userId] ||
-                files[supplier.userId].length === 0) && (
-                <Skeleton className="h-[350px] w-[500px] rounded-lg" />
-              )}
-            </div>
-          </CardContent>
-          <CardFooter className="flex gap-4 justify-center">
-            <Button
-              onClick={() => verifySupplier(supplier.userId)}
-              disabled={supplier.verified || isLoading.status}
-              className="flex-1 bg-rawmats-primary-300 hover:bg-rawmats-primary-100 min-w-[100px] max-w-[150px]"
-            >
-              {isLoading.method === "verify" ? (
-                <InlineLoading message="Verifying" />
-              ) : (
-                <>
-                  <Check className="mr-2 h-4 w-4" />
-                  Verify
-                </>
-              )}
-            </Button>
-            <Button
-              onClick={() => rejectSupplier(supplier.userId)}
-              variant="destructive"
-              disabled={supplier.verified || isLoading.status}
-              className="flex-1 bg-rawmats-feedback-error min-w-[100px] max-w-[150px]"
-            >
-              {isLoading.method === "reject" ? (
-                <InlineLoading message="Rejecting" />
-              ) : (
-                <>
-                  <X className="mr-2 h-4 w-4" />
-                  Reject
-                </>
-              )}
-            </Button>
-          </CardFooter>
-        </Card>
-      ))}
+                    <Lightbox
+                      open={open}
+                      close={toggleOpen(false)}
+                      index={index}
+                      plugins={[Zoom]}
+                      slides={files[supplier.userId].map((file) => ({
+                        src: file,
+                      }))}
+                      on={{ view: updateIndex }}
+                      animation={{ fade: 0 }}
+                      controller={{
+                        closeOnPullDown: true,
+                        closeOnBackdropClick: true,
+                      }}
+                      zoom={{
+                        scrollToZoom: true,
+                        maxZoomPixelRatio: 10,
+                        wheelZoomDistanceFactor: 200,
+                        pinchZoomDistanceFactor: 200,
+                      }}
+                    />
+                  </>
+                )}
+                {(!files[supplier.userId] ||
+                  files[supplier.userId].length === 0) && (
+                  <Skeleton className="h-[350px] w-[500px] rounded-lg" />
+                )}
+              </div>
+            </CardContent>
+            <CardFooter className="flex gap-4 justify-center">
+              <Button
+                onClick={() => verifySupplier(supplier.userId)}
+                disabled={supplier.verified || isLoading.status}
+                className="flex-1 bg-rawmats-primary-300 hover:bg-rawmats-primary-100 min-w-[100px] max-w-[150px]"
+              >
+                {isLoading.method === "verify" ? (
+                  <InlineLoading message="Verifying" />
+                ) : (
+                  <>
+                    <Check className="mr-2 h-4 w-4" />
+                    Verify
+                  </>
+                )}
+              </Button>
+              <Button
+                onClick={() => rejectSupplier(supplier.userId)}
+                variant="destructive"
+                disabled={supplier.verified || isLoading.status}
+                className="flex-1 bg-rawmats-feedback-error min-w-[100px] max-w-[150px]"
+              >
+                {isLoading.method === "reject" ? (
+                  <InlineLoading message="Rejecting" />
+                ) : (
+                  <>
+                    <X className="mr-2 h-4 w-4" />
+                    Reject
+                  </>
+                )}
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }
