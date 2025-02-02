@@ -33,6 +33,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SidebarTrigger } from "../ui/sidebar";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 interface ItemVerificationProps {
   products: Product[];
@@ -54,6 +62,8 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
   const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
   const [comment, setComment] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   const verifyProduct = async (id: string) => {
     try {
@@ -118,14 +128,20 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
     product.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
   return products.length === 0 ? (
     <p>No products to verify currently</p>
   ) : (
-    <div className="h-screen">
+    <div className="h-fit">
       <div className="flex items-center gap-2 md:gap-10 flex-col md:flex-row">
         <div className="flex flex-row justify-center items-center w-full md:w-auto relative">
           <SidebarTrigger className="absolute md:static left-0 md:mr-4 border size-8 bg-gray-100" />
-          <h2 className="text-3xl font-bold tracking-tight">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
             Product Verification
           </h2>
         </div>
@@ -142,8 +158,8 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
       </div>
 
       <ScrollArea className="h-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-          {filteredProducts.map((product) => (
+        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+          {paginatedProducts.map((product) => (
             <Link
               href={`/product/${product.id}`}
               key={product.id}
@@ -173,21 +189,21 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
                   <p className="font-semibold">
                     Price: ${product.price.toFixed(2)}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs text-muted-foreground overflow-hidden text-ellipsis">
                     Supplier ID: {product.supplierId}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     Date Added:{" "}
                     {new Date(product.dateAdded).toLocaleDateString()}
                   </p>
                   {product.verified && (
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       Verified Date:{" "}
                       {new Date(product.verifiedDate).toLocaleDateString()}
                     </p>
                   )}
                 </CardContent>
-                <CardFooter className="flex gap-2 justify-between mt-auto">
+                <CardFooter className="flex flex-col gap-2 justify-between mt-auto">
                   <Button
                     onClick={(e) => {
                       e.preventDefault();
@@ -195,7 +211,7 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
                       verifyProduct(product.id);
                     }}
                     disabled={product.verified}
-                    className="flex-1 bg-rawmats-primary-300 hover:bg-rawmats-feedback-success hover:text-rawmats-text-500"
+                    className="flex-1 bg-rawmats-primary-300 hover:bg-rawmats-primary-100 w-full"
                   >
                     <Check className="mr-2 h-4 w-4" />
                     Verify
@@ -208,7 +224,7 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
                     }}
                     variant="destructive"
                     disabled={product.verified}
-                    className="flex-1 bg-rawmats-feedback-error hover:bg-red-600"
+                    className="flex-1 bg-rawmats-feedback-error w-full"
                   >
                     <X className="mr-2 h-4 w-4" />
                     Reject
@@ -219,6 +235,40 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
           ))}
         </div>
       </ScrollArea>
+
+      {totalPages > 1 && (
+        <Pagination className="mt-3">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              />
+            </PaginationItem>
+
+            {[...Array(totalPages)].map((_, index) => (
+              <PaginationItem key={index}>
+                <PaginationLink
+                  href="#"
+                  isActive={currentPage === index + 1}
+                  onClick={() => setCurrentPage(index + 1)}
+                >
+                  {index + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
 
       <Dialog
         open={isModalOpen}

@@ -118,7 +118,7 @@ export function SupplierVerificationComponent({
     <div className="h-screen">
       <div className="flex flex-row justify-center md:justify-start items-center w-full md:w-auto relative md:mb-5">
         <SidebarTrigger className="absolute md:static left-0 md:mr-4 border size-8 bg-gray-100" />
-        <h2 className="text-3xl font-bold tracking-tight">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
           Supplier Verification
         </h2>
       </div>
@@ -210,7 +210,7 @@ export function SupplierVerificationComponent({
             <Button
               onClick={() => verifySupplier(supplier.userId)}
               disabled={supplier.verified || isLoading.status}
-              className="flex-1 bg-rawmats-primary-300 hover:bg-rawmats-feedback-success hover:text-rawmats-text-500 max-w-[25%]"
+              className="flex-1 bg-rawmats-primary-300 hover:bg-rawmats-primary-100 min-w-[100px] max-w-[150px]"
             >
               {isLoading.method === "verify" ? (
                 <InlineLoading message="Verifying" />
@@ -225,7 +225,7 @@ export function SupplierVerificationComponent({
               onClick={() => rejectSupplier(supplier.userId)}
               variant="destructive"
               disabled={supplier.verified || isLoading.status}
-              className="flex-1 bg-rawmats-feedback-error hover:bg-red-600 max-w-[25%]"
+              className="flex-1 bg-rawmats-feedback-error min-w-[100px] max-w-[150px]"
             >
               {isLoading.method === "reject" ? (
                 <InlineLoading message="Rejecting" />
