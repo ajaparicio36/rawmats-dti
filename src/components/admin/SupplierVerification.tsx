@@ -42,7 +42,7 @@ export function SupplierVerificationComponent({
 
   useEffect(() => {
     const fetchFiles = async () => {
-      const filesMap: Record<string, string[]> = {}; // Define the type for filesMap
+      const filesMap: Record<string, string[]> = {};
 
       await Promise.all(
         suppliers.map(async (supplier) => {
@@ -50,7 +50,7 @@ export function SupplierVerificationComponent({
 
           const filteredFiles = (rawFiles || []).filter(
             (file): file is string => file !== null,
-          ); // Remove nulls
+          );
 
           filesMap[supplier.userId] = filteredFiles;
         }),

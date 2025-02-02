@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import Image from "next/image";
 import { ProductWithSupplier } from "@/utils/Products";
@@ -13,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatDate } from "@/utils/formatDate";
+import EditProductForm from "./EditProductForm";
 
 interface ManageListingsProps {
   fetchedProducts: ProductWithSupplier[];
@@ -21,6 +21,8 @@ interface ManageListingsProps {
 const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
   const [products, setProducts] =
     useState<ProductWithSupplier[]>(fetchedProducts);
+  const [editingProduct, setEditingProduct] =
+    useState<ProductWithSupplier | null>(null);
 
   const handleDelete = async (id: string) => {
     try {
@@ -31,17 +33,26 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
         },
         body: JSON.stringify({ id }),
       });
-
       if (!response.ok) {
         throw new Error("Failed to delete product");
       }
-
       setProducts(products.filter((product) => product.id !== id));
       alert("Product deleted successfully!");
     } catch (error) {
       console.error("Error deleting product:", error);
       alert("Failed to delete product.");
     }
+  };
+
+  const handleEdit = (product: ProductWithSupplier) => {
+    setEditingProduct(product);
+  };
+
+  const handleEditComplete = (updatedProduct: ProductWithSupplier) => {
+    setProducts(
+      products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)),
+    );
+    setEditingProduct(null);
   };
 
   return (
@@ -85,13 +96,22 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
                       <p className="text-sm text-gray-500">
                         Verified on: {formatDate(product.verifiedDate)}
                       </p>
-                      <Button
-                        onClick={() => handleDelete(product.id)}
-                        variant="destructive"
-                        className="mt-4"
-                      >
-                        Delete
-                      </Button>
+                      <div className="flex space-x-2 mt-4">
+                        <Button
+                          onClick={() => handleEdit(product)}
+                          variant="outline"
+                          className="flex-1"
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          onClick={() => handleDelete(product.id)}
+                          variant="destructive"
+                          className="flex-1"
+                        >
+                          Delete
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -100,6 +120,13 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
           ))}
         </Accordion>
       </div>
+      {editingProduct && (
+        <EditProductForm
+          product={editingProduct}
+          onClose={() => setEditingProduct(null)}
+          onEdit={handleEditComplete}
+        />
+      )}
     </ScrollArea>
   );
 };
