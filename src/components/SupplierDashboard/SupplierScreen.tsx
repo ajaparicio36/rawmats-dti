@@ -11,15 +11,19 @@ interface SupplierScreenProps {
     id: string;
   };
   children: React.ReactNode;
-  showProductForm?: boolean; 
+  showProductForm?: boolean;
 }
 
-const SupplierScreen: React.FC<SupplierScreenProps> = ({ children, supplier, showProductForm }) => {
+const SupplierScreen: React.FC<SupplierScreenProps> = ({
+  children,
+  supplier,
+  showProductForm,
+}) => {
   return (
-    <div className="flex h-screen w-full bg-background">
+    <div className="flex h-screen w-full">
       <SupplierSidebar />
-      <SidebarInset className="flex flex-col w-full overflow-hidden">
-        <div className="bg-[#A3E6FD]/30 border-b px-8 py-6 flex items-center justify-between">
+      <SidebarInset className="flex flex-col w-full overflow-hidden bg-gray-100">
+        <div className="bg-blue-50 border-b px-8 py-6 flex items-center justify-between shadow-lg">
           <div className="flex items-center">
             <SidebarTrigger className="mr-4" />
             <h1 className="text-2xl font-semibold text-[#034169]">Dashboard</h1>

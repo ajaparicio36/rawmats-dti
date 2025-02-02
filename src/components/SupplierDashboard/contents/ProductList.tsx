@@ -59,8 +59,7 @@ export default function ProductList({ products }: ProductListProps) {
           <p className="text-gray-500 text-sm">
             Create the best raw materials for your business
           </p>
-        </div>
-        ={" "}
+        </div>{" "}
         <div className="flex gap-3 mt-4 sm:mt-0">
           <Input
             type="text"
@@ -100,8 +99,7 @@ export default function ProductList({ products }: ProductListProps) {
                 stocks={product.stocks}
               />
             ))}
-          </div>
-          ={" "}
+          </div>{" "}
           {totalPages > 1 && (
             <div className="flex justify-center mt-6">
               <Button

@@ -124,7 +124,7 @@ export default function ProductForm({ supplierId }: ProductFormProps) {
     <>
       <Button
         onClick={() => setShowForm(true)}
-        className="bg-blue-500 text-white hover:bg-blue-600"
+        className="bg-white shadow-sm text-black hover:bg-blue-300 outline outline-3 outline-gray-300"
       >
         Add Product
       </Button>

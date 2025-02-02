@@ -74,7 +74,7 @@ export function SupplierSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" {...props} className="shadow-xl">
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>

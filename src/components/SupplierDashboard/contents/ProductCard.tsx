@@ -33,7 +33,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   stocks,
 }) => {
   return (
-    <Card className="w-64 overflow-hidden transition-shadow hover:shadow-lg shadow-md bg-white rounded-xl">
+    <Card className="w-64 overflow-hidden transition-shadow hover:shadow-lg shadow-md bg-gray-50 rounded-xl">
       <div className="relative h-40 w-[calc(100%-1rem)] bg-gray-100 flex items-center justify-center rounded-xl m-2">
         {image ? (
           <Image
