@@ -3,9 +3,10 @@
 import React from "react";
 import { SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { SupplierDashboardProps } from "@/utils/Products";
-import { SupplierSidebar } from "../Sidebar/AppSidebar";
+import { SupplierSidebar } from "../Sidebar/SupplierSidebar";
 
 const SupplierScreen: React.FC<SupplierDashboardProps> = ({
+  children,
   supplier,
   adminRole,
 }) => {
@@ -23,10 +24,6 @@ const SupplierScreen: React.FC<SupplierDashboardProps> = ({
           <SidebarTrigger className="mr-4" />
           <h1 className="text-2xl font-semibold text-[#034169]">Dashboard</h1>
         </div>
-        <div className="flex-1 p-8 overflow-auto">
-          <p>Profile page is not implemented yet. {supplier.businessName}</p>
-        </div>
-
         <div className="flex-1 p-8 overflow-auto">{children}</div>
       </SidebarInset>
     </div>

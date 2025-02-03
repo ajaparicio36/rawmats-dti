@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import LoadingModal from "@/components/Loading/LoadingModal";
 import { ManageProductsPageProps } from "@/utils/Products";
-import SupplierScreen from "@/components/SupplierDashboard/SupplierScreen";  
+import SupplierScreen from "@/components/SupplierDashboard/SupplierScreen";
 
 const DynamicManageListings = dynamic(
   () => import("@/components/SupplierDashboard/contents/ManageListing"),
@@ -52,7 +52,11 @@ const ManageProductsPage = async () => {
   };
 
   return (
-    <SupplierScreen supplier={supplier}> 
+    <SupplierScreen
+      supplier={supplier}
+      adminRole={false}
+      initialProducts={products}
+    >
       <div className="flex p-8 w-full overflow-auto">
         <Suspense fallback={<LoadingModal />}>
           <DynamicManageListings fetchedProducts={props.products} />

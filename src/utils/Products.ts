@@ -26,6 +26,7 @@ export interface SupplierWithUser extends Supplier {
 }
 
 export interface SupplierDashboardProps {
+  children: React.ReactNode;
   adminRole: boolean;
   initialProducts: ProductWithSupplier[];
   supplier: SupplierWithUser;

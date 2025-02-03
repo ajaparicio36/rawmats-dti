@@ -17,6 +17,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { useRouter } from "next/navigation";
 
 export function NavMain({
   items,
@@ -32,6 +33,7 @@ export function NavMain({
     }[];
   }[];
 }) {
+  const router = useRouter();
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -54,7 +56,10 @@ export function NavMain({
               <CollapsibleContent>
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
+                    <SidebarMenuSubItem
+                      onClick={() => router.push(`${subItem.url}`)}
+                      key={subItem.title}
+                    >
                       <SidebarMenuSubButton asChild>
                         <a href={subItem.url}>
                           <span>{subItem.title}</span>

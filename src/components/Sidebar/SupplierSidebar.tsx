@@ -1,19 +1,11 @@
 "use client";
 
 import * as React from "react";
-import {
-  AudioWaveform,
-  GalleryVerticalEnd,
-  Command,
-  ShoppingBag,
-  ClipboardList,
-  Bell,
-  User,
-} from "lucide-react";
+import { SquareTerminal } from "lucide-react";
 
 import { NavMain } from "./SidebarMain";
 import { NavUser } from "./SidebarUser";
-import { TeamSwitcher } from "./NavigationSwitcher";
+import { NavigationSwitcher } from "./NavigationSwitcher";
 import {
   Sidebar,
   SidebarContent,
@@ -22,67 +14,63 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 
+// This is sample data.
 const data = {
   user: {
     name: "shadcn",
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  teams: [
-    {
-      name: "Home",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
-      title: "Products",
-      url:  "/supplier-dashboard/products",
-      icon: ShoppingBag,
+      title: "Supplier",
+      url: "/supplier-dashboard",
+      icon: SquareTerminal,
       isActive: true,
-    },
-    {
-      title: "Manage Products",
-      url: "/supplier-dashboard/manage-products",
-      icon: ClipboardList,
-    },
-    {
-      title: "Notifications",
-      url: "#",
-      icon: Bell,
-    },
-    {
-      title: "Profile",
-      url: "#",
-      icon: User,
+      items: [
+        {
+          title: "Products",
+          url: "/supplier-dashboard/products",
+        },
+        {
+          title: "Manage Products",
+          url: "/supplier-dashboard/manage-products",
+        },
+        {
+          title: "Notifications",
+          url: "/supplier-dashboard/notifications",
+        },
+      ],
     },
   ],
 };
 
+interface SupplierSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  name: string;
+  email: string;
+  avatar: string;
+  isSupplier?: boolean;
+  isAdmin?: boolean;
+}
+
 export function SupplierSidebar({
+  name,
+  email,
+  avatar,
+  isSupplier,
+  isAdmin,
   ...props
-}: React.ComponentProps<typeof Sidebar>) {
+}: SupplierSidebarProps) {
   return (
-    <Sidebar collapsible="icon" {...props} className="shadow-xl">
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <NavigationSwitcher isAdmin={isAdmin} isSupplier={isSupplier} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={{ name, email, avatar }} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
