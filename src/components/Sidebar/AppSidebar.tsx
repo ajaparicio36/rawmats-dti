@@ -140,20 +140,22 @@ interface SupplierSidebarProps extends React.ComponentProps<typeof Sidebar> {
   name: string;
   email: string;
   avatar: string;
-  accessRole: Array<"admin" | "supplier">;
+  isSupplier?: boolean;
+  isAdmin?: boolean;
 }
 
 export function SupplierSidebar({
   name,
   email,
   avatar,
-  accessRole,
+  isSupplier,
+  isAdmin,
   ...props
 }: SupplierSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <NavigationSwitcher accessRole={accessRole} />
+        <NavigationSwitcher isAdmin={isAdmin} isSupplier={isSupplier} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

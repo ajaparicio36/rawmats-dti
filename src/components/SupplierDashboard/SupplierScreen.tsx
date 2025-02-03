@@ -9,15 +9,11 @@ const SupplierScreen: React.FC<SupplierDashboardProps> = ({
   supplier,
   adminRole,
 }) => {
-  const accessRole: Array<"supplier" | "admin"> = ["supplier"];
-  if (adminRole) {
-    accessRole.push("admin");
-  }
-
   return (
     <div className="flex h-screen w-full bg-background">
       <SupplierSidebar
-        accessRole={accessRole}
+        isSupplier={true}
+        isAdmin={adminRole}
         name={supplier.user.displayName}
         email={supplier.user.email}
         avatar={"" /* Implement after profile pages */}
