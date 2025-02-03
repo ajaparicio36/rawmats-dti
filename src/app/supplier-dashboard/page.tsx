@@ -35,7 +35,17 @@ const SupplierDashboard = async () => {
     },
   });
 
+  const isAdmin = await prisma.user.findUnique({
+    where: {
+      id: data.user.id,
+    },
+    select: {
+      role: true,
+    },
+  });
+
   const props: SupplierDashboardProps = {
+    adminRole: isAdmin?.role === "ADMIN",
     initialProducts: products,
     supplier: supplier,
   };

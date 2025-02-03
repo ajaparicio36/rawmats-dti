@@ -123,3 +123,31 @@ body {
     opacity: 1;
   }
 }
+
+.ant-carousel .slick-prev,
+.ant-carousel .slick-prev:hover {
+  left: 10px;
+  z-index: 2;
+  color: black;
+  font-size: 200px;
+  height: 30px;
+}
+
+.ant-carousel .slick-next,
+.ant-carousel .slick-next:hover {
+  right: 10px;
+  z-index: 2;
+  color: black;
+  font-size: 20px;
+  height: 30px;
+}
+
+.ant-carousel .slick-dots li button {
+  background: black;
+  opacity: 0.4;
+}
+
+.ant-carousel .slick-dots li.slick-active button {
+  opacity: 1;
+  background: black;
+}

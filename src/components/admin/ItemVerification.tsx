@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -30,11 +32,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SidebarTrigger } from "../ui/sidebar";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 interface ItemVerificationProps {
   products: Product[];
-  verifyProduct: (id: string) => void;
-  rejectProduct: (id: string) => void;
 }
 
 const rejectionReasons = [
@@ -47,16 +56,50 @@ const rejectionReasons = [
 
 const fallbackImageUrl = "/placeholder.svg";
 
-export function ItemVerification({
-  products,
-  verifyProduct,
-  rejectProduct,
-}: ItemVerificationProps) {
+export function ItemVerificationComponent({ products }: ItemVerificationProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
   const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
   const [comment, setComment] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+
+  const verifyProduct = async (id: string) => {
+    try {
+      const response = await fetch(`/api/product/verify/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to verify product");
+      }
+      alert("Product verified successfully.");
+    } catch (error) {
+      console.error("Error verifying product:", error);
+    }
+  };
+
+  const rejectProduct = async (id: string) => {
+    try {
+      const response = await fetch(`/api/product/reject/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to reject product");
+      }
+      alert("Product rejected successfully.");
+    } catch (error) {
+      console.error("Error rejecting product:", error);
+    }
+  };
 
   const openRejectModal = (productId: string) => {
     setSelectedProduct(productId);
@@ -85,9 +128,23 @@ export function ItemVerification({
     product.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  return (
-    <>
-      <div className="p-4 flex items-center gap-2">
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
+  return products.length === 0 ? (
+    <p>No products to verify currently</p>
+  ) : (
+    <div className="h-fit">
+      <div className="flex items-center gap-2 md:gap-10 flex-col md:flex-row">
+        <div className="flex flex-row justify-center items-center w-full md:w-auto relative">
+          <SidebarTrigger className="absolute md:static left-0 md:mr-4 border size-8 bg-gray-100" />
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+            Product Verification
+          </h2>
+        </div>
         <Input
           type="text"
           placeholder="Search products..."
@@ -100,9 +157,9 @@ export function ItemVerification({
         </Button>
       </div>
 
-      <ScrollArea className="h-[calc(100vh-16rem)]">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-          {filteredProducts.map((product) => (
+      <ScrollArea className="h-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+          {paginatedProducts.map((product) => (
             <Link
               href={`/product/${product.id}`}
               key={product.id}
@@ -132,21 +189,21 @@ export function ItemVerification({
                   <p className="font-semibold">
                     Price: ${product.price.toFixed(2)}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs text-muted-foreground overflow-hidden text-ellipsis">
                     Supplier ID: {product.supplierId}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     Date Added:{" "}
                     {new Date(product.dateAdded).toLocaleDateString()}
                   </p>
                   {product.verified && (
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       Verified Date:{" "}
                       {new Date(product.verifiedDate).toLocaleDateString()}
                     </p>
                   )}
                 </CardContent>
-                <CardFooter className="flex gap-2 justify-between mt-auto">
+                <CardFooter className="flex flex-col gap-2 justify-between mt-auto">
                   <Button
                     onClick={(e) => {
                       e.preventDefault();
@@ -154,7 +211,7 @@ export function ItemVerification({
                       verifyProduct(product.id);
                     }}
                     disabled={product.verified}
-                    className="flex-1 bg-rawmats-primary-300 hover:bg-rawmats-feedback-success hover:text-rawmats-text-500"
+                    className="flex-1 bg-rawmats-primary-300 hover:bg-rawmats-primary-100 w-full"
                   >
                     <Check className="mr-2 h-4 w-4" />
                     Verify
@@ -167,7 +224,7 @@ export function ItemVerification({
                     }}
                     variant="destructive"
                     disabled={product.verified}
-                    className="flex-1 bg-rawmats-feedback-error hover:bg-red-600"
+                    className="flex-1 bg-rawmats-feedback-error w-full"
                   >
                     <X className="mr-2 h-4 w-4" />
                     Reject
@@ -178,6 +235,40 @@ export function ItemVerification({
           ))}
         </div>
       </ScrollArea>
+
+      {totalPages > 1 && (
+        <Pagination className="mt-3">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              />
+            </PaginationItem>
+
+            {[...Array(totalPages)].map((_, index) => (
+              <PaginationItem key={index}>
+                <PaginationLink
+                  href="#"
+                  isActive={currentPage === index + 1}
+                  onClick={() => setCurrentPage(index + 1)}
+                >
+                  {index + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
 
       <Dialog
         open={isModalOpen}
@@ -245,6 +336,6 @@ export function ItemVerification({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }
