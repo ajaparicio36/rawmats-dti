@@ -1,14 +1,16 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MapPin, Star, Building, Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ProductPreview } from "@/utils/Products";
-import { Favorite } from "@prisma/client";
+import type { ProductPreview } from "@/utils/Products";
+import type { Favorite } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { AnimatedDiv } from "@/components/Home/AnimatedComponents";
 
 const ProductPreviewCard: React.FC<ProductPreview> = ({
   userId,
@@ -70,60 +72,70 @@ const ProductPreviewCard: React.FC<ProductPreview> = ({
   };
 
   return (
-    <Card
-      className="w-full max-w-md overflow-hidden cursor-pointer transition-shadow hover:shadow-md"
-      onClick={handleCardClick}
+    <AnimatedDiv
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.98 }}
     >
-      <div className="relative h-48 w-full overflow-hidden bg-gray-100">
-        {loading ? (
-          <Skeleton className="h-full w-full" />
-        ) : (
-          <Image
-            src={image}
-            alt={name}
-            layout="fill"
-            objectFit="cover"
-            loading="lazy"
-          />
-        )}
-      </div>
-      <CardHeader className="p-4">
-        <div className="flex justify-between items-start">
-          <CardTitle className="text-lg font-semibold truncate">
-            {name}
-            <div className="flex text-gray-500 items-center text-sm mt-1">
-              <MapPin className="w-4 h-4 mr-1" />
-              <span className="truncate">{locationName}</span>
-            </div>
-          </CardTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleFavorite}
-            className="text-gray-400 hover:text-red-500 transition-colors"
-          >
-            <Heart
-              className={`w-5 h-5 ${favoritedItem ? "fill-current text-red-500" : ""}`}
+      <Card
+        className="w-full max-w-md overflow-hidden cursor-pointer transition-shadow hover:shadow-md"
+        onClick={handleCardClick}
+      >
+        <div className="relative h-48 w-full overflow-hidden bg-gray-100">
+          {loading ? (
+            <Skeleton className="h-full w-full" />
+          ) : (
+            <Image
+              src={image || "/placeholder.svg"}
+              alt={name}
+              layout="fill"
+              objectFit="cover"
+              loading="lazy"
             />
-          </Button>
+          )}
         </div>
-      </CardHeader>
-      <CardContent className="p-4 pt-0">
-        <div className="flex justify-between items-center mb-2">
-          <Badge variant="secondary" className="text-rawmats-primary-300">
-            ₱{price.toFixed(2)}
-          </Badge>
-          <div className="flex items-center text-sm text-gray-500">
-            <Star className="w-4 h-4 mr-1 text-yellow-500" />
-            <span>0.0</span>
+        <CardHeader className="p-4">
+          <div className="flex justify-between items-start">
+            <CardTitle className="text-lg font-semibold truncate">
+              {name}
+              <div className="flex text-gray-500 items-center text-sm mt-1">
+                <MapPin className="w-4 h-4 mr-1" />
+                <span className="truncate">{locationName}</span>
+              </div>
+            </CardTitle>
+            <AnimatedDiv whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleFavorite}
+                className="text-gray-400 hover:text-red-500 transition-colors"
+              >
+                <Heart
+                  className={`w-5 h-5 ${favoritedItem ? "fill-current text-red-500" : ""}`}
+                />
+              </Button>
+            </AnimatedDiv>
           </div>
-        </div>
-        <div className="flex items-center text-sm text-gray-500">
-          <Building className="w-4 h-4 mr-1" />
-          <span className="truncate">{supplier.businessName}</span>
-        </div>
-      </CardContent>
-    </Card>
+        </CardHeader>
+        <CardContent className="p-4 pt-0">
+          <div className="flex justify-between items-center mb-2">
+            <Badge variant="secondary" className="text-rawmats-primary-300">
+              ₱{price.toFixed(2)}
+            </Badge>
+            <div className="flex items-center text-sm text-gray-500">
+              <Star className="w-4 h-4 mr-1 text-yellow-500" />
+              <span>0.0</span>
+            </div>
+          </div>
+          <div className="flex items-center text-sm text-gray-500">
+            <Building className="w-4 h-4 mr-1" />
+            <span className="truncate">{supplier.businessName}</span>
+          </div>
+        </CardContent>
+      </Card>
+    </AnimatedDiv>
   );
 };
 
