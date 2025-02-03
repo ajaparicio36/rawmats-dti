@@ -38,7 +38,8 @@ export default function ProductForm({ supplierId }: ProductFormProps) {
         const fileName = `${supplierId}-${productName}-${Date.now()}.jpg`;
         imagePath = await uploadProductImage(image, fileName);
       }
-      const fullDescription = `Packaging: ${packaging}\nStocks: ${stocks}\nDescription: ${longDescription}`;
+
+      const fullDescription = `Packaging: ${packaging}\n Stocks: ${stocks}\nDescription: ${longDescription}`;
       const response = await fetch("/api/product", {
         method: "POST",
         headers: {
@@ -57,7 +58,7 @@ export default function ProductForm({ supplierId }: ProductFormProps) {
         throw new Error(data.error || "Error creating product");
       }
       resetForm();
-      router.refresh(); // Refresh the page to show the new product
+      router.refresh();
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
@@ -98,7 +99,7 @@ export default function ProductForm({ supplierId }: ProductFormProps) {
       setImage(
         new File([processedImageBlob], "processed_image.jpg", {
           type: "image/jpeg",
-        }),
+        })
       );
       setShowCropper(false);
     } catch (error) {
@@ -123,7 +124,7 @@ export default function ProductForm({ supplierId }: ProductFormProps) {
     <>
       <Button
         onClick={() => setShowForm(true)}
-        className="bg-blue-500 text-white hover:bg-blue-600"
+        className="bg-white shadow-sm text-black hover:bg-blue-300 outline outline-3 outline-gray-300"
       >
         Add Product
       </Button>

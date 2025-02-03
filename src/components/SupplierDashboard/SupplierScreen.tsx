@@ -26,6 +26,8 @@ const SupplierScreen: React.FC<SupplierDashboardProps> = ({
         <div className="flex-1 p-8 overflow-auto">
           <p>Profile page is not implemented yet. {supplier.businessName}</p>
         </div>
+
+        <div className="flex-1 p-8 overflow-auto">{children}</div>
       </SidebarInset>
     </div>
   );
