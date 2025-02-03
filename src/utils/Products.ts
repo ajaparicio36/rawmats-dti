@@ -26,6 +26,7 @@ export interface SupplierWithUser extends Supplier {
 }
 
 export interface SupplierDashboardProps {
+  adminRole: boolean;
   initialProducts: ProductWithSupplier[];
   supplier: SupplierWithUser;
 }

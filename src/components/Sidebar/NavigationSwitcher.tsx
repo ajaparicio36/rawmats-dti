@@ -1,15 +1,20 @@
 "use client";
 
 import * as React from "react";
-import { ChevronsUpDown, Plus } from "lucide-react";
+import {
+  ChevronsUpDown,
+  Command,
+  GalleryVerticalEnd,
+  HouseIcon,
+} from "lucide-react";
+
+import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -19,17 +24,16 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-export function TeamSwitcher({
-  teams,
+export function NavigationSwitcher({
+  isAdmin = false,
+  isSupplier = false,
 }: {
-  teams: {
-    name: string;
-    logo: React.ElementType;
-    plan: string;
-  }[];
+  isAdmin?: boolean;
+  isSupplier?: boolean;
 }) {
   const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
+  const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <SidebarMenu>
@@ -41,13 +45,20 @@ export function TeamSwitcher({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <activeTeam.logo className="size-4" />
+                {pathname === "/" && <HouseIcon className="size-4" />}
+                {pathname === "/supplier-dashboard" && (
+                  <GalleryVerticalEnd className="size-4" />
+                )}
+                {pathname.startsWith("/admin") && (
+                  <Command className="size-4" />
+                )}
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
-                  {activeTeam.name}
+                  {pathname === "/" && "Home"}
+                  {pathname === "/supplier-dashboard" && "Supplier Dashboard"}
+                  {pathname.startsWith("/admin") && "Admin Dashboard"}
                 </span>
-                <span className="truncate text-xs">{activeTeam.plan}</span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
@@ -58,29 +69,54 @@ export function TeamSwitcher({
             side={isMobile ? "bottom" : "right"}
             sideOffset={4}
           >
-            <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Teams
-            </DropdownMenuLabel>
-            {teams.map((team, index) => (
+            <DropdownMenuItem
+              onClick={() => router.push("/")}
+              className={`gap-2 p-2 ${
+                pathname === "/"
+                  ? "cursor-not-allowed bg-gray-200"
+                  : "cursor-pointer"
+              }`}
+              disabled={pathname === "/"}
+            >
+              <div className="flex size-6 items-center justify-center rounded-sm border">
+                <HouseIcon className="size-4 shrink-0" />
+              </div>
+              Home
+            </DropdownMenuItem>
+
+            {isSupplier && (
               <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
-                className="gap-2 p-2"
+                onClick={() => router.push("/supplier-dashboard")}
+                className={`gap-2 p-2 ${
+                  pathname === "/supplier-dashboard"
+                    ? "cursor-not-allowed bg-gray-200"
+                    : "cursor-pointer"
+                }`}
+                disabled={pathname === "/supplier-dashboard"}
               >
                 <div className="flex size-6 items-center justify-center rounded-sm border">
-                  <team.logo className="size-4 shrink-0" />
+                  <GalleryVerticalEnd className="size-4 shrink-0" />
                 </div>
-                {team.name}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+                Supplier Dashboard
               </DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2">
-              <div className="flex size-6 items-center justify-center rounded-md border bg-background">
-                <Plus className="size-4" />
-              </div>
-              <div className="font-medium text-muted-foreground">Add team</div>
-            </DropdownMenuItem>
+            )}
+
+            {isAdmin && (
+              <DropdownMenuItem
+                onClick={() => router.push("/admin")}
+                className={`gap-2 p-2 ${
+                  pathname.startsWith("/admin")
+                    ? "cursor-not-allowed bg-gray-200"
+                    : "cursor-pointer"
+                }`}
+                disabled={pathname.startsWith("/admin")}
+              >
+                <div className="flex size-6 items-center justify-center rounded-sm border">
+                  <Command className="size-4 shrink-0" />
+                </div>
+                Admin
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
