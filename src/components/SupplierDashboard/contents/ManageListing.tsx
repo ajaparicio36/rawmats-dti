@@ -28,6 +28,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+// import ProductForm from "./ProductForm"; 
+
 
 interface ManageListingsProps {
   fetchedProducts: ProductWithSupplier[];
@@ -84,6 +86,12 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
 
   return (
     <div className="w-full">
+
+       {/* Add Product Button
+       <div className="flex justify-end mb-4">
+            <ProductForm supplierId="your_supplier_id_here" />
+          </div> */}
+
       <div className="hidden md:block">
         <div
           className="bg-white p-10 mt-[-20] rounded-lg"
@@ -92,6 +100,7 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
               "0 4px 10px rgba(0, 0, 0, 0.1), 0 -4px 10px rgba(0, 0, 0, 0.1)",
           }}
         >
+
           <Table className="w-full min-w-[600px] rounded-lg shadow-lg overflow-hidden">
             <TableHeader>
               <TableRow>
