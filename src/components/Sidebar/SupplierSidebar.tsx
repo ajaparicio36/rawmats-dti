@@ -28,10 +28,10 @@ const data = {
       icon: SquareTerminal,
       isActive: true,
       items: [
-        {
-          title: "Products",
-          url: "/supplier-dashboard/products",
-        },
+        // {
+        //   title: "Products",
+        //   url: "/supplier-dashboard/products",
+        // },
         {
           title: "Manage Products",
           url: "/supplier-dashboard/manage-products",

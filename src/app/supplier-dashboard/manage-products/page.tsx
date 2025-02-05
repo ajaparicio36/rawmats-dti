@@ -7,13 +7,14 @@ import { Suspense } from "react";
 import LoadingModal from "@/components/Loading/LoadingModal";
 import { ManageProductsPageProps } from "@/utils/Products";
 import SupplierScreen from "@/components/SupplierDashboard/SupplierScreen";
+import ProductForm from "@/components/SupplierDashboard/contents/ProductForm";
 
 const DynamicManageListings = dynamic(
   () => import("@/components/SupplierDashboard/contents/ManageListing"),
   {
     loading: () => <p>Loading manage listings...</p>,
     ssr: true,
-  },
+  }
 );
 
 const ManageProductsPage = async () => {
@@ -56,10 +57,13 @@ const ManageProductsPage = async () => {
       supplier={supplier}
       adminRole={false}
       initialProducts={products}
+      headerAction={<ProductForm supplierId={supplier.id} />}
     >
-      <div className="flex p-8 w-full overflow-auto">
+      <div className="flex flex-col p-8 w-full overflow-auto gap-4">
         <Suspense fallback={<LoadingModal />}>
-          <DynamicManageListings fetchedProducts={props.products} />
+          <div className="w-full">
+            <DynamicManageListings fetchedProducts={props.products} />
+          </div>
         </Suspense>
       </div>
     </SupplierScreen>
