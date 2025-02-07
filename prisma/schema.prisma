@@ -27,6 +27,8 @@ model User {
   favorites      Favorite[] // One user can have many favorites
   albums         Album[] // One user can have many albums
   notifications  Notification[]
+  conversations  Conversation[] // One user can have many conversations
+  messages       Message[] // One user can send many messages
 }
 
 enum Role {
@@ -91,4 +93,31 @@ model Notification {
   createdAt DateTime @default(now())
   userId    String
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
+  members   User[]
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  content        String
+  messageType    MessageType
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  conversationId String
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
 }
