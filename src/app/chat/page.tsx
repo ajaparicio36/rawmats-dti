@@ -1,28 +1,22 @@
 import React from "react";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import ChatClient from "@/components/Chat/ClientSideChat";
 
 const Chat = async () => {
-  const supabase = await createClient();
+  const supabase = createClient();
   const { data: userData, error: userError } = await supabase.auth.getUser();
-
-  const handleInsert = async (payload: unknown) => {
-    console.log("Change received!", payload);
-  };
+  console.log(userData);
 
   if (userError || !userData?.user) {
     redirect("/login");
   }
 
-  supabase
-    .channel("Message")
-    .on(
-      "postgres_changes",
-      { event: "INSERT", schema: "public", table: "Message" },
-      handleInsert,
-    );
-
-  return <div>Chat</div>;
+  return (
+    <div>
+      <ChatClient />
+    </div>
+  );
 };
 
 export default Chat;
