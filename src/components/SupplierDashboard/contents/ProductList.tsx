@@ -18,8 +18,6 @@ interface ProductListProps {
     supplierId: string;
     price: number;
     description: string;
-    packaging: string;
-    stocks: number;
     verified: boolean;
     verifiedDate: Date;
     dateAdded: Date;
@@ -36,7 +34,7 @@ export default function ProductList({ products }: ProductListProps) {
 
   const filteredProducts = products
     .filter((product) =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()),
     )
     .sort((a, b) => {
       if (sortOption === "price-low") return a.price - b.price;
@@ -48,7 +46,7 @@ export default function ProductList({ products }: ProductListProps) {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentProducts = filteredProducts.slice(
     startIndex,
-    startIndex + itemsPerPage
+    startIndex + itemsPerPage,
   );
 
   return (
@@ -95,8 +93,6 @@ export default function ProductList({ products }: ProductListProps) {
                 image={product.image}
                 verified={product.verified}
                 description={product.description}
-                packaging={product.packaging}
-                stocks={product.stocks}
               />
             ))}
           </div>{" "}

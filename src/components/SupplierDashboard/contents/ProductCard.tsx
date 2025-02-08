@@ -19,8 +19,6 @@ interface ProductCardProps {
   image: string;
   verified: boolean;
   description: string;
-  packaging: string;
-  stocks: number;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -29,8 +27,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
   image,
   verified,
   description,
-  packaging,
-  stocks,
 }) => {
   return (
     <Card className="w-64 overflow-hidden transition-shadow hover:shadow-lg shadow-md bg-gray-50 rounded-xl">
@@ -80,9 +76,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </PopoverTrigger>
           <PopoverContent className="w-56 p-4 text-sm bg-white shadow-md rounded-lg">
             <p className="text-gray-700">{description}</p>
-            <p className="text-gray-500 text-xs mt-1">
-              {packaging} • {stocks} in stock
-            </p>
           </PopoverContent>
         </Popover>
       </CardContent>

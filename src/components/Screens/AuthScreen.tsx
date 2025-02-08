@@ -2,6 +2,8 @@ import React from "react";
 import Image from "next/image";
 import { User } from "@supabase/supabase-js";
 import { Card, CardContent } from "@/components/ui/card";
+import Link from "next/link";
+import { ArrowLeftSquare } from "lucide-react";
 
 interface AuthScreenProps {
   header: string;
@@ -21,7 +23,10 @@ const AuthScreen: React.FC<AuthScreenProps> = ({
     <div className="w-full min-h-screen flex items-center justify-center md:p-4 bg-[rgba(254,254,254,0.962)]">
       {/* Mobile design */}
       <div className="md:hidden w-full flex flex-col h-screen overflow-hidden bg-[#CFEEF9]">
-        <div className="flex-grow flex items-center justify-center p-4">
+        <div className="flex-grow flex flex-col items-center justify-center p-4">
+          <Link href="/" className="mb-4">
+            <ArrowLeftSquare className="h-6 w-6 text-[#001D3F]" />
+          </Link>
           <Image
             src="/logo.png"
             alt="RAWMATS Logo"
@@ -47,8 +52,13 @@ const AuthScreen: React.FC<AuthScreenProps> = ({
       {/* Desktop design */}
       <Card className="hidden md:flex w-[80%] lg:w-[70%] rounded-xl overflow-hidden m-12 h-[75%] shadow-[0_15px_30px_rgba(70,130,180,0.5)]">
         <CardContent
-          className={`${isSupplierForm ? "w-[60%]" : "w-3/5"} p-12 bg-white`}
+          className={`${isSupplierForm ? "w-[60%]" : "w-3/5"} p-12 bg-white relative`}
         >
+          <Link href="/" className="absolute top-4 left-4">
+            <Link href="/" className="mb-4">
+              <ArrowLeftSquare className="h-6 w-6 text-[#001D3F]" />
+            </Link>
+          </Link>
           <h2 className="text-2xl font-extrabold mb-3 text-[#001D3F]">
             {header}
           </h2>
