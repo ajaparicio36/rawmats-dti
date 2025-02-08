@@ -3,7 +3,6 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import prisma from "@/utils/prisma/client";
 import SupplierScreen from "@/components/SupplierDashboard/SupplierScreen";
-import { SupplierDashboardProps } from "@/utils/Products";
 
 const SupplierDashboard = async () => {
   const supabase = createClient();
@@ -44,13 +43,23 @@ const SupplierDashboard = async () => {
     },
   });
 
-  const props: SupplierDashboardProps = {
+  const props = {
     adminRole: isAdmin?.role === "ADMIN",
     initialProducts: products,
     supplier: supplier,
   };
 
-  return <SupplierScreen {...props} />;
+  return (
+    <SupplierScreen
+      adminRole={props.adminRole}
+      initialProducts={props.initialProducts}
+      supplier={props.supplier}
+    >
+      <div className="flex-1 p-8 overflow-auto">
+        <p>Profile page is not implemented yet. {supplier.businessName}</p>
+      </div>
+    </SupplierScreen>
+  );
 };
 
 export default SupplierDashboard;
