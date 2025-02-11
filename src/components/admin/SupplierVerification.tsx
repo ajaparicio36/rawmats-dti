@@ -123,6 +123,7 @@ export function SupplierVerificationComponent({
         </h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2">
+        {suppliers.length === 0 && <p>No supplier applications currently</p>}
         {suppliers.map((supplier) => (
           <Card className="my-3" key={supplier.id}>
             <CardHeader>

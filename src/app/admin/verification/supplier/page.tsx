@@ -19,9 +19,6 @@ export default async function SupplierVerification() {
           {/* Mobile design */}
           <div className="md:hidden w-full flex flex-col h-screen overflow-hidden bg-[#CFEEF9]">
             <main className="flex-1 overflow-auto p-4">
-              {fetchedSuppliers.length === 0 && (
-                <p>No supplier applications currently</p>
-              )}
               <SupplierVerificationComponent suppliers={fetchedSuppliers} />
             </main>
           </div>
@@ -29,9 +26,6 @@ export default async function SupplierVerification() {
           {/* Desktop design */}
           <div className="hidden md:flex md:h-screen md:w-full bg-background">
             <main className="flex-1 overflow-auto p-6">
-              {fetchedSuppliers.length === 0 && (
-                <p>No supplier applications currently</p>
-              )}
               <SupplierVerificationComponent suppliers={fetchedSuppliers} />
             </main>
           </div>

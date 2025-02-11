@@ -134,9 +134,7 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
     currentPage * itemsPerPage,
   );
 
-  return products.length === 0 ? (
-    <p>No products to verify currently</p>
-  ) : (
+  return (
     <div className="h-fit">
       <div className="flex items-center gap-2 md:gap-10 flex-col md:flex-row">
         <div className="flex flex-row justify-center items-center w-full md:w-auto relative">
@@ -159,6 +157,9 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
 
       <ScrollArea className="h-auto">
         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+          {paginatedProducts.length === 0 && (
+            <p>No supplier applications currently</p>
+          )}
           {paginatedProducts.map((product) => (
             <Link
               href={`/product/${product.id}`}
