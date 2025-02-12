@@ -20,16 +20,16 @@ const SupplierScreen: React.FC<SupplierScreenProps> = ({
   const isLandingPage = !children;
 
   return (
-    <div className="flex h-screen w-full bg-background">
-      <SupplierSidebar
+<div className="flex h-screen w-full bg-background">
+<SupplierSidebar
         isSupplier={true}
         isAdmin={adminRole}
         name={supplier.user.displayName}
         email={supplier.user.email}
         avatar={"" /* Implement after profile pages */}
       />
-      <SidebarInset className="flex flex-col w-full overflow-hidden">
-        <div className="bg-[#A3E6FD]/30 border-b px-8 py-6 flex items-center justify-between">
+      <SidebarInset className="flex flex-col w-full overflow-hidden bg-white">
+        <div className="bg-[#A3E6FD]/25 border-b px-8 py-6 flex items-center justify-between shadow-lg">
           <div className="flex items-center">
             <SidebarTrigger className="mr-4" />
             <h1 className="text-2xl font-semibold text-[#034169]">Dashboard</h1>

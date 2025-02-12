@@ -75,8 +75,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-56 p-4 text-sm bg-white shadow-md rounded-lg">
-            <p className="text-gray-700">{description}</p>
-            <p className="text-gray-500 text-xs mt-1"></p>
+            {description.split("\n").map((line, index) => (
+              <div
+                key={index}
+                className="border border-gray-300 p-2 rounded-md mb-2 bg-gray-50"
+              >
+                <p className="text-gray-700">{line}</p>
+              </div>
+            ))}
           </PopoverContent>
         </Popover>
       </CardContent>

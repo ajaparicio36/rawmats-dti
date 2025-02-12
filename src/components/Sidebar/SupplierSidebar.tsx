@@ -62,7 +62,11 @@ export function SupplierSidebar({
   ...props
 }: SupplierSidebarProps) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar
+      collapsible="icon"
+      className="shadow-xl shadow-gray-500/40"
+      {...props}
+    >
       <SidebarHeader>
         <NavigationSwitcher isAdmin={isAdmin} isSupplier={isSupplier} />
       </SidebarHeader>

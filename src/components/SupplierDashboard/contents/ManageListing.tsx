@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Package, Hourglass, CheckCircle } from "lucide-react";
 
 interface ManageListingsProps {
   fetchedProducts: ProductWithSupplier[];
@@ -55,18 +56,40 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
         body: JSON.stringify({ id }),
       });
       if (!response.ok) throw new Error("Failed to delete product");
-      setProducts(products.filter((product) => product.id !== id));
+
+      const updatedProducts = products.filter((product) => product.id !== id);
+      setProducts(updatedProducts);
+
+      // Update filteredProducts based on the current filter
+      setFilteredProducts(
+        updatedProducts.filter((product) => {
+          if (statusFilter === "all") return true;
+          if (statusFilter === "pending") return !product.verified;
+          if (statusFilter === "verified") return product.verified;
+          return false;
+        })
+      );
     } catch (error) {
       console.error("Error deleting product:", error);
     }
   };
 
   const handleEditComplete = (updatedProduct: ProductWithSupplier) => {
-    setProducts((prevProducts) =>
-      prevProducts.map((product) =>
-        product.id === updatedProduct.id ? updatedProduct : product
-      )
+    const updatedProducts = products.map((product) =>
+      product.id === updatedProduct.id ? updatedProduct : product
     );
+
+    setProducts(updatedProducts);
+
+    setFilteredProducts(
+      updatedProducts.filter((product) => {
+        if (statusFilter === "all") return true;
+        if (statusFilter === "pending") return !product.verified;
+        if (statusFilter === "verified") return product.verified;
+        return false;
+      })
+    );
+
     setEditingProduct(null);
   };
 
@@ -91,41 +114,58 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
   return (
     <div className="w-full space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="border border-gray-200 shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg text-gray-700">
-              Total Products
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold text-blue-600">{totalProducts}</p>
-          </CardContent>
+        <Card className="relative border border-gray-200 shadow-lg bg-white p-6">
+          <div className="flex items-start">
+            <Package className="h-7 w-7 text-blue-600 mr-3" />
+            <div>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg text-gray-700">
+                  Total Products
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold text-blue-600">
+                  {totalProducts}
+                </p>
+              </CardContent>
+            </div>
+          </div>
         </Card>
 
-        <Card className="border border-gray-200 shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg text-gray-700">
-              Pending Products
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold text-yellow-500">
-              {pendingProducts}
-            </p>
-          </CardContent>
+        <Card className="relative border border-gray-200 shadow-lg bg-white p-6">
+          <div className="flex items-start">
+            <Hourglass className="h-7 w-7 text-yellow-500 mr-3" />
+            <div>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg text-gray-700">
+                  Pending Products
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold text-yellow-500">
+                  {pendingProducts}
+                </p>
+              </CardContent>
+            </div>
+          </div>
         </Card>
 
-        <Card className="border border-gray-200 shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg text-gray-700">
-              Verified Products
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold text-green-600">
-              {verifiedProducts}
-            </p>
-          </CardContent>
+        <Card className="relative border border-gray-200 shadow-lg bg-white p-6">
+          <div className="flex items-start">
+            <CheckCircle className="h-7 w-7 text-green-600 mr-3" />
+            <div>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg text-gray-700">
+                  Verified Products
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold text-green-600">
+                  {verifiedProducts}
+                </p>
+              </CardContent>
+            </div>
+          </div>
         </Card>
       </div>
 
