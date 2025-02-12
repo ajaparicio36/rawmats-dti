@@ -18,8 +18,6 @@ interface ProductListProps {
     supplierId: string;
     price: number;
     description: string;
-    packaging: string;
-    stocks: number;
     verified: boolean;
     verifiedDate: Date;
     dateAdded: Date;
@@ -95,8 +93,6 @@ export default function ProductList({ products }: ProductListProps) {
                 image={product.image}
                 verified={product.verified}
                 description={product.description}
-                packaging={product.packaging}
-                stocks={product.stocks}
               />
             ))}
           </div>{" "}

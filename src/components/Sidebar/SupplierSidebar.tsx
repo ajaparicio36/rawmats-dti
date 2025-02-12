@@ -1,19 +1,10 @@
 "use client";
 
 import * as React from "react";
-import {
-  AudioWaveform,
-  GalleryVerticalEnd,
-  Command,
-  ShoppingBag,
-  ClipboardList,
-  Bell,
-  User,
-} from "lucide-react";
+import { ShoppingBag, ClipboardList, Bell, User } from "lucide-react";
 
 import { NavMain } from "./SidebarMain";
 import { NavUser } from "./SidebarUser";
-import { TeamSwitcher } from "./NavigationSwitcher";
 import {
   Sidebar,
   SidebarContent,
@@ -21,6 +12,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { NavigationSwitcher } from "./NavigationSwitcher";
 
 const data = {
   user: {
@@ -28,23 +20,6 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  teams: [
-    {
-      name: "Home",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
       title: "Products",
@@ -70,13 +45,20 @@ const data = {
   ],
 };
 
+type SupplierSidebarProps = React.ComponentProps<typeof Sidebar> & {
+  isAdmin: boolean;
+  isSupplier: boolean;
+};
+
 export function SupplierSidebar({
+  isAdmin,
+  isSupplier,
   ...props
-}: React.ComponentProps<typeof Sidebar>) {
+}: SupplierSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props} className="shadow-xl">
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <NavigationSwitcher isSupplier={isSupplier} isAdmin={isAdmin} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

@@ -37,7 +37,11 @@ const ProductsPage = async () => {
   })) as ProductWithSupplier[];
 
   return (
-    <SupplierScreen supplier={supplier} showProductForm={true}>
+    <SupplierScreen
+      supplier={supplier}
+      adminRole={supplier.user.role === "ADMIN"}
+      initialProducts={products}
+    >
       <ProductList products={products} />
     </SupplierScreen>
   );

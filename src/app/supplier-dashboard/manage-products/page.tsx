@@ -52,7 +52,11 @@ const ManageProductsPage = async () => {
   };
 
   return (
-    <SupplierScreen supplier={supplier}>
+    <SupplierScreen
+      supplier={supplier}
+      adminRole={supplier.user.role === "ADMIN"}
+      initialProducts={products}
+    >
       <div className="flex p-8 w-full overflow-auto">
         <Suspense fallback={<LoadingModal />}>
           <DynamicManageListings fetchedProducts={props.products} />
