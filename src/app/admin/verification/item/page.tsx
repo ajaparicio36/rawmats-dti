@@ -7,6 +7,9 @@ export default async function ItemVerification() {
     where: {
       verified: false,
     },
+    include: {
+      supplier: true,
+    },
   });
 
   return (
