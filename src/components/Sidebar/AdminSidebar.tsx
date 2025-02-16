@@ -58,8 +58,6 @@ export function AdminSidebar({
                 <span>Dashboard</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
-          </SidebarMenu>
-          <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
                 onClick={() => router.push("/admin/verification/supplier")}
@@ -74,8 +72,6 @@ export function AdminSidebar({
                 <span>Supplier Verification</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
-          </SidebarMenu>
-          <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
                 onClick={() => router.push("/admin/verification/item")}
