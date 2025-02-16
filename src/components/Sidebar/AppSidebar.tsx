@@ -44,7 +44,7 @@ const data = {
     },
     {
       title: "Notifications",
-      url: "#",
+      url: "/supplier-dashboard/notifications",
       icon: Bell,
     },
     {
