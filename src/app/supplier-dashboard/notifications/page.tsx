@@ -5,7 +5,6 @@ import { format } from "date-fns";
 import { Check, CheckCircle2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 // Sample notifications data
 const allNotifications: {
@@ -90,7 +89,7 @@ const allNotifications: {
 export default function NotificationsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [notifications, setNotifications] = useState(allNotifications);
-  const notificationsPerPage = 10;
+  const notificationsPerPage = 5;
   const totalPages = Math.ceil(notifications.length / notificationsPerPage);
 
   const getCurrentPageNotifications = () => {
@@ -108,76 +107,71 @@ export default function NotificationsPage() {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl">Notifications</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {getCurrentPageNotifications().map((notification) => (
-            <div
-              key={notification.id}
-              className={`p-4 rounded-lg border transition-colors ${
-                notification.read
-                  ? "bg-muted/50"
-                  : "bg-card hover:bg-accent/5 relative"
-              }`}
-            >
-              {!notification.read && (
-                <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-primary rounded-full" />
-              )}
-              <div className="grid gap-1 ml-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold">{notification.title}</h3>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={`shrink-0 ${notification.read ? "text-muted-foreground" : ""}`}
-                    onClick={() => markAsRead(notification.id)}
-                    disabled={notification.read}
-                  >
-                    {notification.read ? (
-                      <CheckCircle2 className="h-5 w-5" />
-                    ) : (
-                      <Check className="h-5 w-5" />
-                    )}
-                    <span className="sr-only">Mark as read</span>
-                  </Button>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {notification.message}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {format(notification.date, "PPp")}
-                </p>
+    <>
+      <div className="space-y-4">
+        {getCurrentPageNotifications().map((notification) => (
+          <div
+            key={notification.id}
+            className={`p-4 rounded-lg border transition-colors ${
+              notification.read
+                ? "bg-muted/50"
+                : "bg-card hover:bg-accent/5 relative"
+            }`}
+          >
+            {!notification.read && (
+              <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-primary rounded-full" />
+            )}
+            <div className="grid gap-1 ml-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold">{notification.title}</h3>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={`shrink-0 ${notification.read ? "text-muted-foreground" : ""}`}
+                  onClick={() => markAsRead(notification.id)}
+                  disabled={notification.read}
+                >
+                  {notification.read ? (
+                    <CheckCircle2 className="h-5 w-5" />
+                  ) : (
+                    <Check className="h-5 w-5" />
+                  )}
+                  <span className="sr-only">Mark as read</span>
+                </Button>
               </div>
+              <p className="text-sm text-muted-foreground">
+                {notification.message}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {format(notification.date, "PPp")}
+              </p>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
 
-        {/* Pagination */}
-        <div className="flex items-center justify-center space-x-2 mt-8">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </Button>
-          <span className="text-sm text-muted-foreground">
-            Page {currentPage} of {totalPages}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+      {/* Pagination */}
+      <div className="flex items-center justify-center space-x-2 mt-8">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <span className="text-sm text-muted-foreground">
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </Button>
+      </div>
+    </>
   );
 }
