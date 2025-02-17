@@ -7,9 +7,28 @@ export async function POST(
   { params }: { params: { id: string } },
 ) {
   try {
+    const data = await req.json();
+    const { reasons, userID } = data;
+    let { comment } = data;
+
+    const id = params.id;
+    console.log("Received ID:", id);
+
+    if (comment.trim() === "") {
+      comment = null;
+    }
+
     await prisma.supplier.delete({
       where: {
-        userId: params.id,
+        userId: id,
+      },
+    });
+
+    await prisma.notification.create({
+      data: {
+        title: "Supplier Rejected",
+        content: `Reasons: ${reasons.join(", ")}\nComment: ${comment}`,
+        userId: userID,
       },
     });
 

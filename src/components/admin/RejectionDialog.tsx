@@ -25,7 +25,7 @@ export default function RejectionDialog({
   isModalOpen: boolean;
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
   rejectFunction: (
-    productID: string,
+    id: string,
     reasons: string[],
     comment: string,
     userID: string,
