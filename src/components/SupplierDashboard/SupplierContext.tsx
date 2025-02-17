@@ -2,9 +2,11 @@
 
 import { createContext, useContext } from "react";
 import { ProductWithSupplier } from "@/utils/Products";
+import { Supplier } from "@prisma/client";
 
 interface SupplierContextType {
   products: ProductWithSupplier[];
+  supplier: Supplier;
 }
 
 export const SupplierContext = createContext<SupplierContextType | undefined>(
@@ -21,13 +23,15 @@ export function useSupplier() {
 
 export default function SupplierProvider({
   products,
+  supplier,
   children,
 }: {
   products: ProductWithSupplier[];
+  supplier: Supplier;
   children: React.ReactNode;
 }) {
   return (
-    <SupplierContext.Provider value={{ products }}>
+    <SupplierContext.Provider value={{ products, supplier }}>
       {children}
     </SupplierContext.Provider>
   );
