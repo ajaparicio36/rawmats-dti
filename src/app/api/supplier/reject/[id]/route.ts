@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/utils/prisma/client";
 import { revalidatePath } from "next/cache";
+import { deleteFile } from "@/utils/supabase/files";
 
 export async function POST(
   req: NextRequest,
@@ -20,7 +21,8 @@ export async function POST(
 
     await prisma.supplier.delete({
       where: {
-        userId: id,
+        userId: userID,
+        id: id,
       },
     });
 
@@ -31,6 +33,8 @@ export async function POST(
         userId: userID,
       },
     });
+
+    await deleteFile(userID);
 
     revalidatePath("/", "layout");
     return NextResponse.json({ success: true }, { status: 200 });
