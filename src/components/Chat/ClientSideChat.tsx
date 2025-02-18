@@ -1,56 +1,204 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client"; // Note: Use client-side Supabase
-import { Message } from "@prisma/client";
-import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
-const ChatClient = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+import { useEffect, useState, useRef } from "react";
+import { createClient } from "@/utils/supabase/client";
+import type { Message } from "@prisma/client";
+import { MessageType } from "@/types/types";
+import type { RealtimeChannel } from "@supabase/supabase-js";
+
+interface ChatClientProps {
+  userId: string;
+  conversationId: string;
+}
+
+interface MessageWithUser extends Message {
+  user: { displayName: string; profilePicture: string };
+}
+
+interface TypingUser {
+  userId: string;
+  displayName: string;
+}
+
+const ChatClient: React.FC<ChatClientProps> = ({ userId, conversationId }) => {
+  const [messages, setMessages] = useState<MessageWithUser[]>([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [typingUser, setTypingUser] = useState<TypingUser | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const supabase = createClient();
+  const channelRef = useRef<RealtimeChannel | null>(null);
+
   useEffect(() => {
-    const supabase = createClient();
+    const fetchMessages = async () => {
+      const { data, error } = await supabase
+        .from("Message")
+        .select(`*, user:userId (displayName, profilePicture)`)
+        .eq("conversationId", conversationId)
+        .order("createdAt", { ascending: true });
 
-    // Update New Messages received from Payload to messages state
+      if (error) {
+        console.error("Error fetching messages:", error);
+        return;
+      }
 
-    // Create and subscribe to the channel
-    const channel = supabase
-      .channel("message")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "Message" },
-        (payload) => {
-          const { new: newMessage, eventType } =
-            payload as RealtimePostgresChangesPayload<Message>;
-          if (eventType === "INSERT") {
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
-          }
-        },
-      )
-      .subscribe((status) => {
-        console.log("Subscription status:", status);
+      setMessages(data || []);
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    };
+
+    const setupRealtimeSubscription = () => {
+      const channel = supabase.channel(`chat-${conversationId}`, {
+        config: { presence: { key: userId } },
       });
 
-    // Cleanup subscription when component unmounts
-    return () => {
-      supabase.removeChannel(channel);
+      channel.on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "Message",
+          filter: `conversationId=eq.${conversationId}`,
+        },
+        async (payload) => {
+          const { data: userData, error: userError } = await supabase
+            .from("User")
+            .select("displayName, profilePicture")
+            .eq("id", (payload.new as Message).userId)
+            .single();
+
+          if (userError) {
+            console.error("Error fetching user data:", userError);
+            return;
+          }
+
+          const newMessage: MessageWithUser = {
+            ...(payload.new as Message),
+            user: userData as { displayName: string; profilePicture: string },
+          };
+
+          setMessages((prev) => [...prev, newMessage]);
+          setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+          }, 100);
+        },
+      );
+
+      channel.on("presence", { event: "sync" }, () => {
+        const presenceState = channel.presenceState();
+        const allPresence = Object.values(presenceState).flat();
+
+        const allTypingUsers: TypingUser[] = allPresence
+          .filter(
+            (presence) =>
+              presence && "userId" in presence && "displayName" in presence,
+          )
+          .map((presence) => ({
+            userId: presence.userId,
+            displayName: presence.displayName,
+          }));
+
+        const otherTypingUser = allTypingUsers.find(
+          (user) => user.userId !== userId,
+        );
+        setTypingUser(otherTypingUser || null);
+      });
+
+      channel.subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          channelRef.current = channel;
+        }
+      });
+
+      return () => {
+        channel.unsubscribe();
+      };
     };
-  }, []);
+
+    fetchMessages();
+    const unsubscribe = setupRealtimeSubscription();
+
+    return () => {
+      unsubscribe();
+    };
+  }, [conversationId, supabase, userId]);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+
+    const newMessageId = crypto.randomUUID();
+
+    const { error } = await supabase.from("Message").insert({
+      id: newMessageId,
+      content: newMessage,
+      userId: userId,
+      conversationId: conversationId,
+      messageType: MessageType.TEXT,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    if (error) {
+      console.error("Error sending message:", error);
+      return;
+    }
+
+    setNewMessage("");
+  };
+
+  const handleTyping = async () => {
+    if (channelRef.current) {
+      await channelRef.current.track({
+        userId,
+        displayName:
+          messages.find((msg) => msg.userId === userId)?.user.displayName ||
+          "Unknown",
+      });
+    }
+  };
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Chat</h2>
-      <div className="bg-white rounded-lg shadow p-4">
-        <h3 className="text-lg font-semibold mb-3">Messages:</h3>
+      <div className="bg-white rounded-lg shadow p-4 max-h-[60vh] overflow-y-auto">
         <ul className="space-y-2">
           {messages.map((message) => (
             <li
               key={message.id}
-              className="p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              className={`p-3 rounded-lg ${message.userId === userId ? "bg-blue-100 ml-auto" : "bg-gray-100"}`}
             >
-              {message.content}
+              <div>
+                <strong>{message.user?.displayName || "Unknown"}:</strong>{" "}
+                {message.content}
+              </div>
             </li>
           ))}
         </ul>
+        <div ref={messagesEndRef} />
       </div>
+      {typingUser && (
+        <p className="text-sm text-gray-500">
+          {typingUser.displayName} is typing...
+        </p>
+      )}
+      <form onSubmit={handleSendMessage} className="mt-4">
+        <input
+          type="text"
+          value={newMessage}
+          onChange={(e) => {
+            setNewMessage(e.target.value);
+            handleTyping();
+          }}
+          className="w-full p-2 border rounded"
+          placeholder="Type your message..."
+        />
+        <button
+          type="submit"
+          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Send
+        </button>
+      </form>
     </div>
   );
 };

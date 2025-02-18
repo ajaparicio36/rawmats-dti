@@ -13,3 +13,20 @@ export interface Product {
   description: string;
   image?: string;
 }
+
+export enum MessageType {
+  TEXT = "TEXT",
+  IMAGE = "IMAGE",
+  VIDEO = "VIDEO",
+  AUDIO = "AUDIO",
+}
+
+export interface Message {
+  id: string;
+  content: string;
+  messageType: MessageType;
+  createdAt: Date;
+  updatedAt: Date;
+  conversationId: string;
+  userId: string;
+}
