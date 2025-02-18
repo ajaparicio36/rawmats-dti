@@ -1,11 +1,14 @@
 "use client";
 
 import * as React from "react";
+
 import { SquareTerminal } from "lucide-react";
 
 import { NavMain } from "./SidebarMain";
 import { NavUser } from "./SidebarUser";
 import { NavigationSwitcher } from "./NavigationSwitcher";
+
+
 import {
   Sidebar,
   SidebarContent,
@@ -13,6 +16,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { NavigationSwitcher } from "./NavigationSwitcher";
 
 // This is sample data.
 const data = {
@@ -23,9 +27,11 @@ const data = {
   },
   navMain: [
     {
+
       title: "Supplier",
       url: "/supplier-dashboard",
       icon: SquareTerminal,
+
       isActive: true,
       items: [
         // {
@@ -59,6 +65,7 @@ export function SupplierSidebar({
   avatar,
   isSupplier,
   isAdmin,
+
   ...props
 }: SupplierSidebarProps) {
   return (
@@ -68,6 +75,7 @@ export function SupplierSidebar({
       {...props}
     >
       <SidebarHeader>
+
         <NavigationSwitcher isAdmin={isAdmin} isSupplier={isSupplier} />
       </SidebarHeader>
       <SidebarContent>

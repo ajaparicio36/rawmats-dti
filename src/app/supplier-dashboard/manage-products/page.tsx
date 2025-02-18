@@ -9,6 +9,7 @@ import { ManageProductsPageProps } from "@/utils/Products";
 import SupplierScreen from "@/components/SupplierDashboard/SupplierScreen";
 import ProductForm from "@/components/SupplierDashboard/contents/ProductForm";
 
+
 const DynamicManageListings = dynamic(
   () => import("@/components/SupplierDashboard/contents/ManageListing"),
   {
@@ -55,11 +56,13 @@ const ManageProductsPage = async () => {
   return (
     <SupplierScreen
       supplier={supplier}
+
       adminRole={false}
       initialProducts={products}
       headerAction={<ProductForm supplierId={supplier.id} />}
     >
       <div className="flex flex-col p-8 w-full overflow-auto gap-4">
+
         <Suspense fallback={<LoadingModal />}>
           <div className="w-full">
             <DynamicManageListings fetchedProducts={props.products} />

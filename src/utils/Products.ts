@@ -30,6 +30,7 @@ export interface SupplierDashboardProps {
   adminRole: boolean;
   initialProducts: ProductWithSupplier[];
   supplier: SupplierWithUser;
+  children: React.ReactNode;
 }
 
 export interface ProductsPageProps {

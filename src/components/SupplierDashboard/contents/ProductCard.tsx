@@ -74,6 +74,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <ChevronDown size={18} className="text-gray-800" />
             </Button>
           </PopoverTrigger>
+
           <PopoverContent className="w-72 p-5 text-sm bg-white bg-opacity-95 backdrop-blur-lg shadow-2xl rounded-2xl border border-gray-300">
             <div className="flex flex-col space-y-2">
               {(() => {
@@ -101,6 +102,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 ));
               })()}
             </div>
+
           </PopoverContent>
         </Popover>
       </CardContent>

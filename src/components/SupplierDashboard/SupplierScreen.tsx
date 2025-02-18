@@ -4,7 +4,9 @@ import React from "react";
 import { SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { SupplierDashboardProps } from "@/utils/Products";
 import { SupplierSidebar } from "../Sidebar/SupplierSidebar";
+
 import ProductList from "@/components/SupplierDashboard/contents/ProductList";
+
 
 interface SupplierScreenProps extends SupplierDashboardProps {
   headerAction?: React.ReactNode;
@@ -14,13 +16,16 @@ const SupplierScreen: React.FC<SupplierScreenProps> = ({
   children,
   supplier,
   adminRole,
+
   initialProducts,
   headerAction,
+
 }) => {
   const isLandingPage = !children;
 
   return (
     <div className="flex h-screen w-full bg-background">
+
       <SupplierSidebar
         isSupplier={true}
         isAdmin={adminRole}
@@ -45,6 +50,7 @@ const SupplierScreen: React.FC<SupplierScreenProps> = ({
             children
           )}
         </div>
+
       </SidebarInset>
     </div>
   );

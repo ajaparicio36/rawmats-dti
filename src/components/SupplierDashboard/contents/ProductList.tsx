@@ -34,7 +34,7 @@ export default function ProductList({ products }: ProductListProps) {
 
   const filteredProducts = products
     .filter((product) =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()),
     )
     .sort((a, b) => {
       if (sortOption === "price-low") return a.price - b.price;
@@ -46,7 +46,7 @@ export default function ProductList({ products }: ProductListProps) {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentProducts = filteredProducts.slice(
     startIndex,
-    startIndex + itemsPerPage
+    startIndex + itemsPerPage,
   );
 
   return (
@@ -81,6 +81,7 @@ export default function ProductList({ products }: ProductListProps) {
 
       {filteredProducts.length > 0 ? (
         <>
+
           <div className="w-full">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full min-w-0">
               {currentProducts.map((product) => (
@@ -99,7 +100,7 @@ export default function ProductList({ products }: ProductListProps) {
             </div>
           </div>
 
-          {/* Pagination */}
+
           {totalPages > 1 && (
             <div className="flex justify-center mt-6 gap-4 w-full">
               <Button
