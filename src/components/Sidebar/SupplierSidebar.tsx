@@ -1,10 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { ShoppingBag, ClipboardList, Bell, User } from "lucide-react";
+
+import { SquareTerminal } from "lucide-react";
 
 import { NavMain } from "./SidebarMain";
 import { NavUser } from "./SidebarUser";
+import { NavigationSwitcher } from "./NavigationSwitcher";
+
+
 import {
   Sidebar,
   SidebarContent,
@@ -14,6 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 import { NavigationSwitcher } from "./NavigationSwitcher";
 
+// This is sample data.
 const data = {
   user: {
     name: "shadcn",
@@ -22,49 +27,62 @@ const data = {
   },
   navMain: [
     {
-      title: "Products",
-      url: "/supplier-dashboard/products",
-      icon: ShoppingBag,
+
+      title: "Supplier",
+      url: "/supplier-dashboard",
+      icon: SquareTerminal,
+
       isActive: true,
-    },
-    {
-      title: "Manage Products",
-      url: "/supplier-dashboard/manage-products",
-      icon: ClipboardList,
-    },
-    {
-      title: "Notifications",
-      url: "#",
-      icon: Bell,
-    },
-    {
-      title: "Profile",
-      url: "#",
-      icon: User,
+      items: [
+        // {
+        //   title: "Products",
+        //   url: "/supplier-dashboard/products",
+        // },
+        {
+          title: "Manage Products",
+          url: "/supplier-dashboard/manage-products",
+        },
+        {
+          title: "Notifications",
+          url: "/supplier-dashboard/notifications",
+        },
+      ],
     },
   ],
 };
 
-type SupplierSidebarProps = React.ComponentProps<typeof Sidebar> & {
-  isAdmin: boolean;
-  isSupplier: boolean;
-};
+interface SupplierSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  name: string;
+  email: string;
+  avatar: string;
+  isSupplier?: boolean;
+  isAdmin?: boolean;
+}
 
 export function SupplierSidebar({
-  isAdmin,
+  name,
+  email,
+  avatar,
   isSupplier,
+  isAdmin,
+
   ...props
 }: SupplierSidebarProps) {
   return (
-    <Sidebar collapsible="icon" {...props} className="shadow-xl">
+    <Sidebar
+      collapsible="icon"
+      className="shadow-xl shadow-gray-500/40"
+      {...props}
+    >
       <SidebarHeader>
-        <NavigationSwitcher isSupplier={isSupplier} isAdmin={isAdmin} />
+
+        <NavigationSwitcher isAdmin={isAdmin} isSupplier={isSupplier} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={{ name, email, avatar }} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

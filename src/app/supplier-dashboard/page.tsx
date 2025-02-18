@@ -43,7 +43,10 @@ const SupplierDashboard = async () => {
     },
   });
 
-  const props = {
+
+  const props: SupplierDashboardProps = {
+    children: null,
+
     adminRole: isAdmin?.role === "ADMIN",
     initialProducts: products,
     supplier: supplier,
