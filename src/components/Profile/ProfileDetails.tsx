@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Supplier } from "@prisma/client";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Edit3, Pencil } from "lucide-react";
+import { CheckCircle, Edit3, Pencil, Star } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -39,6 +39,32 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
         </div>
         <h1 className="text-2xl font-semibold">{supplier.businessName}</h1>
         <p className="text-gray-500">{supplier.user.email}</p>
+        <div className="flex items-center gap-2">
+          <div className="flex relative">
+            {/* Background stars (gray) */}
+            <div className="flex">
+              {[...Array(5)].map((_, index) => (
+                <Star key={`bg-${index}`} size={20} className="text-gray-200" />
+              ))}
+            </div>
+            {/* Foreground stars (filled) */}
+            <div
+              className="flex absolute top-0 left-0 overflow-hidden"
+              // style={{ width: `${(4.8 / 5) * 100}%` }}
+            >
+              {[...Array(4)].map((_, index) => (
+                <Star
+                  key={`fg-${index}`}
+                  size={20}
+                  className="fill-yellow-400 text-yellow-400"
+                />
+              ))}
+            </div>
+          </div>
+          <span className="text-sm text-gray-600">
+            ({(4.8).toFixed(1)} • {Number(1432).toLocaleString()} reviews)
+          </span>
+        </div>
         <Button variant="outline" className="flex items-center gap-2">
           <Edit3 size={16} />
           Edit Profile
