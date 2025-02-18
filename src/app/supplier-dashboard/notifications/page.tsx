@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
-import { Check, CheckCircle2, Loader } from "lucide-react";
+import { Check, CheckCircle2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import useSWR from "swr";
 import { Notification } from "@prisma/client";
 import { useSupplier } from "@/components/SupplierDashboard/SupplierContext";
+import { SnakeLoader } from "@/components/ui/loader";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -28,11 +29,14 @@ export default function NotificationsPage() {
     notifications: Notification[];
     totalNotifCount: number;
   }>(`/api/notification/${supplier.userId}?page=${currentPage}`, fetcher);
-  console.log(data);
+
   return (
     <>
       {isLoading ? (
-        <Loader />
+        <div className="flex flex-row gap-3 justify-start items-center">
+          <SnakeLoader />
+          Loading notifications...
+        </div>
       ) : error ? (
         <div className="text-sm font-medium">
           Failed to load notifications, try again later
@@ -70,7 +74,7 @@ export default function NotificationsPage() {
                       <span className="sr-only">Mark as read</span>
                     </Button>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground whitespace-pre-line">
                     {notification.content}
                   </p>
                   <p className="text-xs text-muted-foreground">

@@ -10,6 +10,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
+import { useSupplier } from "../SupplierDashboard/SupplierContext";
 
 export function NavMain({
   items,
@@ -17,11 +18,13 @@ export function NavMain({
   items: {
     title: string;
     url: string;
-    icon?: LucideIcon;
+    icon: LucideIcon;
     isActive?: boolean;
   }[];
 }) {
   const router = useRouter();
+  const { notifCount } = useSupplier();
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -34,7 +37,14 @@ export function NavMain({
                 router.push(item.url);
               }}
             >
-              {item.icon && <item.icon />}
+              <div className="relative">
+                {item.title === "Notifications" && notifCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-destructive text-[10px] font-medium text-destructive-foreground">
+                    {notifCount}
+                  </span>
+                )}
+                <item.icon className="size-5" />
+              </div>
               <span>{item.title}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>

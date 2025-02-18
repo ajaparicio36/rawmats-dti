@@ -18,6 +18,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { logout } from "../AuthHandlers/LoginHandler";
+import { useRouter } from "next/navigation";
 
 export function NavUser({
   user,
@@ -29,8 +30,11 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+  const router = useRouter();
+
   const logOut = async () => {
     await logout();
+    router.push("/login");
   };
 
   return (
