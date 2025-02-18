@@ -44,13 +44,6 @@ export default async function SupplierLayout({
     },
   });
 
-  const notifCount = await prisma.notification.count({
-    where: {
-      read: false,
-      userId: data.user.id,
-    },
-  });
-
   const props = {
     adminRole: user?.role === "ADMIN",
     initialProducts: products,
@@ -58,11 +51,7 @@ export default async function SupplierLayout({
   };
 
   return (
-    <SupplierProvider
-      products={products}
-      supplier={supplier}
-      notifCount={notifCount}
-    >
+    <SupplierProvider products={products} supplier={supplier}>
       <SupplierScreen
         user={user!}
         adminRole={props.adminRole}

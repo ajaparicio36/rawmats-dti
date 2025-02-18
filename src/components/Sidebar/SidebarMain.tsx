@@ -10,7 +10,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
+import useSWR from "swr";
 import { useSupplier } from "../SupplierDashboard/SupplierContext";
+
+const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export function NavMain({
   items,
@@ -23,7 +26,12 @@ export function NavMain({
   }[];
 }) {
   const router = useRouter();
-  const { notifCount } = useSupplier();
+  const { supplier } = useSupplier();
+
+  const { data: notifCount = 0 } = useSWR<number>(
+    `/api/notification/read/${supplier.userId}`,
+    fetcher,
+  );
 
   return (
     <SidebarGroup>

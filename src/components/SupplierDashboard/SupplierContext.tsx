@@ -7,7 +7,6 @@ import { Supplier } from "@prisma/client";
 interface SupplierContextType {
   products: ProductWithSupplier[];
   supplier: Supplier;
-  notifCount: number;
 }
 
 export const SupplierContext = createContext<SupplierContextType | undefined>(
@@ -25,16 +24,14 @@ export function useSupplier() {
 export default function SupplierProvider({
   products,
   supplier,
-  notifCount,
   children,
 }: {
   products: ProductWithSupplier[];
   supplier: Supplier;
-  notifCount: number;
   children: React.ReactNode;
 }) {
   return (
-    <SupplierContext.Provider value={{ products, supplier, notifCount }}>
+    <SupplierContext.Provider value={{ products, supplier }}>
       {children}
     </SupplierContext.Provider>
   );

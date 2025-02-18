@@ -17,18 +17,17 @@ export default function NotificationsPage() {
 
   const { supplier } = useSupplier();
 
-  // const markAsRead = (id: string) => {
-  //   setNotifications(
-  //     notifications.map((notif) =>
-  //       notif.id === id ? { ...notif, read: true } : notif,
-  //     ),
-  //   );
-  // };
-
   const { data, error, isLoading } = useSWR<{
     notifications: Notification[];
     totalNotifCount: number;
   }>(`/api/notification/${supplier.userId}?page=${currentPage}`, fetcher);
+
+  const markAsRead = async (id: string) => {
+    await fetch(`/api/notification/read`, {
+      method: "PATCH",
+      body: JSON.stringify({ id }),
+    });
+  };
 
   return (
     <>
@@ -43,46 +42,45 @@ export default function NotificationsPage() {
         </div>
       ) : data && data.notifications.length > 0 ? (
         <div className="space-y-4">
-          {data &&
-            data.notifications.map((notification) => (
-              <div
-                key={notification.id}
-                className={`p-4 rounded-lg border transition-colors ${
-                  notification.read
-                    ? "bg-muted/50"
-                    : "bg-card hover:bg-accent/5 relative"
-                }`}
-              >
-                {!notification.read && (
-                  <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-primary rounded-full" />
-                )}
-                <div className="grid gap-1 ml-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold">{notification.title}</h3>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className={`shrink-0 ${notification.read ? "text-muted-foreground" : ""}`}
-                      // onClick={() => markAsRead(notification.id)}
-                      disabled={notification.read}
-                    >
-                      {notification.read ? (
-                        <CheckCircle2 className="h-5 w-5" />
-                      ) : (
-                        <Check className="h-5 w-5" />
-                      )}
-                      <span className="sr-only">Mark as read</span>
-                    </Button>
-                  </div>
-                  <p className="text-sm text-muted-foreground whitespace-pre-line">
-                    {notification.content}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {format(notification.createdAt, "PPp")}
-                  </p>
+          {data.notifications.map((notification) => (
+            <div
+              key={notification.id}
+              className={`p-4 rounded-lg border transition-colors ${
+                notification.read
+                  ? "bg-muted/50"
+                  : "bg-card hover:bg-accent/5 relative"
+              }`}
+            >
+              {!notification.read && (
+                <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-primary rounded-full" />
+              )}
+              <div className="grid gap-1 ml-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold">{notification.title}</h3>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`shrink-0 ${notification.read ? "text-muted-foreground" : ""}`}
+                    onClick={() => markAsRead(notification.id)}
+                    disabled={notification.read}
+                  >
+                    {notification.read ? (
+                      <CheckCircle2 className="h-5 w-5" />
+                    ) : (
+                      <Check className="h-5 w-5" />
+                    )}
+                    <span className="sr-only">Mark as read</span>
+                  </Button>
                 </div>
+                <p className="text-sm text-muted-foreground whitespace-pre-line">
+                  {notification.content}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {format(notification.createdAt, "PPp")}
+                </p>
               </div>
-            ))}
+            </div>
+          ))}
         </div>
       ) : (
         <div className="text-sm font-medium">No data available</div>
