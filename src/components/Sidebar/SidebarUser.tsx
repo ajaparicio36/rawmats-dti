@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronsUpDown, LogOut } from "lucide-react";
-
+import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -29,8 +29,14 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+  const router = useRouter();
+
   const logOut = async () => {
     await logout();
+  };
+
+  const goToProfile = () => {
+    router.push("/profile");
   };
 
   return (
@@ -62,7 +68,10 @@ export function NavUser({
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+              <div
+                className="flex cursor-pointer items-center gap-2 px-1 py-1.5 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+                onClick={goToProfile}
+              >
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback className="rounded-lg">
@@ -70,8 +79,7 @@ export function NavUser({
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  Profile
                 </div>
               </div>
             </DropdownMenuLabel>
