@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { Supplier } from "@prisma/client";
+import type React from "react";
+import { useState } from "react";
+import type { Supplier } from "@prisma/client";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Edit3, Pencil, Star, X } from "lucide-react";
+import { Camera, CheckCircle, Edit3, Pencil, Star, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +13,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import Image from "next/image";
 
 interface ProfileProps {
   supplier: Supplier & { user: { email: string } };
@@ -33,8 +35,23 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
   return (
     <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-lg space-y-4 text-sm w-full">
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 rounded-full bg-gray-300 flex justify-center items-center text-white text-xl font-semibold">
-          {supplier.businessName.charAt(0)}
+        <div className="relative group">
+          <Image
+            src={
+              "https://fugtxatemswintywrhoe.supabase.co/storage/v1/object/public/photos/users/default.jpg"
+            }
+            alt="default"
+            width={100}
+            height={100}
+            className="w-16 h-16 rounded-full"
+          />
+          {/* Overlay that appears on hover */}
+          <div
+            className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+            onClick={() => console.log("clicked!")}
+          >
+            <Camera className="w-5 h-5 text-white" />
+          </div>
         </div>
         <div className="flex-1">
           <h1 className="text-lg font-semibold text-gray-800">
