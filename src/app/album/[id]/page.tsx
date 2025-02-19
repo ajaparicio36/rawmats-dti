@@ -1,4 +1,4 @@
-import React, { Fragment, Suspense } from "react";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import prisma from "@/utils/prisma/client";
 import AlbumProductCard from "@/components/Albums/AlbumProductCard";
@@ -55,7 +55,7 @@ const AlbumContent = async ({
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col gap-2">
         <BackToFavorites />
         <h1 className="text-3xl font-bold mb-6">
@@ -66,7 +66,7 @@ const AlbumContent = async ({
       {album.favorites.length === 0 ? (
         <EmptyState />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
           {album.favorites.map((favorite) => (
             <AlbumProductCard
               key={favorite.id}
@@ -81,7 +81,7 @@ const AlbumContent = async ({
           ))}
         </div>
       )}
-    </div>
+    </main>
   );
 };
 
@@ -103,12 +103,12 @@ const AlbumPage = async ({ params }: { params: { id: string } }) => {
   }
 
   return (
-    <Fragment>
+    <div className="min-h-screen w-screen">
       <NavBar user={user} supplier={user.supplier} />
       <Suspense fallback={<LoadingState />}>
         <AlbumContent albumId={params.id} userId={user.id} />
       </Suspense>
-    </Fragment>
+    </div>
   );
 };
 

@@ -51,7 +51,7 @@ export default async function Home() {
   });
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen w-screen">
       <NavBar user={user} supplier={user.supplier} />
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {/* Albums Section */}
