@@ -50,25 +50,24 @@ export default function ProductList({ products }: ProductListProps) {
   );
 
   return (
-    <div className="mt-6 max-w-7xl mx-auto">
-      <div className="flex flex-col sm:flex-row items-center justify-between mb-6">
-        <div className="text-center sm:text-left">
+    <div className="mt-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4 w-full">
+        <div className="text-center sm:text-left w-full">
           <h2 className="text-2xl font-bold text-gray-900">Browse Products</h2>
           <p className="text-gray-500 text-sm">
             Create the best raw materials for your business
           </p>
-        </div>{" "}
-        <div className="flex gap-3 mt-4 sm:mt-0">
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <Input
             type="text"
             placeholder="Search products..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-64 border rounded-lg px-3 py-2 text-sm"
+            className="w-full sm:w-64 border rounded-lg px-3 py-2 text-sm"
           />
-
           <Select value={sortOption} onValueChange={setSortOption}>
-            <SelectTrigger className="w-40 border rounded-lg px-3 py-2 text-sm bg-white">
+            <SelectTrigger className="w-full sm:w-40 border rounded-lg px-3 py-2 text-sm bg-white">
               Sort by
             </SelectTrigger>
             <SelectContent>
@@ -82,31 +81,35 @@ export default function ProductList({ products }: ProductListProps) {
 
       {filteredProducts.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-center">
-            {currentProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                id={product.id}
-                name={product.name}
-                supplier={product.supplier}
-                price={product.price}
-                image={product.image}
-                verified={product.verified}
-                description={product.description}
-              />
-            ))}
-          </div>{" "}
+          <div className="w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full min-w-0">
+              {currentProducts.map((product) => (
+                <div key={product.id} className="min-w-0 flex">
+                  <ProductCard
+                    id={product.id}
+                    name={product.name}
+                    supplier={product.supplier}
+                    price={product.price}
+                    image={product.image}
+                    verified={product.verified}
+                    description={product.description}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
           {totalPages > 1 && (
-            <div className="flex justify-center mt-6">
+            <div className="flex justify-center mt-6 gap-4 w-full">
               <Button
                 variant="outline"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="mx-2"
+                className="px-4 py-2"
               >
                 Previous
               </Button>
-              <span className="px-4 py-4 text-sm font-medium">
+              <span className="px-4 py-2 text-sm font-medium">
                 Page {currentPage} of {totalPages}
               </span>
               <Button
@@ -115,7 +118,7 @@ export default function ProductList({ products }: ProductListProps) {
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
-                className="mx-2"
+                className="px-4 py-2"
               >
                 Next
               </Button>
@@ -123,7 +126,7 @@ export default function ProductList({ products }: ProductListProps) {
           )}
         </>
       ) : (
-        <p className="text-center text-gray-500">No products found.</p>
+        <p className="text-center text-gray-500 w-full">No products found.</p>
       )}
     </div>
   );

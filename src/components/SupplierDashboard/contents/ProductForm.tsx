@@ -17,6 +17,7 @@ export default function ProductForm({ supplierId }: ProductFormProps) {
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
   const [packaging, setPackaging] = useState("");
+  // const [weight, setWeight] = useState("");
   const [stocks, setStocks] = useState("");
   const [longDescription, setLongDescription] = useState("");
   const [image, setImage] = useState<File | null>(null);
@@ -112,6 +113,7 @@ export default function ProductForm({ supplierId }: ProductFormProps) {
     setProductName("");
     setPrice("");
     setPackaging("");
+    // setWeight("");
     setStocks("");
     setLongDescription("");
     setImage(null);
@@ -124,84 +126,129 @@ export default function ProductForm({ supplierId }: ProductFormProps) {
     <>
       <Button
         onClick={() => setShowForm(true)}
-        className="bg-white shadow-sm text-black hover:bg-blue-300 outline outline-3 outline-gray-300"
+        className="bg-blue-400 text-white px-5 py-2.5 rounded-lg shadow-md hover:bg-blue-700 transition-all"
       >
-        Add Product
+        + Add Product
       </Button>
+
       {showForm && (
         <Dialog open={showForm} onOpenChange={setShowForm}>
-          <DialogOverlay className="fixed inset-0 bg-black bg-opacity-50" />
-          <DialogContent className="bg-white p-4 sm:p-6 rounded shadow-md w-full max-w-xs sm:max-w-sm md:max-w-lg max-h-screen overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4">Create New Product</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+          <DialogOverlay className="fixed inset-0 bg-black bg-opacity-10 backdrop-blur-md" />
+          <DialogContent className="bg-gray-50 p-6 rounded-3xl shadow-2xl w-full max-w-md space-y-5">
+            <h2 className="text-xl font-semibold text-gray-800">
+              Create New Product
+            </h2>
+            <form onSubmit={handleSubmit} className="space-y-3">
               <div>
-                <Label htmlFor="productName">Product Name</Label>
+                <Label htmlFor="productName" className="text-black">
+                  Product Name
+                </Label>
                 <Input
                   id="productName"
                   value={productName}
                   onChange={(e) => setProductName(e.target.value)}
                   required
+                  className="w-full border border-gray-400 rounded-md px-3 py-2 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all"
                 />
               </div>
+
               <div>
-                <Label htmlFor="price">Price</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                <Label htmlFor="description" className="text-black">
+                  Product Description
+                </Label>
+                <textarea
+                  id="description"
+                  value={longDescription}
+                  onChange={(e) => setLongDescription(e.target.value)}
+                  placeholder="Describe the product"
+                  className="w-full border border-gray-400 rounded-md px-3 py-2 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all resize-none"
+                  rows={2}
                   required
                 />
               </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <Label htmlFor="price" className="text-black">
+                    Price
+                  </Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    required
+                    className="w-full border border-gray-400 rounded-md px-3 py-2 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="stocks" className="text-black">
+                    Available Stocks
+                  </Label>
+                  <Input
+                    id="stocks"
+                    value={stocks}
+                    onChange={(e) => setStocks(e.target.value)}
+                    required
+                    className="w-full border border-gray-400 rounded-md px-3 py-2 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* Weight
               <div>
-                <Label htmlFor="packaging">Packaging</Label>
+                <Label htmlFor="weight" className="text-black">
+                  Weight/Size (if applicable)
+                </Label>
+                <Input
+                  id="weight"
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
+                  className="w-full border border-gray-400 rounded-md px-3 py-2 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all"
+                />
+              </div> */}
+
+              <div>
+                <Label htmlFor="packaging" className="text-black ">
+                  Packaging Type
+                </Label>
                 <Input
                   id="packaging"
                   value={packaging}
                   onChange={(e) => setPackaging(e.target.value)}
                   required
+                  className="w-full border border-gray-400 rounded-md px-3 py-2 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all"
                 />
               </div>
+
               <div>
-                <Label htmlFor="stocks">Stocks</Label>
-                <Input
-                  id="stocks"
-                  type="number"
-                  value={stocks}
-                  onChange={(e) => setStocks(e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="longDescription">Description</Label>
-                <textarea
-                  id="longDescription"
-                  value={longDescription}
-                  onChange={(e) => setLongDescription(e.target.value)}
-                  placeholder="Detailed description of the product"
-                  className="border rounded-md w-full p-2 max-h-[50px]"
-                  rows={3}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="image">Image</Label>
+                <Label htmlFor="image" className="text-black">
+                  Upload Image
+                </Label>
                 <Input
                   id="image"
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
                   required
+                  className="w-full border border-gray-400 rounded-md px-3 py-2 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all"
                 />
               </div>
-              {error && <div className="text-red-500">{error}</div>}
+
+              {error && <div className="text-red-500 text-sm">{error}</div>}
+
               <div className="flex justify-end space-x-2">
-                <Button type="button" variant="outline" onClick={resetForm}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={resetForm}
+                  className="bg-gray-200 text-gray-700 px-3 py-2 rounded-md hover:bg-gray-300 transition"
+                >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  className="bg-blue-500 text-white"
+                  className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition"
                   disabled={loading}
                 >
                   {loading ? "Submitting..." : "Submit"}
@@ -211,6 +258,7 @@ export default function ProductForm({ supplierId }: ProductFormProps) {
           </DialogContent>
         </Dialog>
       )}
+
       {showCropper && cropImage && (
         <Dialog open={showCropper} onOpenChange={setShowCropper}>
           <DialogOverlay className="fixed inset-0 bg-black bg-opacity-50" />

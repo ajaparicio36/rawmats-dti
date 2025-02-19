@@ -9,7 +9,6 @@ const SupplierScreen: React.FC<SupplierDashboardProps> = ({
   user,
   supplier,
   adminRole,
-  children,
 }) => {
   return (
     <div className="flex h-screen w-full bg-background">
@@ -26,8 +25,6 @@ const SupplierScreen: React.FC<SupplierDashboardProps> = ({
           <SidebarTrigger className="mr-4" />
           <h1 className="text-2xl font-semibold text-[#034169]">Dashboard</h1>
         </div>
-
-        <div className="flex-1 p-8 overflow-auto">{children}</div>
       </SidebarInset>
     </div>
   );
