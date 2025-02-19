@@ -20,6 +20,7 @@ import Lightbox from "yet-another-react-lightbox";
 import Inline from "yet-another-react-lightbox/plugins/inline";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
+import RejectionDialog from "./RejectionDialog";
 
 export function SupplierVerificationComponent({
   suppliers,
@@ -29,6 +30,11 @@ export function SupplierVerificationComponent({
   const [files, setFiles] = useState<Record<string, string[]>>({});
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSupplier, setSelectedSupplier] = useState<{
+    supplierID: string;
+    userID: string;
+  }>({ supplierID: "", userID: "" });
 
   const toggleOpen = (state: boolean) => () => setOpen(state);
 
@@ -62,6 +68,11 @@ export function SupplierVerificationComponent({
     fetchFiles();
   }, [suppliers]);
 
+  const openRejectModal = (supplierID: string, userID: string) => {
+    setSelectedSupplier({ supplierID, userID });
+    setIsModalOpen(true);
+  };
+
   const verifySupplier = async (id: string) => {
     setIsLoading({ status: true, method: "verify" });
     try {
@@ -88,14 +99,24 @@ export function SupplierVerificationComponent({
     }
   };
 
-  const rejectSupplier = async (id: string) => {
+  const rejectSupplier = async (
+    supplierID: string,
+    reasons: string[],
+    comment: string,
+    userID: string,
+  ) => {
     setIsLoading({ status: true, method: "reject" });
     try {
-      const response = await fetch(`/api/supplier/reject/${id}`, {
+      const response = await fetch(`/api/supplier/reject/${supplierID}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          reasons,
+          comment,
+          userID,
+        }),
       });
 
       if (!response.ok) {
@@ -123,6 +144,7 @@ export function SupplierVerificationComponent({
         </h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2">
+        {suppliers.length === 0 && <p>No supplier applications currently</p>}
         {suppliers.map((supplier) => (
           <Card className="my-3" key={supplier.id}>
             <CardHeader>
@@ -223,7 +245,11 @@ export function SupplierVerificationComponent({
                 )}
               </Button>
               <Button
-                onClick={() => rejectSupplier(supplier.userId)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  openRejectModal(supplier.id, supplier.userId);
+                }}
                 variant="destructive"
                 disabled={supplier.verified || isLoading.status}
                 className="flex-1 bg-rawmats-feedback-error min-w-[100px] max-w-[150px]"
@@ -241,6 +267,20 @@ export function SupplierVerificationComponent({
           </Card>
         ))}
       </div>
+
+      <RejectionDialog
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        rejectFunction={rejectSupplier}
+        rejectID={selectedSupplier.supplierID}
+        userID={selectedSupplier.userID}
+        rejectionReasons={[
+          "Incomplete business documents",
+          "Invalid business registration",
+          "Inconsistent or misleading information",
+          "Poor image quality",
+        ]}
+      />
     </div>
   );
 }

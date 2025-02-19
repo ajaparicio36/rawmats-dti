@@ -102,7 +102,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 ));
               })()}
             </div>
-
           </PopoverContent>
         </Popover>
       </CardContent>

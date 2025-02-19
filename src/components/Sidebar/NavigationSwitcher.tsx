@@ -46,7 +46,7 @@ export function NavigationSwitcher({
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                 {pathname === "/" && <HouseIcon className="size-4" />}
-                {pathname === "/supplier-dashboard" && (
+                {pathname.startsWith("/supplier-dashboard") && (
                   <GalleryVerticalEnd className="size-4" />
                 )}
                 {pathname.startsWith("/admin") && (
@@ -56,7 +56,8 @@ export function NavigationSwitcher({
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
                   {pathname === "/" && "Home"}
-                  {pathname === "/supplier-dashboard" && "Supplier Dashboard"}
+                  {pathname.startsWith("/supplier-dashboard") &&
+                    "Supplier Dashboard"}
                   {pathname.startsWith("/admin") && "Admin Dashboard"}
                 </span>
               </div>
@@ -88,11 +89,11 @@ export function NavigationSwitcher({
               <DropdownMenuItem
                 onClick={() => router.push("/supplier-dashboard")}
                 className={`gap-2 p-2 ${
-                  pathname === "/supplier-dashboard"
+                  pathname.startsWith("/supplier-dashboard")
                     ? "cursor-not-allowed bg-gray-200"
                     : "cursor-pointer"
                 }`}
-                disabled={pathname === "/supplier-dashboard"}
+                disabled={pathname.startsWith("/supplier-dashboard")}
               >
                 <div className="flex size-6 items-center justify-center rounded-sm border">
                   <GalleryVerticalEnd className="size-4 shrink-0" />

@@ -81,7 +81,6 @@ export default function ProductList({ products }: ProductListProps) {
 
       {filteredProducts.length > 0 ? (
         <>
-
           <div className="w-full">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full min-w-0">
               {currentProducts.map((product) => (
@@ -99,7 +98,6 @@ export default function ProductList({ products }: ProductListProps) {
               ))}
             </div>
           </div>
-
 
           {totalPages > 1 && (
             <div className="flex justify-center mt-6 gap-4 w-full">

@@ -8,7 +8,6 @@ import { NavMain } from "./SidebarMain";
 import { NavUser } from "./SidebarUser";
 import { NavigationSwitcher } from "./NavigationSwitcher";
 
-
 import {
   Sidebar,
   SidebarContent,
@@ -27,7 +26,6 @@ const data = {
   },
   navMain: [
     {
-
       title: "Supplier",
       url: "/supplier-dashboard",
       icon: SquareTerminal,
@@ -75,7 +73,6 @@ export function SupplierSidebar({
       {...props}
     >
       <SidebarHeader>
-
         <NavigationSwitcher isAdmin={isAdmin} isSupplier={isSupplier} />
       </SidebarHeader>
       <SidebarContent>

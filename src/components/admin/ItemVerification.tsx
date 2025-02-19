@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Check, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,23 +14,6 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import { Product } from "@prisma/client";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { SidebarTrigger } from "../ui/sidebar";
 import {
   Pagination,
@@ -41,26 +23,23 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import ImageWithFallback from "../ui/image-fallback";
+import RejectionDialog from "./RejectionDialog";
+import { ProductWithSupplier } from "@/utils/Products";
 
 interface ItemVerificationProps {
-  products: Product[];
+  products: ProductWithSupplier[];
 }
 
-const rejectionReasons = [
-  "Inappropriate content",
-  "Poor image quality",
-  "Inaccurate description",
-  "Incorrect pricing",
-  "Duplicate listing",
-];
-
-const fallbackImageUrl = "/placeholder.svg";
+const fallbackImageUrl =
+  "https://fugtxatemswintywrhoe.supabase.co/storage/v1/object/public/photos/products/default.jpg";
 
 export function ItemVerificationComponent({ products }: ItemVerificationProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
-  const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
-  const [comment, setComment] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState<{
+    productId: string;
+    userID: string;
+  }>({ productId: "", userID: "" });
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
@@ -83,14 +62,23 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
     }
   };
 
-  const rejectProduct = async (id: string) => {
+  const rejectProduct = async (
+    productID: string,
+    reasons: string[],
+    comment: string,
+    userID: string,
+  ) => {
     try {
-      const response = await fetch(`/api/product/reject/${id}`, {
+      const response = await fetch(`/api/product/reject/${productID}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({
+          reasons,
+          comment,
+          userID,
+        }),
       });
       if (!response.ok) {
         throw new Error("Failed to reject product");
@@ -101,27 +89,9 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
     }
   };
 
-  const openRejectModal = (productId: string) => {
-    setSelectedProduct(productId);
+  const openRejectModal = (productId: string, userID: string) => {
+    setSelectedProduct({ productId, userID });
     setIsModalOpen(true);
-  };
-
-  const handleReject = () => {
-    if (selectedProduct) {
-      rejectProduct(selectedProduct);
-      setIsModalOpen(false);
-      setSelectedProduct(null);
-      setSelectedReasons([]);
-      setComment("");
-    }
-  };
-
-  const handleReasonChange = (reason: string) => {
-    setSelectedReasons((prev) =>
-      prev.includes(reason)
-        ? prev.filter((r) => r !== reason)
-        : [...prev, reason],
-    );
   };
 
   const filteredProducts = products.filter((product) =>
@@ -134,9 +104,7 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
     currentPage * itemsPerPage,
   );
 
-  return products.length === 0 ? (
-    <p>No products to verify currently</p>
-  ) : (
+  return (
     <div className="h-fit">
       <div className="flex items-center gap-2 md:gap-10 flex-col md:flex-row">
         <div className="flex flex-row justify-center items-center w-full md:w-auto relative">
@@ -159,6 +127,9 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
 
       <ScrollArea className="h-auto">
         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+          {paginatedProducts.length === 0 && (
+            <p>No supplier applications currently</p>
+          )}
           {paginatedProducts.map((product) => (
             <Link
               href={`/product/${product.id}`}
@@ -167,16 +138,12 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
             >
               <Card className="flex flex-col h-full transition-transform duration-200 hover:scale-105">
                 <div className="relative w-full pt-[56.25%]">
-                  <Image
-                    src={product.image || fallbackImageUrl}
+                  <ImageWithFallback
+                    src={product.image}
                     alt={product.name}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-t-lg"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = fallbackImageUrl;
-                    }}
+                    fallbackSrc={fallbackImageUrl}
+                    fill
+                    className="rounded-t-lg object-cover"
                   />
                 </div>
                 <CardHeader>
@@ -220,7 +187,7 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      openRejectModal(product.id);
+                      openRejectModal(product.id, product.supplier.userId);
                     }}
                     variant="destructive"
                     disabled={product.verified}
@@ -270,72 +237,20 @@ export function ItemVerificationComponent({ products }: ItemVerificationProps) {
         </Pagination>
       )}
 
-      <Dialog
-        open={isModalOpen}
-        onOpenChange={(open) => {
-          setIsModalOpen(open);
-          if (!open) {
-            setSelectedReasons([]);
-            setComment("");
-          }
-        }}
-      >
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Reject Product</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="reasons">Rejection Reasons</Label>
-              <Select onValueChange={handleReasonChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select reasons" />
-                </SelectTrigger>
-                <SelectContent>
-                  {rejectionReasons.map((reason) => (
-                    <SelectItem key={reason} value={reason}>
-                      {reason}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {selectedReasons.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {selectedReasons.map((reason) => (
-                    <div
-                      key={reason}
-                      className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-sm"
-                    >
-                      {reason}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="comment">Additional Comments</Label>
-              <Textarea
-                id="comment"
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Provide additional details about the rejection..."
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              className="bg-rawmats-feedback-error hover:bg-red-600"
-              onClick={handleReject}
-            >
-              Confirm Rejection
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <RejectionDialog
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        rejectFunction={rejectProduct}
+        rejectID={selectedProduct.productId}
+        userID={selectedProduct.userID}
+        rejectionReasons={[
+          "Inappropriate content",
+          "Poor image quality",
+          "Inaccurate description",
+          "Incorrect pricing",
+          "Duplicate listing",
+        ]}
+      />
     </div>
   );
 }

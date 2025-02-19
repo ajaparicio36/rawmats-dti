@@ -100,7 +100,7 @@ export default function ProductForm({ supplierId }: ProductFormProps) {
       setImage(
         new File([processedImageBlob], "processed_image.jpg", {
           type: "image/jpeg",
-        })
+        }),
       );
       setShowCropper(false);
     } catch (error) {

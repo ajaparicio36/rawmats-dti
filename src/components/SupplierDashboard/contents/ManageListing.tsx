@@ -42,10 +42,10 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
 
   const totalProducts = filteredProducts.length;
   const pendingProducts = filteredProducts.filter(
-    (product) => !product.verified
+    (product) => !product.verified,
   ).length;
   const verifiedProducts = filteredProducts.filter(
-    (product) => product.verified
+    (product) => product.verified,
   ).length;
 
   const handleDelete = async (id: string) => {
@@ -67,7 +67,7 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
           if (statusFilter === "pending") return !product.verified;
           if (statusFilter === "verified") return product.verified;
           return false;
-        })
+        }),
       );
     } catch (error) {
       console.error("Error deleting product:", error);
@@ -76,7 +76,7 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
 
   const handleEditComplete = (updatedProduct: ProductWithSupplier) => {
     const updatedProducts = products.map((product) =>
-      product.id === updatedProduct.id ? updatedProduct : product
+      product.id === updatedProduct.id ? updatedProduct : product,
     );
 
     setProducts(updatedProducts);
@@ -87,7 +87,7 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
         if (statusFilter === "pending") return !product.verified;
         if (statusFilter === "verified") return product.verified;
         return false;
-      })
+      }),
     );
 
     setEditingProduct(null);
@@ -96,7 +96,7 @@ const ManageListings: React.FC<ManageListingsProps> = ({ fetchedProducts }) => {
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const currentProducts = filteredProducts.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
+    currentPage * ITEMS_PER_PAGE,
   );
 
   const handleStatusChange = (value: string) => {
