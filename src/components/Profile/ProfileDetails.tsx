@@ -4,7 +4,8 @@ import type React from "react";
 import { useState } from "react";
 import type { Supplier } from "@prisma/client";
 import { Button } from "@/components/ui/button";
-import { Camera, CheckCircle, Edit3, Pencil, Star, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { CheckCircle, ImageUp, Pencil, Star, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -21,37 +22,54 @@ interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = ({ supplier }) => {
   const [bio, setBio] = useState(supplier.bio || "");
+  const [email, setEmail] = useState(supplier.user.email);
+  const [phone, setPhone] = useState(supplier.businessPhone || "");
   const [isBioModalOpen, setIsBioModalOpen] = useState(false);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
 
-  const handleBioChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setBio(event.target.value);
-  };
-
-  const handleSaveBio = () => {
-    alert(`Bio saved: ${bio}`);
-    setIsBioModalOpen(false);
+  const handleSave = (type: "bio" | "email" | "phone") => {
+    switch (type) {
+      case "bio":
+        alert(`Bio saved: ${bio}`);
+        setIsBioModalOpen(false);
+        break;
+      case "email":
+        alert(`Email saved: ${email}`);
+        setIsEmailModalOpen(false);
+        break;
+      case "phone":
+        alert(`Phone saved: ${phone}`);
+        setIsPhoneModalOpen(false);
+        break;
+    }
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-lg space-y-4 text-sm w-full">
-      <div className="flex items-center gap-4">
-        <div className="relative group">
-          <Image
-            src={
-              "https://fugtxatemswintywrhoe.supabase.co/storage/v1/object/public/photos/users/default.jpg"
-            }
-            alt="default"
-            width={100}
-            height={100}
-            className="w-16 h-16 rounded-full"
-          />
-          {/* Overlay that appears on hover */}
-          <div
-            className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+    <div className="max-w-6xl mx-auto p-4 sm:p-6 bg-white rounded-lg shadow-lg space-y-4 text-sm w-full">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <div className="relative group shrink-0">
+          <div className="w-16 h-16 rounded-full overflow-hidden">
+            <Image
+              src={
+                "https://fugtxatemswintywrhoe.supabase.co/storage/v1/object/public/photos/businesses/default.jpg"
+              }
+              alt="default"
+              width={100}
+              height={100}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          {/* Upload button overlay */}
+          <button
+            className="absolute bottom-0 right-0 rounded-full bg-black/90 p-1.5 cursor-pointer hover:bg-black/70 transition-colors"
             onClick={() => console.log("clicked!")}
           >
-            <Camera className="w-5 h-5 text-white" />
-          </div>
+            <div className="w-4 h-4 flex items-center justify-center">
+              {/* <Plus className="w-3 h-3 text-white" /> */}
+              <ImageUp color="white" className="w-4 h-4" />
+            </div>
+          </button>
         </div>
         <div className="flex-1">
           <h1 className="text-lg font-semibold text-gray-800">
@@ -60,7 +78,7 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
           <p className="text-green-600 text-xs font-semibold">
             RawMats Supplier
           </p>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 mt-1">
             <div className="flex relative">
               <div className="flex">
                 {[...Array(5)].map((_, index) => (
@@ -89,12 +107,6 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
             </span>
           </div>
         </div>
-        <Button
-          variant="outline"
-          className="text-xs flex items-center gap-1 px-2 py-1"
-        >
-          <Edit3 size={12} /> Edit Profile
-        </Button>
       </div>
 
       <hr className="border-gray-300" />
@@ -103,42 +115,62 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
         <h2 className="text-base font-medium text-gray-800">
           Personal Details
         </h2>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <strong className="text-gray-700">Email:</strong>
-            <p className="text-gray-600 text-xs mt-1">{supplier.user.email}</p>
+            <div className="flex items-center justify-between">
+              <strong className="text-gray-700">Email:</strong>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-blue-600 flex items-center gap-1 p-0 h-auto"
+                onClick={() => setIsEmailModalOpen(true)}
+              >
+                <Pencil size={12} /> Edit
+              </Button>
+            </div>
+            <p className="text-gray-600 text-xs mt-1">{email}</p>
           </div>
           <div>
-            <strong className="text-gray-700">Phone:</strong>
-            <p className="text-gray-600 text-xs mt-1">
-              {supplier.businessPhone || "N/A"}
-            </p>
+            <div className="flex items-center justify-between">
+              <strong className="text-gray-700">Phone:</strong>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-blue-600 flex items-center gap-1 p-0 h-auto"
+                onClick={() => setIsPhoneModalOpen(true)}
+              >
+                <Pencil size={12} /> Edit
+              </Button>
+            </div>
+            <p className="text-gray-600 text-xs mt-1">{phone || "N/A"}</p>
           </div>
         </div>
-        <div className="flex justify-between items-center">
-          <strong className="text-gray-700">Bio</strong>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-blue-600 flex items-center gap-1 p-0"
-            onClick={() => setIsBioModalOpen(true)}
-          >
-            {bio ? (
-              <>
-                <Pencil size={12} /> Edit Bio
-              </>
-            ) : (
-              <>
-                Add Bio <span className="text-lg font-bold">+</span>
-              </>
-            )}
-          </Button>
+        <div>
+          <div className="flex justify-between items-center">
+            <strong className="text-gray-700">Bio</strong>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-blue-600 flex items-center gap-1 p-0 h-auto"
+              onClick={() => setIsBioModalOpen(true)}
+            >
+              {bio ? (
+                <>
+                  <Pencil size={12} /> Edit Bio
+                </>
+              ) : (
+                <>
+                  Add Bio <span className="text-lg font-bold">+</span>
+                </>
+              )}
+            </Button>
+          </div>
+          {bio ? (
+            <p className="text-gray-600 text-xs mt-1">{bio}</p>
+          ) : (
+            <p className="text-gray-400 italic text-xs mt-1">No bio added.</p>
+          )}
         </div>
-        {bio ? (
-          <p className="text-gray-600 text-xs mt-1">{bio}</p>
-        ) : (
-          <p className="text-gray-400 italic text-xs mt-1">No bio added.</p>
-        )}
       </div>
 
       <hr className="border-gray-300" />
@@ -152,7 +184,7 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
             <CheckCircle size={12} /> Verified
           </span>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid sm:grid-cols-2 gap-4">
           <div>
             <strong className="text-gray-700">Location:</strong>
             <p className="text-blue-500 text-xs mt-1 cursor-pointer hover:underline">
@@ -168,6 +200,7 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
         </div>
       </div>
 
+      {/* Bio Edit Modal */}
       <Dialog open={isBioModalOpen} onOpenChange={setIsBioModalOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
@@ -177,13 +210,61 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
             className="w-full p-2 border border-gray-300 rounded-md"
             rows={4}
             value={bio}
-            onChange={handleBioChange}
+            onChange={(e) => setBio(e.target.value)}
           />
           <DialogFooter className="flex justify-end gap-2 mt-4">
             <Button variant="outline" onClick={() => setIsBioModalOpen(false)}>
               <X size={14} /> Cancel
             </Button>
-            <Button onClick={handleSaveBio}>Save Bio</Button>
+            <Button onClick={() => handleSave("bio")}>Save Bio</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Email Edit Modal */}
+      <Dialog open={isEmailModalOpen} onOpenChange={setIsEmailModalOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Edit Email</DialogTitle>
+          </DialogHeader>
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+          />
+          <DialogFooter className="flex justify-end gap-2 mt-4">
+            <Button
+              variant="outline"
+              onClick={() => setIsEmailModalOpen(false)}
+            >
+              <X size={14} /> Cancel
+            </Button>
+            <Button onClick={() => handleSave("email")}>Save Email</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Phone Edit Modal */}
+      <Dialog open={isPhoneModalOpen} onOpenChange={setIsPhoneModalOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Edit Phone Number</DialogTitle>
+          </DialogHeader>
+          <Input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="Enter your phone number"
+          />
+          <DialogFooter className="flex justify-end gap-2 mt-4">
+            <Button
+              variant="outline"
+              onClick={() => setIsPhoneModalOpen(false)}
+            >
+              <X size={14} /> Cancel
+            </Button>
+            <Button onClick={() => handleSave("phone")}>Save Phone</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

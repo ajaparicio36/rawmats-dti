@@ -23,7 +23,7 @@ const ProfilePage = async () => {
       user: true,
       products: {
         include: {
-          supplier: true, 
+          supplier: true,
         },
       },
     },
@@ -39,7 +39,7 @@ const ProfilePage = async () => {
       adminRole={supplier.user.role === "ADMIN"}
       initialProducts={supplier.products || []}
     >
-      <div className="flex justify-center items-center p-8 w-full overflow-auto">
+      <div className="flex justify-center items-center sm:p-8 p-3 w-full overflow-visible">
         <Suspense fallback={<LoadingModal />}>
           <div>
             <ProfileDetails supplier={supplier} />
