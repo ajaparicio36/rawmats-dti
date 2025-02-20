@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "prepare": "husky",
-    "postinstall": "npx prisma generate"
+    "postinstall": "npm install --os=linux --cpu=x64 sharp && npx prisma generate"
   },
   "dependencies": {
     "@algolia/client-search": "^5.15.0",
