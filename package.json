@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "prepare": "husky"
+    "postinstall": "npm rebuild sharp"
   },
   "dependencies": {
     "@algolia/client-search": "^5.15.0",
