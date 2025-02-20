@@ -1,13 +1,15 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import prisma from "@/utils/prisma/client";
-import SupplierScreen from "@/components/SupplierDashboard/SupplierScreen";
-import { SupplierDashboardProps } from "@/utils/Products";
 
-const SupplierDashboard = async () => {
+import ProfileDetails from "@/components/Profile/ProfileDetails";
+import LoadingModal from "@/components/Loading/LoadingModal";
+
+const ProfilePage = async () => {
   const supabase = createClient();
   const { data, error } = await supabase.auth.getUser();
+
   if (error || !data.user) {
     redirect("/");
   }
@@ -19,6 +21,11 @@ const SupplierDashboard = async () => {
     },
     include: {
       user: true,
+      products: {
+        include: {
+          supplier: true,
+        },
+      },
     },
   });
 
@@ -26,21 +33,15 @@ const SupplierDashboard = async () => {
     redirect("/");
   }
 
-  const products = await prisma.product.findMany({
-    where: {
-      supplierId: supplier.id,
-    },
-    include: {
-      supplier: true,
-    },
-  });
-
-  const props: SupplierDashboardProps = {
-    initialProducts: products,
-    supplier: supplier,
-  };
-
-  return <SupplierScreen {...props} />;
+  return (
+    <div className="flex justify-center items-center sm:p-8 p-3 w-full overflow-visible">
+      <Suspense fallback={<LoadingModal />}>
+        <div>
+          <ProfileDetails supplier={supplier} />
+        </div>
+      </Suspense>
+    </div>
+  );
 };
 
-export default SupplierDashboard;
+export default ProfilePage;

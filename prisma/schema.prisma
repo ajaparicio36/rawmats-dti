@@ -86,6 +86,7 @@ model Album {
 
 model Notification {
   id        String   @id @default(cuid())
+  title     String
   content   String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())

@@ -54,3 +54,23 @@ export async function retrieveFile(userID: string) {
     return downloadedFiles;
   }
 }
+
+export async function deleteFile(userID: string) {
+  const { data, error } = await supabase.storage
+    .from("documents")
+    .list(`business-docs/${userID}`, {
+      offset: 0,
+      sortBy: { column: "name", order: "asc" },
+    });
+
+  if (error) {
+    // Handle error
+    console.error(error);
+    return null;
+  } else {
+    // delete the images
+    await supabase.storage
+      .from("documents")
+      .remove(data.map((file) => `business-docs/${userID}/${file.name}`));
+  }
+}
