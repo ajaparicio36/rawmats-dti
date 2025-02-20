@@ -1,33 +1,114 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { Supplier } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CheckCircle, ImageUp, Pencil, Star, X } from "lucide-react";
+import { CheckCircle, ImageUp, Loader, Pencil, Star, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogOverlay,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import ImageCropper from "../SupplierDashboard/contents/ImageCropper";
+import { uploadSupplierImage } from "@/utils/supabase/profile";
 
 interface ProfileProps {
   supplier: Supplier & { user: { email: string } };
 }
 
 const Profile: React.FC<ProfileProps> = ({ supplier }) => {
-  const [bio, setBio] = useState(supplier.bio || "");
-  const [phone, setPhone] = useState(supplier.businessPhone || "");
+  const [bio, setBio] = useState(supplier.bio);
+  const [phone, setPhone] = useState(supplier.businessPhone);
   const [isBioModalOpen, setIsBioModalOpen] = useState(false);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
+  const [showCropper, setShowCropper] = useState(false);
+  const [cropImage, setCropImage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click(); // Opens file picker
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target && typeof e.target.result === "string") {
+          setCropImage(e.target.result);
+          setShowCropper(true);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCropComplete = async (croppedImage: Blob) => {
+    try {
+      const formData = new FormData();
+      formData.append("image", croppedImage, "cropped_image.jpg");
+      const processResponse = await fetch("/api/process-image", {
+        method: "POST",
+        body: formData,
+      });
+      if (!processResponse.ok) {
+        throw new Error("Error processing image");
+      }
+      const processedImageBlob = await processResponse.blob();
+
+      setShowCropper(false);
+      setLoading(true);
+      setError(null);
+
+      const image = new File([processedImageBlob], "processed_image.jpg", {
+        type: "image/jpeg",
+      });
+
+      let imagePath = null;
+
+      const fileName = `${supplier.id}-${Date.now()}.jpg`;
+      imagePath = await uploadSupplierImage(image, fileName);
+
+      const uploadResponse = await fetch(
+        `/api/supplier/profile/${supplier.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            businessPicture: imagePath,
+          }),
+        },
+      );
+
+      if (!uploadResponse.ok) {
+        const data = await uploadResponse.json();
+        throw new Error(data.error || "Error creating product");
+      }
+    } catch (error) {
+      console.error("Error processing image:", error);
+      setError("Error processing image. Please try again.");
+    } finally {
+      setLoading(false);
+
+      router.refresh();
+    }
+  };
 
   const handleSave = async (type: "bio" | "businessPhone", newData: string) => {
     await fetch(`/api/supplier/profile/${supplier.id}`, {
@@ -56,7 +137,9 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
           <div className="w-16 h-16 rounded-full overflow-hidden">
             <Image
               src={
-                "https://fugtxatemswintywrhoe.supabase.co/storage/v1/object/public/photos/businesses/default.jpg"
+                supplier.businessPicture === "/businesses/default.jpg"
+                  ? "https://fugtxatemswintywrhoe.supabase.co/storage/v1/object/public/photos/businesses/default.jpg"
+                  : supplier.businessPicture
               }
               alt="default"
               width={100}
@@ -67,13 +150,25 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
           {/* Upload button overlay */}
           <button
             className="absolute bottom-0 right-0 rounded-full bg-black/90 p-1.5 cursor-pointer hover:bg-black/70 transition-colors"
-            onClick={() => console.log("clicked!")}
+            onClick={handleFileUpload}
+            disabled={loading}
           >
             <div className="w-4 h-4 flex items-center justify-center">
-              {/* <Plus className="w-3 h-3 text-white" /> */}
-              <ImageUp color="white" className="w-4 h-4" />
+              {loading && (
+                <Loader color="white" className="animate-spin w-4 h-4" />
+              )}
+              {!loading && <ImageUp color="white" className="w-4 h-4" />}
             </div>
           </button>
+
+          {/* Hidden file input */}
+          <Input
+            ref={fileInputRef}
+            className="hidden"
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
         </div>
         <div className="flex-1">
           <h1 className="text-lg font-semibold text-gray-800">
@@ -110,6 +205,7 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
               ({(4.8).toFixed(1)} • {Number(1432).toLocaleString()} reviews)
             </span>
           </div>
+          {error && <div className="text-red-500">{error}</div>}
         </div>
       </div>
 
@@ -244,6 +340,21 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Image Cropper */}
+      {showCropper && cropImage && (
+        <Dialog open={showCropper} onOpenChange={setShowCropper}>
+          <DialogOverlay className="fixed inset-0 bg-black bg-opacity-50" />
+          <DialogContent className="bg-white p-4 sm:p-6 rounded shadow-md w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-xl xl:max-w-2xl max-h-screen overflow-y-auto">
+            <h2 className="text-xl font-bold mb-4">Crop Image</h2>
+            <ImageCropper
+              image={cropImage}
+              onCropComplete={handleCropComplete}
+              onCancel={() => setShowCropper(false)}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };

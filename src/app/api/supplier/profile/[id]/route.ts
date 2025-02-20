@@ -13,6 +13,8 @@ export async function PATCH(
       businessPicture?: string;
     } = await req.json();
 
+    console.log(data);
+
     await prisma.supplier.update({
       where: {
         id: params.id,
