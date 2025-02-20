@@ -231,7 +231,7 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
                 className="text-blue-600 flex items-center gap-1 p-0 h-auto"
                 onClick={() => setIsPhoneModalOpen(true)}
               >
-                <Pencil size={12} /> Edit
+                <Pencil size={12} /> Edit Phone Number
               </Button>
             </div>
             <p className="text-gray-600 text-xs mt-1">
