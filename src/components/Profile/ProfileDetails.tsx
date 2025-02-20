@@ -285,12 +285,12 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
               {supplier.businessLocation}
             </p>
           </div>
-          <div>
+          {/* <div>
             <strong className="text-gray-700">Business Documents:</strong>
             <p className="text-gray-600 text-xs mt-1">
               {supplier.businessPicture || "N/A"}
             </p>
-          </div>
+          </div> */}
         </div>
       </div>
 
