@@ -2,15 +2,12 @@
 
 import * as React from "react";
 import {
-  CircleUser,
   Heart,
   Home,
   ShoppingCart,
   Settings,
   HelpCircle,
   LogOut,
-  Building,
-  ShieldEllipsis,
   Flag,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
@@ -126,16 +123,6 @@ export function HomeSidebar({
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
-                onClick={() => router.push("/profile")}
-                disabled={pathname === "/profile"}
-                className={pathname === "/profile" ? "bg-gray-200" : ""}
-              >
-                <CircleUser />
-                <span>Profile</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
                 onClick={() => router.push("/settings")}
                 disabled={pathname === "/settings"}
                 className={pathname === "/settings" ? "bg-gray-200" : ""}
@@ -146,63 +133,6 @@ export function HomeSidebar({
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
-
-        {/* Supplier/Admin Section */}
-        {isSupplier ? (
-          <SidebarGroup>
-            <SidebarGroupLabel>Supplier</SidebarGroupLabel>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => router.push("/supplier-dashboard")}
-                  disabled={pathname === "/supplier-dashboard"}
-                  className={
-                    pathname === "/supplier-dashboard" ? "bg-gray-200" : ""
-                  }
-                >
-                  <Building />
-                  <span>Supplier Dashboard</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroup>
-        ) : (
-          <SidebarGroup>
-            <SidebarGroupLabel>Become a Supplier</SidebarGroupLabel>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => router.push("/apply-supplier")}
-                  disabled={pathname === "/apply-supplier"}
-                  className={
-                    pathname === "/apply-supplier" ? "bg-gray-200" : ""
-                  }
-                >
-                  <Building />
-                  <span>Apply as a Supplier</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroup>
-        )}
-
-        {isAdmin && (
-          <SidebarGroup>
-            <SidebarGroupLabel>Admin</SidebarGroupLabel>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => router.push("/admin")}
-                  disabled={pathname === "/admin"}
-                  className={pathname === "/admin" ? "bg-gray-200" : ""}
-                >
-                  <ShieldEllipsis />
-                  <span>Admin Dashboard</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroup>
-        )}
 
         {/* Support Section */}
         <SidebarGroup>

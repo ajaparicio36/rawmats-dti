@@ -1,18 +1,10 @@
 "use client";
 
 import * as React from "react";
-import {
-  Frame,
-  Map,
-  PieChart,
-  ShoppingBag,
-  ClipboardList,
-  Bell,
-  User,
-} from "lucide-react";
+import { ShoppingBag, ClipboardList, Bell, User } from "lucide-react";
 
 import { NavMain } from "./SidebarMain";
-import { NavProjects } from "./SidebarNavigation";
+
 import { NavUser } from "./SidebarUser";
 import { NavigationSwitcher } from "./NavigationSwitcher";
 import {
@@ -32,6 +24,11 @@ const data = {
   },
   navMain: [
     {
+      title: "Profile",
+      url: "/supplier-dashboard/",
+      icon: User,
+    },
+    {
       title: "Products",
       url: "/supplier-dashboard/products",
       icon: ShoppingBag,
@@ -46,28 +43,6 @@ const data = {
       title: "Notifications",
       url: "/supplier-dashboard/notifications",
       icon: Bell,
-    },
-    {
-      title: "Profile",
-      url: "#",
-      icon: User,
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
     },
   ],
 };
@@ -95,7 +70,6 @@ export function SupplierSidebar({
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={{ name, email, avatar }} />

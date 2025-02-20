@@ -22,7 +22,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({
   return (
     <div className="w-full min-h-screen flex items-center justify-center md:p-4 bg-[rgba(254,254,254,0.962)]">
       {/* Mobile design */}
-      <div className="md:hidden w-full flex flex-col h-screen overflow-hidden bg-[#CFEEF9]">
+      <div className="md:hidden w-full flex flex-col min-h-screen bg-[#CFEEF9]">
         <div className="flex-grow flex flex-col items-center justify-center p-4">
           <Link href="/" className="mb-4">
             <ArrowLeftSquare className="h-6 w-6 text-[#001D3F]" />
@@ -37,7 +37,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({
           />
         </div>
         <Card className="bg-white rounded-t-3xl p-8 shadow-[0_-15px_30px_rgba(70,130,180,0.5)] z-10 w-full">
-          <CardContent>
+          <CardContent className="overflow-y-auto">
             <h2 className="text-xl font-extrabold mb-2 text-[#001D3F] font-inter text-center">
               {header}
             </h2>
@@ -50,14 +50,12 @@ const AuthScreen: React.FC<AuthScreenProps> = ({
       </div>
 
       {/* Desktop design */}
-      <Card className="hidden md:flex w-[80%] lg:w-[70%] rounded-xl overflow-hidden m-12 h-[75%] shadow-[0_15px_30px_rgba(70,130,180,0.5)]">
+      <Card className="hidden md:flex w-[80%] lg:w-[70%] rounded-xl m-12 shadow-[0_15px_30px_rgba(70,130,180,0.5)] max-h-[90vh]">
         <CardContent
-          className={`${isSupplierForm ? "w-[60%]" : "w-3/5"} p-12 bg-white relative`}
+          className={`${isSupplierForm ? "w-[60%]" : "w-3/5"} p-12 bg-white relative overflow-y-auto`}
         >
           <Link href="/" className="absolute top-4 left-4">
-            <Link href="/" className="mb-4">
-              <ArrowLeftSquare className="h-6 w-6 text-[#001D3F]" />
-            </Link>
+            <ArrowLeftSquare className="h-6 w-6 text-[#001D3F]" />
           </Link>
           <h2 className="text-2xl font-extrabold mb-3 text-[#001D3F]">
             {header}

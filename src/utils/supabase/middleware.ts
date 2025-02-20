@@ -6,6 +6,8 @@ export async function updateSession(request: NextRequest) {
     request,
   });
 
+  console.log("🔍 Middleware executing for path:", request.nextUrl.pathname);
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -43,6 +45,7 @@ export async function updateSession(request: NextRequest) {
   );
 
   if (!user && !isPublicPath) {
+    console.log("🚫 No session, redirecting to login from middleware");
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);

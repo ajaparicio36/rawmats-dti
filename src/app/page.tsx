@@ -3,6 +3,8 @@ import prisma from "@/utils/prisma/client";
 import type { ProductWithSupplier } from "@/utils/Products";
 import DynamicHomeScreen from "@/components/Home/DynamicScreen";
 import { redirect } from "next/navigation";
+import { Fragment } from "react";
+import { HomeSidebar } from "@/components/Sidebar/HomeSidebar";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -16,7 +18,7 @@ export default async function Home({
   const supabase = createClient();
   const { data: userData, error: userError } = await supabase.auth.getUser();
 
-  if (userError || !userData?.user) {
+  if (userError) {
     redirect("/login");
   }
 
@@ -31,6 +33,8 @@ export default async function Home({
   const supplier = await prisma.supplier.findUnique({
     where: { userId: user.id, verified: true },
   });
+
+  const isAdmin = user.role === "ADMIN";
 
   const allProducts: ProductWithSupplier[] = await prisma.product.findMany({
     include: { supplier: true },
@@ -58,15 +62,24 @@ export default async function Home({
   const totalPages = Math.ceil(allProducts.length / ITEMS_PER_PAGE);
 
   return (
-    <DynamicHomeScreen
-      user={user}
-      supplier={supplier}
-      dailyDiscoverProducts={dailyDiscoverProducts}
-      newArrivalsProducts={newArrivalsProducts}
-      paginatedProducts={paginatedProducts}
-      page={page}
-      totalPages={totalPages}
-      searchQuery={searchQuery}
-    />
+    <Fragment>
+      <HomeSidebar
+        name={user.displayName}
+        email={user.email}
+        avatar={"" /* Implement after profile pages */}
+        isSupplier={!!supplier}
+        isAdmin={isAdmin}
+      />
+      <DynamicHomeScreen
+        user={user}
+        supplier={supplier}
+        dailyDiscoverProducts={dailyDiscoverProducts}
+        newArrivalsProducts={newArrivalsProducts}
+        paginatedProducts={paginatedProducts}
+        page={page}
+        totalPages={totalPages}
+        searchQuery={searchQuery}
+      />
+    </Fragment>
   );
 }

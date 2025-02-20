@@ -15,7 +15,6 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { NavigationSwitcher } from "./NavigationSwitcher";
 
 // This is sample data.
 const data = {
