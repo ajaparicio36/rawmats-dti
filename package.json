@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "prepare": "husky",
-    "postinstall": "npx prisma generate && npm rebuild sharp"
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
     "@algolia/client-search": "^5.15.0",
@@ -53,7 +53,7 @@
     "react-hook-form": "^7.53.2",
     "react-icons": "^5.3.0",
     "react-responsive": "^10.0.0",
-    "sharp": "^0.33.5",
+    "sharp": "latest",
     "swr": "^2.2.5",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
