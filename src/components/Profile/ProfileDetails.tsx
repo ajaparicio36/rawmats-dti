@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface ProfileProps {
   supplier: Supplier & { user: { email: string } };
@@ -22,27 +23,30 @@ interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = ({ supplier }) => {
   const [bio, setBio] = useState(supplier.bio || "");
-  const [email, setEmail] = useState(supplier.user.email);
   const [phone, setPhone] = useState(supplier.businessPhone || "");
   const [isBioModalOpen, setIsBioModalOpen] = useState(false);
-  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
 
-  const handleSave = (type: "bio" | "email" | "phone") => {
-    switch (type) {
-      case "bio":
-        alert(`Bio saved: ${bio}`);
-        setIsBioModalOpen(false);
-        break;
-      case "email":
-        alert(`Email saved: ${email}`);
-        setIsEmailModalOpen(false);
-        break;
-      case "phone":
-        alert(`Phone saved: ${phone}`);
-        setIsPhoneModalOpen(false);
-        break;
+  const router = useRouter();
+
+  const handleSave = async (type: "bio" | "businessPhone", newData: string) => {
+    await fetch(`/api/supplier/profile/${supplier.id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ [type]: newData }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (type === "bio") {
+      setBio(newData);
+      setIsBioModalOpen(false);
+    } else {
+      setPhone(newData);
+      setIsPhoneModalOpen(false);
     }
+
+    router.refresh();
   };
 
   return (
@@ -119,16 +123,8 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
           <div>
             <div className="flex items-center justify-between">
               <strong className="text-gray-700">Email:</strong>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-blue-600 flex items-center gap-1 p-0 h-auto"
-                onClick={() => setIsEmailModalOpen(true)}
-              >
-                <Pencil size={12} /> Edit
-              </Button>
             </div>
-            <p className="text-gray-600 text-xs mt-1">{email}</p>
+            <p className="text-gray-600 text-xs mt-1">{supplier.user.email}</p>
           </div>
           <div>
             <div className="flex items-center justify-between">
@@ -142,7 +138,9 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
                 <Pencil size={12} /> Edit
               </Button>
             </div>
-            <p className="text-gray-600 text-xs mt-1">{phone || "N/A"}</p>
+            <p className="text-gray-600 text-xs mt-1">
+              {supplier.businessPhone}
+            </p>
           </div>
         </div>
         <div>
@@ -154,7 +152,7 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
               className="text-blue-600 flex items-center gap-1 p-0 h-auto"
               onClick={() => setIsBioModalOpen(true)}
             >
-              {bio ? (
+              {supplier.bio ? (
                 <>
                   <Pencil size={12} /> Edit Bio
                 </>
@@ -165,8 +163,8 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
               )}
             </Button>
           </div>
-          {bio ? (
-            <p className="text-gray-600 text-xs mt-1">{bio}</p>
+          {supplier.bio ? (
+            <p className="text-gray-600 text-xs mt-1">{supplier.bio}</p>
           ) : (
             <p className="text-gray-400 italic text-xs mt-1">No bio added.</p>
           )}
@@ -216,31 +214,7 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
             <Button variant="outline" onClick={() => setIsBioModalOpen(false)}>
               <X size={14} /> Cancel
             </Button>
-            <Button onClick={() => handleSave("bio")}>Save Bio</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Email Edit Modal */}
-      <Dialog open={isEmailModalOpen} onOpenChange={setIsEmailModalOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Edit Email</DialogTitle>
-          </DialogHeader>
-          <Input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-          />
-          <DialogFooter className="flex justify-end gap-2 mt-4">
-            <Button
-              variant="outline"
-              onClick={() => setIsEmailModalOpen(false)}
-            >
-              <X size={14} /> Cancel
-            </Button>
-            <Button onClick={() => handleSave("email")}>Save Email</Button>
+            <Button onClick={() => handleSave("bio", bio)}>Save Bio</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -264,7 +238,9 @@ const Profile: React.FC<ProfileProps> = ({ supplier }) => {
             >
               <X size={14} /> Cancel
             </Button>
-            <Button onClick={() => handleSave("phone")}>Save Phone</Button>
+            <Button onClick={() => handleSave("businessPhone", phone)}>
+              Save Phone
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
